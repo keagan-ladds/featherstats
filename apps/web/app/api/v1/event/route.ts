@@ -43,7 +43,7 @@ export async function POST(request: Request) {
             }
         }));
 
-        tinybirdClient.publishEvents('analytics_events', eventsWithClientInfo);
+        await tinybirdClient.publishEvents('analytics_events', eventsWithClientInfo);
 
     } catch (error) {
         console.error('Error processing telemetry:', error);
