@@ -21,7 +21,13 @@ export async function POST(request: Request) {
         const { ip, anonymizedIp } = getClientIP(headersList);
         //const location = process.env.NODE_ENV === 'development' ? null : await getLocationFromIP(ip);
         const userAgent = headersList.get('user-agent');
-        const host = headersList.get('origin');
+        const origin = headersList.get('origin');
+        let hostname = '';
+        if (origin) {
+            var url = new URL(origin);
+            hostname = url.hostname;
+        }
+        
 
         const payload = {
             ip: anonymizedIp,
@@ -35,7 +41,7 @@ export async function POST(request: Request) {
 
         const eventsWithClientInfo = events.map(event => ({
             ...event,
-            host: host,
+            host: hostname,
             appId: appId,
             payload: {
                 ...payload,
