@@ -1,5 +1,5 @@
 {
-  "name": "web",
+  "name": "@repo/web",
   "version": "1.0.0",
   "type": "module",
   "private": true,
@@ -27,6 +27,7 @@
     "@repo/eslint-config": "*",
     "@repo/tailwind-config": "*",
     "@repo/typescript-config": "*",
+    "@types/ndjson": "^2.0.4",
     "@types/node": "^22.12.0",
     "@types/react": "^19.0.7",
     "@types/react-dom": "^19.0.3",

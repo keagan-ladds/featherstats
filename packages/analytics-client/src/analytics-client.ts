@@ -7,7 +7,7 @@ interface FeatherstatsClientConfig {
 }
 
 
-interface AnalyticsEvent {
+export interface AnalyticsEvent {
     timestamp: string
     sessionId: string
     eventType: string;

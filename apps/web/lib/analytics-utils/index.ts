@@ -57,19 +57,13 @@ export function parseUserAgent(userAgent: string | null) {
   const device = parser.getDevice();
   
   return {
-    browser: {
-      name: browser.name || 'unknown',
-      version: browser.version || 'unknown'
-    },
-    os: {
-      name: os.name || 'unknown',
-      version: os.version || 'unknown'
-    },
-    device: {
-      type: device.type || 'desktop',
-      vendor: device.vendor || 'unknown',
-      model: device.model || 'unknown'
-    }
+    browser: browser.name,
+    browserVersion: browser.version,
+    os: os.name,
+    osVersion: os.version,
+    deviceType: device.type || 'desktop',
+    deviceVendor: device.vendor || 'unknown',
+    deviceModel: device.model || 'unknown'
   };
 }
 

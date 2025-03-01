@@ -23,9 +23,14 @@ function init() {
     return;
   }
 
+  const defaultPayload = {
+    referrer: document.referrer,
+    pathname: window.location.pathname
+  }
+
   // Initialize the client
   const client = new FeatherstatsClient(apiKey, { baseUrl: FEATHERSTATS_BASE_URL });
-  client.track('page_hit', {payload: { referrer: document.referrer}});
+  client.track('page_hit', {payload: defaultPayload});
 
   // Process any queued commands
   const w = window;
