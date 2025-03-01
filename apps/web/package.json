@@ -1,0 +1,40 @@
+{
+  "name": "web",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --port 3000 --turbopack",
+    "prebuild": "node scripts/build-tracker.mjs",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint --max-warnings 0",
+    "check-types": "tsc --noEmit",
+    "build:tracker": "node scripts/build-tracker.mjs"
+  },
+  "dependencies": {
+    "@repo/analytics-client": "*",
+    "@repo/ui": "*",
+    "cors": "^2.8.5",
+    "ip-anonymize": "^0.1.0",
+    "next": "^15.1.6",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "ua-parser-js": "^2.0.2"
+  },
+  "devDependencies": {
+    "@next/eslint-plugin-next": "^15.1.6",
+    "@repo/eslint-config": "*",
+    "@repo/tailwind-config": "*",
+    "@repo/typescript-config": "*",
+    "@types/node": "^22.12.0",
+    "@types/react": "^19.0.7",
+    "@types/react-dom": "^19.0.3",
+    "autoprefixer": "^10.4.20",
+    "esbuild": "^0.25.0",
+    "eslint": "^9.21.0",
+    "postcss": "^8.5.1",
+    "tailwindcss": "^3.4.17",
+    "typescript": "5.7.3"
+  }
+}

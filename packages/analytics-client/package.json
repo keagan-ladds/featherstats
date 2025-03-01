@@ -1,0 +1,24 @@
+{
+    "name": "@repo/analytics-client",
+    "type": "module",
+    "main": "./dist/analytics-client.js",
+    "types": "./dist/analytics-client.d.ts",
+    "scripts": {
+      "dev": "tsc --watch",
+      "build": "tsc"
+    },
+    "exports": {
+      ".": {
+        "types": "./dist/analytics-client.d.ts",
+        "import": "./dist/analytics-client.js",
+        "require": "./dist/analytics-client.js"
+      }
+    },
+    "dependencies": {
+      "nanoid": "^5.0.6"
+    },
+    "devDependencies": {
+      "@repo/typescript-config": "*",
+      "typescript": "latest"
+    }
+}
