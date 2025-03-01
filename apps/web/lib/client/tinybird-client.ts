@@ -1,9 +1,15 @@
+
+
 export class TinybirdClient {
     private readonly baseUrl: string = 'https://api.tinybird.co';
     private readonly token: string;
 
     constructor() {
-        this.token = process.env.TINYBIRD_API_TOKEN || '';
+        if (!process.env.TINYBIRD_API_TOKEN) {
+            throw new Error("Tinybird API Token no configured")
+        }
+        
+        this.token = process.env.TINYBIRD_API_TOKEN;
     }
 
     public publishEvents(eventName: string, events: Object[]): Promise<void> {
