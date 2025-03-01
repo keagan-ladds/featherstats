@@ -17,7 +17,7 @@ export async function POST(request: Request) {
         }
 
         const { ip, anonymizedIp } = getClientIP(headersList);
-        const location = process.env.NODE_ENV === 'development' ? null : await getLocationFromIP(ip);
+        //const location = process.env.NODE_ENV === 'development' ? null : await getLocationFromIP(ip);
         const userAgent = headersList.get('user-agent');
         const host = headersList.get('origin');
 
@@ -26,7 +26,7 @@ export async function POST(request: Request) {
             userAgent: userAgent,
             referrer: cleanReferrer(headersList.get('referer')),
             ...parseUserAgent(userAgent),
-            ...location
+            //...location
         };
 
         const appId = 'featherstats';
