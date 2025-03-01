@@ -13,8 +13,6 @@ export class TinybirdClient {
     }
 
     public publishEvents(eventName: string, events: Object[]): Promise<void> {
-
-        console.warn("Publishing " + events.length + " events to tinybird");
         const ndjsonData = events.map(event => JSON.stringify(event)).join('\n');
         
         return fetch(`${this.baseUrl}/v0/events?name=${eventName}`, {

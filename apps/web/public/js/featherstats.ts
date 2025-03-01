@@ -30,7 +30,7 @@ function init() {
 
   // Initialize the client
   const client = new FeatherstatsClient(apiKey, { baseUrl: FEATHERSTATS_BASE_URL });
-  client.track('page_hit', {payload: defaultPayload});
+  client.track('page_hit', { payload: defaultPayload });
 
   // Process any queued commands
   const w = window;
@@ -50,6 +50,21 @@ function init() {
       fn.apply(null, args);
     }
   });
+
+
+  let pathname = location.pathname;
+  window.addEventListener("click", function () {
+    if (location.pathname != pathname) {
+      pathname = location.pathname;
+      client.track('page_hit', {
+        payload: {
+          ...defaultPayload,
+          pathname: pathname
+        }
+      });
+    }
+  });
+
 }
 
 // Initialize when the script loads
