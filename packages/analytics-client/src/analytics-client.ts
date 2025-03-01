@@ -20,8 +20,8 @@ interface EventOptions {
 
 const DEFAULT_CONFIG: Required<FeatherstatsClientConfig> = {
   batchSize: 10,
-  flushInterval: 5000, // 5 seconds
-  baseUrl: 'https://featherstats.com'
+  flushInterval: 10000, // 10 seconds
+  baseUrl: 'http://localhost:3000'
 };
 
 export class FeatherstatsClient {
