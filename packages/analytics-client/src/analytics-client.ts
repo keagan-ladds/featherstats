@@ -4,6 +4,7 @@ interface FeatherstatsClientConfig {
     batchSize?: number;
     flushInterval?: number;
     baseUrl?: string;
+    requeueOnFailure?: boolean;
 }
 
 
@@ -20,8 +21,9 @@ interface EventOptions {
 
 const DEFAULT_CONFIG: Required<FeatherstatsClientConfig> = {
   batchSize: 10,
-  flushInterval: 10000, // 10 seconds
-  baseUrl: 'http://localhost:3000'
+  flushInterval: 5000, // 10 seconds
+  baseUrl: 'http://localhost:3000',
+  requeueOnFailure: false
 };
 
 export class FeatherstatsClient {
@@ -103,8 +105,7 @@ export class FeatherstatsClient {
       await this.sendEvents(events);
     } catch (error) {
       console.error('Failed to send telemetry events:', error);
-      if (!this.isDestroyed) {
-        // Only requeue if service is not destroyed
+      if (!this.isDestroyed && this.config.requeueOnFailure) {
         this.eventQueue = [...events, ...this.eventQueue];
       }
     }
