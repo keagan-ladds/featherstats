@@ -15,9 +15,11 @@
   "dependencies": {
     "@repo/analytics-client": "*",
     "@repo/ui": "*",
+    "@types/jsonwebtoken": "^9.0.9",
     "@vercel/functions": "^2.0.0",
     "cors": "^2.8.5",
     "ip-anonymize": "^0.1.0",
+    "jsonwebtoken": "^9.0.2",
     "next": "^15.1.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

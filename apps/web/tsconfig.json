@@ -18,6 +18,6 @@
     "next.config.ts",
     ".next/types/**/*.ts",
     "public/js/**/*.ts"
-  ],
+, "../../packages/ui/src/components/dashboard/top-pages-card.tsx"  ],
   "exclude": ["node_modules"]
 }
