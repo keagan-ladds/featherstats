@@ -1,10 +1,9 @@
-export const runtime = 'nodejs';
-
 import { NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { AnalyticsEvent } from '@repo/analytics-client';
-import { cleanReferrer, getClientIP, getLocationFromIP, parseUserAgent } from 'lib/analytics-utils';
+import { getClientIP, parseUserAgent } from 'lib/analytics-utils';
 import tinybirdClient from 'lib/client/tinybird-client';
+import { geolocation } from '@vercel/functions';
 
 export async function POST(request: Request) {
     try {
@@ -19,7 +18,7 @@ export async function POST(request: Request) {
         }
 
         const { ip, anonymizedIp } = getClientIP(headersList);
-        //const location = process.env.NODE_ENV === 'development' ? null : await getLocationFromIP(ip);
+        const location = geolocation(request);
         const userAgent = headersList.get('user-agent');
         const origin = headersList.get('origin');
         let hostname = '';
@@ -32,9 +31,9 @@ export async function POST(request: Request) {
         const payload = {
             ip: anonymizedIp,
             userAgent: userAgent,
-            referrer: cleanReferrer(headersList.get('referer')),
+            country: location.country,
+            city: location.city,
             ...parseUserAgent(userAgent),
-            //...location
         };
 
         const appId = 'featherstats';

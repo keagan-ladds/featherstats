@@ -15,6 +15,7 @@
   "dependencies": {
     "@repo/analytics-client": "*",
     "@repo/ui": "*",
+    "@vercel/functions": "^2.0.0",
     "cors": "^2.8.5",
     "ip-anonymize": "^0.1.0",
     "next": "^15.1.6",
