@@ -38,19 +38,21 @@ export class TinybirdClient {
         const next10minutes = new Date();
         next10minutes.setTime(next10minutes.getTime() + 1000 * 60 * 10);
 
+        const pipes = ["top_pages", "top_locations"]
+
         const payload = {
             workspace_id: WORKSPACE_ID,
             name: "my_demo_jwt",
             exp: Math.floor(next10minutes.getTime() / 1000),
             scopes: [
-                {
+                ...pipes.map(pipe => ({
                     type: "PIPES:READ",
-                    resource: "top_pages",
+                    resource: pipe,
                     fixed_params: {
                         "workspace_id": workspaceId,
                         "hostname": hostName
                     }
-                },
+                }))
             ],
         };
 
@@ -58,4 +60,4 @@ export class TinybirdClient {
     }
 }
 
-export const tinybirdClient =  new TinybirdClient();
+export const tinybirdClient = new TinybirdClient();

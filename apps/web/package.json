@@ -13,16 +13,21 @@
     "build:tracker": "node scripts/build-tracker.mjs"
   },
   "dependencies": {
+    "@radix-ui/react-slot": "^1.1.2",
     "@repo/analytics-client": "*",
     "@repo/ui": "*",
     "@types/jsonwebtoken": "^9.0.9",
     "@vercel/functions": "^2.0.0",
     "cors": "^2.8.5",
+    "date-fns": "^3.6.0",
     "ip-anonymize": "^0.1.0",
     "jsonwebtoken": "^9.0.2",
+    "lucide-react": "^0.477.0",
     "next": "^15.1.6",
     "react": "^19.0.0",
+    "react-day-picker": "^8.10.1",
     "react-dom": "^19.0.0",
+    "recharts": "^2.15.1",
     "ua-parser-js": "^2.0.2"
   },
   "devDependencies": {
