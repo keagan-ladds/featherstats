@@ -38,7 +38,7 @@ export class TinybirdClient {
         const next10minutes = new Date();
         next10minutes.setTime(next10minutes.getTime() + 1000 * 60 * 10);
 
-        const pipes = ["top_pages", "top_locations"]
+        const pipes = ["key_metrics", "top_pages", "top_locations"]
 
         const payload = {
             workspace_id: WORKSPACE_ID,

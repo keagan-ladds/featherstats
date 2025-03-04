@@ -2,7 +2,8 @@
 
 import { AnalyticsContext } from "providers/analytics-provider"
 import { useCallback, useContext, useMemo, useState } from "react"
-import { TopLocationsData } from "@repo/ui/types/analytics"
+import { KeyMetricsData, TopLocationsData, TopPagesData } from "@repo/ui/types/analytics"
+import { formatISO } from 'date-fns'
 
 export interface TopPagesResponse {
     data: {
@@ -22,14 +23,23 @@ export function useAnalytics() {
     const context = useContext(AnalyticsContext);
     if (!context) throw new Error("The 'useAnalytics' hook should only be used within an AnalyticsProvider context");
 
-
     const [dateRange, setDateRange] = useState({
         start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
         end: new Date()
     });
 
-    const [topLocationsState, setTopLocationsState] = useState<AnalyticsDataState<TopLocationsData>>({ data: null, loading: false, error: null })
+    const dateRangeQuery = `date_from=${formatISO(dateRange.start, { representation: "date" })}&date_to=${formatISO(dateRange.end, { representation: "date" })}`;
 
+    const [metricsState, setMetricsState] = useState<AnalyticsDataState<KeyMetricsData>>({ data: null, loading: false, error: null })
+    const [topLocationsState, setTopLocationsState] = useState<AnalyticsDataState<TopLocationsData>>({ data: null, loading: false, error: null })
+    const [topPagesState, setTopPagesState] = useState<AnalyticsDataState<TopPagesData>>({data: null, loading: false, error: null})
+
+    const keyMetrics = useMemo(() => ({
+        ...metricsState,
+        setData: (data: KeyMetricsData) => setMetricsState(prev => ({ ...prev, data })),
+        setLoading: (loading: boolean) => setMetricsState(prev => ({ ...prev, loading })),
+        setError: (error: Error | null) => setMetricsState(prev => ({ ...prev, error }))
+    }), [metricsState])
 
     const topLocations = useMemo(() => ({
         ...topLocationsState,
@@ -38,28 +48,33 @@ export function useAnalytics() {
         setError: (error: Error | null) => setTopLocationsState(prev => ({ ...prev, error }))
     }), [topLocationsState])
 
-    const [topPagesData, setTopPagesData] = useState<TopPagesResponse["data"]>([])
-    const [loading, setLoading] = useState<boolean>(false);
-    const fetchTopPages = async () => {
+    const topPages = useMemo(() => ({
+        ...topPagesState,
+        setData: (data: TopPagesData) => setTopPagesState(prev => ({ ...prev, data })),
+        setLoading: (loading: boolean) => setTopPagesState(prev => ({ ...prev, loading })),
+        setError: (error: Error | null) => setTopPagesState(prev => ({ ...prev, error }))
+    }), [topPagesState])
 
-        setLoading(true);
-        const response = await fetch(`${context.baseUrl}/v0/pipes/top_pages.json?limit=10`, {
+    const fetchKeyMetrics = useCallback(async () => {
+
+        keyMetrics.setLoading(true);
+        const response = await fetch(`${context.baseUrl}/v0/pipes/key_metrics.json?${dateRangeQuery}`, {
             headers: {
                 Authorization: 'Bearer ' + context.token
             }
         });
 
-        const data = await response.json() as TopPagesResponse;
-        setTopPagesData(data.data);
-        setLoading(false);
-        return data;
-    }
+        const responseData = await response.json() as {
+            data: KeyMetricsData
+        };
 
-
+        keyMetrics.setData(responseData.data);
+        keyMetrics.setLoading(false);
+    }, [dateRange, keyMetrics])
 
     const fetchTopLocations = useCallback(async () => {
         topLocations.setLoading(true);
-        const response = await fetch(`${context.baseUrl}/v0/pipes/top_locations.json?limit=10`, {
+        const response = await fetch(`${context.baseUrl}/v0/pipes/top_locations.json?limit=10&${dateRangeQuery}`, {
             headers: {
                 Authorization: 'Bearer ' + context.token
             }
@@ -73,16 +88,37 @@ export function useAnalytics() {
         topLocations.setLoading(false);
     }, [topLocations, dateRange])
 
+
+    const fetchTopPages = useCallback(async () => {
+        topPages.setLoading(true);
+        const response = await fetch(`${context.baseUrl}/v0/pipes/top_pages.json?limit=10&${dateRangeQuery}`, {
+            headers: {
+                Authorization: 'Bearer ' + context.token
+            }
+        });
+
+        const responseData = await response.json() as {
+            data: TopPagesData
+        };
+
+        topPages.setData(responseData.data);
+        topPages.setLoading(false);
+    }, [dateRange, topPages])
+
     const refreshAllData = useCallback(() => {
+        fetchKeyMetrics();
         fetchTopLocations();
-        
-    }, [fetchTopLocations])
+        fetchTopPages();
+
+    }, [fetchTopLocations, fetchKeyMetrics, fetchTopPages])
 
     return {
-        fetchTopPages,
+        setDateRange,
         refreshAllData,
-        topPagesData,
-        loading,
-        topLocations
+        topPages,
+        keyMetrics,
+        topLocations,
+        dateRange,
+        
     }
 }

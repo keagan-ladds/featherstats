@@ -5,16 +5,16 @@ export type TopLocationsData = {
     hits: number;
 }[]
 
-export interface TopPagesData {
+export type TopPagesData = {
     pathname: string;
     visits: number;
     hits: number;
-}
+}[]
 
-export interface KeyMetricsData {
+export type KeyMetricsData = {
     date: Date;
     visits: number;
     pageviews: number;
     bounce_rate: number;
     avg_session_sec: number
-}
+}[]
