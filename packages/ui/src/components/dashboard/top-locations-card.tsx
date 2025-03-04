@@ -14,11 +14,11 @@ export default function TopLocationsCard({ data }: TopLocationsCardProps) {
 
     return <>
         <Card>
-            <Tabs defaultValue="country">
+            <Tabs defaultValue="country" >
                 <CardHeader>
                     <div className="ui-w-full ui-flex ui-items-center">
                         <CardTitle>Top Locations</CardTitle>
-                        <TabsList className="ui-ml-auto">
+                        <TabsList className="ui-ml-auto" >
                             <TabsTrigger value="country">Country</TabsTrigger>
                             <TabsTrigger value="city">City</TabsTrigger>
                         </TabsList>
@@ -69,40 +69,40 @@ type AggregatedCountryData = {
     country: string;
     visits: number;
     hits: number;
-  }[];
-  
-  /**
-   * Aggregates location data by country, keeping the maximum visits and hits for each country
-   * @param data - Array of location data or null/undefined
-   * @returns Aggregated data by country
-   */
-  function aggregateByCountry(data: TopLocationsData | null | undefined): AggregatedCountryData {
+}[];
+
+/**
+ * Aggregates location data by country, keeping the maximum visits and hits for each country
+ * @param data - Array of location data or null/undefined
+ * @returns Aggregated data by country
+ */
+function aggregateByCountry(data: TopLocationsData | null | undefined): AggregatedCountryData {
     // Handle null or empty array
     if (!data || !Array.isArray(data) || data.length === 0) {
-      return [];
+        return [];
     }
-  
+
     // Create a map to track max values per country
     const countryMap = new Map<string, { country: string; visits: number; hits: number }>();
-  
+
     // Process each location entry
     for (const location of data) {
-      const { country, visits, hits } = location;
-      
-      if (!countryMap.has(country)) {
-        // First entry for this country
-        countryMap.set(country, { country, visits, hits });
-      } else {
-        // Update only if current values are higher than stored values
-        const current = countryMap.get(country)!;
-        countryMap.set(country, {
-          country,
-          visits: Math.max(current.visits, visits),
-          hits: Math.max(current.hits, hits)
-        });
-      }
+        const { country, visits, hits } = location;
+
+        if (!countryMap.has(country)) {
+            // First entry for this country
+            countryMap.set(country, { country, visits, hits });
+        } else {
+            // Update only if current values are higher than stored values
+            const current = countryMap.get(country)!;
+            countryMap.set(country, {
+                country,
+                visits: Math.max(current.visits, visits),
+                hits: Math.max(current.hits, hits)
+            });
+        }
     }
-  
+
     // Convert map to array of results
     return Array.from(countryMap.values());
-  }
+}

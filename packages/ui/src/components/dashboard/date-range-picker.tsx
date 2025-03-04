@@ -34,7 +34,7 @@ export function CalendarDateRangePicker({ className, onDateSelect }: CalendarDat
 
     return (
         <Select defaultValue="last_7_days" onValueChange={onPresetSelect}>
-            <SelectTrigger className="ui-w-[180px]">
+            <SelectTrigger className="ui-w-[200px] sm:ui-w-[280px]">
                 <SelectValue placeholder="Select Time Range" />
             </SelectTrigger>
             <SelectContent>

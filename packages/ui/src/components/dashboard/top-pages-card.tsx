@@ -13,14 +13,11 @@ export interface TopPagesCardProps {
 
 export default function TopPagesCard({ data, loading }: TopPagesCardProps) {
     return <>
-        <Card>
+        <Card className="ui-min-h-[380px]">
             <Tabs defaultValue="top_pages">
                 <CardHeader>
                     <div className="ui-w-full ui-flex ui-items-center">
                         <CardTitle>Top Pages</CardTitle>
-                        <TabsList className="ui-ml-auto">
-                            <TabsTrigger value="top_pages">Pages</TabsTrigger>
-                        </TabsList>
                     </div>
                 </CardHeader>
                 <CardContent>

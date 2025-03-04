@@ -11,6 +11,12 @@ export type TopPagesData = {
     hits: number;
 }[]
 
+export type TopSourcesData = {
+    referrer: string;
+    visits: number;
+    hits: number;
+}[]
+
 export type KeyMetricsData = {
     date: Date;
     visits: number;
