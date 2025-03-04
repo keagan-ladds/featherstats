@@ -4,7 +4,6 @@ interface AppLayoutProps {
 
 export default function AppLayout({ children }: AppLayoutProps) {
     return <>
-    <a>App Layout</a>
         {children}
     </>
 }

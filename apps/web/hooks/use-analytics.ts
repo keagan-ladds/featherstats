@@ -4,6 +4,7 @@ import { AnalyticsContext } from "providers/analytics-provider"
 import { useCallback, useContext, useMemo, useState } from "react"
 import { KeyMetricsData, TopLocationsData, TopPagesData, TopSourcesData } from "@repo/ui/types/analytics"
 import { formatISO } from 'date-fns'
+import { TopBrowsersData, TopDevicesData } from "types/analytics"
 
 
 export interface AnalyticsDataState<T> {
@@ -16,45 +17,10 @@ export function useAnalytics() {
     const context = useContext(AnalyticsContext);
     if (!context) throw new Error("The 'useAnalytics' hook should only be used within an AnalyticsProvider context");
 
-    const [dateRange, setDateRange] = useState({
-        start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
-        end: new Date()
-    });
+    const {dateRange, setDateRange, keyMetrics, topLocations, topPages, topSources, topDevices, topBrowsers, topOperatingSystems} = context;
+    
 
     const dateRangeQuery = `date_from=${formatISO(dateRange.start, { representation: "date" })}&date_to=${formatISO(dateRange.end, { representation: "date" })}`;
-
-    const [metricsState, setMetricsState] = useState<AnalyticsDataState<KeyMetricsData>>({ data: [], loading: false, error: null })
-    const [topLocationsState, setTopLocationsState] = useState<AnalyticsDataState<TopLocationsData>>({ data: [], loading: false, error: null })
-    const [topPagesState, setTopPagesState] = useState<AnalyticsDataState<TopPagesData>>({ data: [], loading: false, error: null })
-    const [topSourcesState, setTopSourcesState] = useState<AnalyticsDataState<TopSourcesData>>({ data: [], loading: false, error: null })
-
-    const keyMetrics = useMemo(() => ({
-        ...metricsState,
-        setData: (data: KeyMetricsData) => setMetricsState(prev => ({ ...prev, data })),
-        setLoading: (loading: boolean) => setMetricsState(prev => ({ ...prev, loading })),
-        setError: (error: Error | null) => setMetricsState(prev => ({ ...prev, error }))
-    }), [metricsState])
-
-    const topLocations = useMemo(() => ({
-        ...topLocationsState,
-        setData: (data: TopLocationsData) => setTopLocationsState(prev => ({ ...prev, data })),
-        setLoading: (loading: boolean) => setTopLocationsState(prev => ({ ...prev, loading })),
-        setError: (error: Error | null) => setTopLocationsState(prev => ({ ...prev, error }))
-    }), [topLocationsState])
-
-    const topPages = useMemo(() => ({
-        ...topPagesState,
-        setData: (data: TopPagesData) => setTopPagesState(prev => ({ ...prev, data })),
-        setLoading: (loading: boolean) => setTopPagesState(prev => ({ ...prev, loading })),
-        setError: (error: Error | null) => setTopPagesState(prev => ({ ...prev, error }))
-    }), [topPagesState])
-
-    const topSources = useMemo(() => ({
-        ...topSourcesState,
-        setData: (data: TopSourcesData) => setTopSourcesState(prev => ({ ...prev, data })),
-        setLoading: (loading: boolean) => setTopSourcesState(prev => ({ ...prev, loading })),
-        setError: (error: Error | null) => setTopSourcesState(prev => ({ ...prev, error }))
-    }), [topSourcesState])
 
     const fetchKeyMetrics = useCallback(async () => {
 
@@ -122,21 +88,58 @@ export function useAnalytics() {
         topSources.setLoading(false);
     }, [dateRange, topSources])
 
+    const fetchTopDevices = useCallback(async () => {
+        topDevices.setLoading(true);
+        const response = await fetch(`${context.baseUrl}/v0/pipes/top_devices.json?limit=10&${dateRangeQuery}`, {
+            headers: {
+                Authorization: 'Bearer ' + context.token
+            }
+        });
+
+        const responseData = await response.json() as {
+            data: TopDevicesData
+        };
+
+        topDevices.setData(responseData.data);
+        topDevices.setLoading(false);
+    }, [dateRange, topDevices])
+
+    const fetchTopBrowsers = useCallback(async () => {
+        topBrowsers.setLoading(true);
+        const response = await fetch(`${context.baseUrl}/v0/pipes/top_browsers.json?limit=10&${dateRangeQuery}`, {
+            headers: {
+                Authorization: 'Bearer ' + context.token
+            }
+        });
+
+        const responseData = await response.json() as {
+            data: TopBrowsersData
+        };
+
+        topBrowsers.setData(responseData.data);
+        topBrowsers.setLoading(false);
+    }, [dateRange, topDevices])
+
     const refreshAllData = useCallback(() => {
         fetchKeyMetrics();
         fetchTopLocations();
         fetchTopPages();
         fetchTopSources();
+        fetchTopDevices();
+        fetchTopBrowsers();
 
-    }, [fetchTopLocations, fetchKeyMetrics, fetchTopPages, fetchTopSources])
+    }, [fetchTopLocations, fetchKeyMetrics, fetchTopPages, fetchTopSources, fetchTopDevices, fetchTopBrowsers])
 
     return {
         setDateRange,
         refreshAllData,
+        keyMetrics,
         topPages,
         topSources,
-        keyMetrics,
         topLocations,
         dateRange,
+        topDevices,
+        topBrowsers,
+        topOperatingSystems
     }
 }

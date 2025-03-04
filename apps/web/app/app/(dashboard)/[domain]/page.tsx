@@ -1,13 +1,14 @@
 'use client'
 
-import TopPagesCard from "@repo/ui/components/dashboard/top-pages-card";
-import TopSourcesCard from "@repo/ui/components/dashboard/top-sources-card";
-import TopLocationsCard from "@repo/ui/components/dashboard/top-locations-card";
-import DashboardMetricsCard from "@repo/ui/components/dashboard/dashboard-metrics-card";
 import { useAnalytics } from "hooks/use-analytics";
 import { useCallback, useEffect } from "react";
 import { CalendarDateRangePicker } from "@repo/ui/components/dashboard/date-range-picker";
 import { DateRange } from "react-day-picker";
+import TopPagesCard from "components/analytics/top-pages-card";
+import DashboardMetricsCard from "components/analytics/dashboard-metrics-card";
+import TopLocationsCard from "components/analytics/top-locations-card";
+import TopSourcesCard from "components/analytics/top-sources-card";
+import TopDevicesCard from "components/analytics/top-devices-card";
 
 export default function DomainDashboardPage() {
     const { refreshAllData, topLocations, topSources, topPages, keyMetrics, dateRange, setDateRange } = useAnalytics();
@@ -20,7 +21,7 @@ export default function DomainDashboardPage() {
         if (date) {
             if (date.from) {
                 console.log('Updating date range: ', date)
-                setDateRange(prev => ({ ...prev, start: date.from!, end: date.to ?? date.from! }))
+                setDateRange({ start: date.from!, end: date.to ?? date.from! })
             }
         }
     }, [])
@@ -34,11 +35,11 @@ export default function DomainDashboardPage() {
                 </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <DashboardMetricsCard {...keyMetrics} className="col-span-full" />
+                <DashboardMetricsCard className="col-span-full" />
                 <TopPagesCard {...topPages} />
                 <TopLocationsCard {...topLocations} />
                 <TopSourcesCard {...topSources}/>
-
+                <TopDevicesCard/>
             </div>
         </div>
 

@@ -1,7 +1,7 @@
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "../ui/tabs";
-import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "../ui/table";
-import { TopSourcesData } from "@/types/analytics";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@repo/ui/components/ui/tabs";
+import { Card, CardHeader, CardTitle, CardContent } from "@repo/ui/components/ui/card";
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@repo/ui/components/ui/table";
+import { TopSourcesData } from "@repo/ui/types/analytics";
 
 
 interface TopSourcesCardProps {
@@ -12,15 +12,11 @@ interface TopSourcesCardProps {
 
 export default function TopSourcesCard({ data, loading }: TopSourcesCardProps) {
     return <>
-        <Card className="ui-min-h-[380px]">
+        <Card className="min-h-[380px]">
             <Tabs defaultValue="sources">
                 <CardHeader>
-                    <div className="ui-w-full ui-flex ui-items-center">
+                    <div className="w-full flex items-center">
                         <CardTitle>Top Sources</CardTitle>
-                        <TabsList className="ui-ml-auto">
-                            <TabsTrigger value="sources">Sources</TabsTrigger>
-                            <TabsTrigger value="devices">Devices</TabsTrigger>
-                        </TabsList>
                     </div>
                 </CardHeader>
                 <CardContent>
@@ -29,7 +25,7 @@ export default function TopSourcesCard({ data, loading }: TopSourcesCardProps) {
                             <TableHeader>
                                 <TableRow>
                                     <TableHead>Source</TableHead>
-                                    <TableHead className="ui-w-[100px] ui-text-right">Visitors</TableHead>
+                                    <TableHead className="w-[100px] text-right">Visitors</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -40,7 +36,6 @@ export default function TopSourcesCard({ data, loading }: TopSourcesCardProps) {
                             </TableBody>
                         </Table>
                     </TabsContent>
-
                 </CardContent>
             </Tabs>
         </Card>

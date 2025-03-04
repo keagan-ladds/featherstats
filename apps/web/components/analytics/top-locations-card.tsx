@@ -1,7 +1,7 @@
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "../ui/tabs";
-import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "../ui/table";
-import { TopLocationsData } from '../../types/analytics'
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@repo/ui/components/ui/tabs";
+import { Card, CardHeader, CardTitle, CardContent } from "@repo/ui/components/ui/card";
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@repo/ui/components/ui/table";
+import { TopLocationsData } from "@repo/ui/types/analytics";
 
 interface TopLocationsCardProps {
     data: TopLocationsData | null
@@ -16,9 +16,9 @@ export default function TopLocationsCard({ data }: TopLocationsCardProps) {
         <Card>
             <Tabs defaultValue="country" >
                 <CardHeader>
-                    <div className="ui-w-full ui-flex ui-items-center">
-                        <CardTitle>Top Locations</CardTitle>
-                        <TabsList className="ui-ml-auto" >
+                    <div className="w-full flex items-center">
+                        <CardTitle className="h-9">Top Locations</CardTitle>
+                        <TabsList className="ml-auto" >
                             <TabsTrigger value="country">Country</TabsTrigger>
                             <TabsTrigger value="city">City</TabsTrigger>
                         </TabsList>
@@ -30,13 +30,13 @@ export default function TopLocationsCard({ data }: TopLocationsCardProps) {
                             <TableHeader>
                                 <TableRow>
                                     <TableHead>Country</TableHead>
-                                    <TableHead className="w-[100px] ui-text-right">Visitors</TableHead>
+                                    <TableHead className="w-[100px] text-right">Visitors</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {aggregatedByCountry.map((country, i) => <TableRow key={i}>
-                                    <TableCell className="ui-font-medium">{country.country}</TableCell>
-                                    <TableCell className="ui-text-right">{country.visits}</TableCell>
+                                    <TableCell className="font-medium">{country.country}</TableCell>
+                                    <TableCell className="text-right">{country.visits}</TableCell>
                                 </TableRow>)}
 
                             </TableBody>
@@ -48,13 +48,13 @@ export default function TopLocationsCard({ data }: TopLocationsCardProps) {
                             <TableHeader>
                                 <TableRow>
                                     <TableHead>City</TableHead>
-                                    <TableHead className="w-[100px] ui-text-right">Visitors</TableHead>
+                                    <TableHead className="w-[100px] text-right">Visitors</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {data?.map((item, i) => <TableRow key={i}>
-                                    <TableCell className="ui-font-medium">{item.city}</TableCell>
-                                    <TableCell className="ui-text-right">{item.visits}</TableCell>
+                                    <TableCell className="font-medium">{item.city}</TableCell>
+                                    <TableCell className="text-right">{item.visits}</TableCell>
                                 </TableRow>)}
                             </TableBody>
                         </Table>
