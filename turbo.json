@@ -3,16 +3,35 @@
   "ui": "tui",
   "tasks": {
     "build": {
-      "dependsOn": ["^build"],
-      "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
-      "env": ["FEATHERSTATS_CLIENT_BASE_URL", "TINYBIRD_API_TOKEN"]
+      "dependsOn": [
+        "^build"
+      ],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env*"
+      ],
+      "outputs": [
+        "dist/**",
+        ".next/**",
+        "!.next/cache/**"
+      ],
+      "env": [
+        "FEATHERSTATS_CLIENT_BASE_URL",
+        "TINYBIRD_API_TOKEN",
+        "TINYBIRD_SIGNING_TOKEN",
+        "TINYBIRD_WORKSPACE",
+        "NEXT_PUBLIC_TINYBIRD_HOST"
+      ]
     },
     "lint": {
-      "dependsOn": ["^lint"]
+      "dependsOn": [
+        "^lint"
+      ]
     },
     "check-types": {
-      "dependsOn": ["^check-types"]
+      "dependsOn": [
+        "^check-types"
+      ]
     },
     "dev": {
       "cache": false,
