@@ -3,7 +3,7 @@ import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "../ui
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "../ui/chart";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
 import { useMemo, useState } from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "@repo/ui/lib/utils";
 
 interface DashboardMetricsCardProps {
   data: KeyMetricsData | null,

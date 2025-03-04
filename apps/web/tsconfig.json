@@ -17,7 +17,7 @@
     "next-env.d.ts",
     "next.config.ts",
     ".next/types/**/*.ts",
-    "public/js/**/*.ts"
-, "../../packages/ui/src/components/dashboard/top-pages-card.tsx"  ],
+    "public/js/**/*.ts"  
+  ],
   "exclude": ["node_modules"]
 }

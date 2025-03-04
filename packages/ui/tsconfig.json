@@ -3,9 +3,8 @@
   "include": ["src/**/*.tsx", "src/**/*.ts"],
   "exclude": ["dist", "build", "node_modules"],
   "compilerOptions": {
-    "baseUrl": "src",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./src/*"],
     }
   }
 }
