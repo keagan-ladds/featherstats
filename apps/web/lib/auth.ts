@@ -1,10 +1,10 @@
 import GitHub from "next-auth/providers/github"
 import Google from "next-auth/providers/google"
-import NextAuth, { type NextAuthResult } from 'next-auth';
+import NextAuth, { NextAuthConfig, type NextAuthResult } from 'next-auth';
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { db } from "@featherstats/database";
-import { usersTable } from "@featherstats/database/schema/user";
-import { accountsTable, sessionsTable, verificationTokensTable, authenticatorsTable } from "@featherstats/database/schema/auth";
+import { usersTable, accountsTable, sessionsTable, verificationTokensTable, authenticatorsTable } from "@featherstats/database/schema/auth";
+import { workspaceService } from "services/workspace.service";
 
 const authOptions = {
     providers: [GitHub, Google],
@@ -15,7 +15,14 @@ const authOptions = {
         verificationTokensTable: verificationTokensTable,
         authenticatorsTable: authenticatorsTable
     }),
-}
+    callbacks: {
+        signIn: async ({ user }) => {
+            await workspaceService.createDefaultUserWorkspace({ userId: user.id! })
+            return true
+        }
+    }
+
+} satisfies NextAuthConfig
 
 const result = NextAuth(authOptions);
 
