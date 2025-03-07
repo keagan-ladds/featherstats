@@ -15,10 +15,9 @@ const authOptions = {
         verificationTokensTable: verificationTokensTable,
         authenticatorsTable: authenticatorsTable
     }),
-    callbacks: {
-        signIn: async ({ user }) => {
+    events: {
+        createUser: async ({ user }) => {
             await workspaceService.createDefaultUserWorkspace({ userId: user.id! })
-            return true
         }
     }
 

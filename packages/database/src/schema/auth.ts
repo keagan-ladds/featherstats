@@ -1,8 +1,9 @@
 import { boolean, timestamp, pgTable, text, primaryKey, integer } from "drizzle-orm/pg-core"
 import type { AdapterAccountType } from "next-auth/adapters"
+import { generateUniqueString } from "../util";
 
 export const usersTable = pgTable("users", {
-  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  id: text("id").primaryKey().$defaultFn(() => generateUniqueString()),
   name: text("name"),
   email: text("email").unique(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
