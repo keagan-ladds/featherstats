@@ -1,13 +1,11 @@
 import { Domain, DomainVerificationStatus, Workspace } from "@featherstats/database/types";
 
-export type WorkspaceCreateRequest = {
-    workspaceName: string
-    userId: string;
+export type WorkspaceCreateOptions = {
+    name: string
 }
 
-export type DomainCreateRequest = {
-    workspaceId: string;
-    domainName: string;
+export type DomainCreateOptions = {
+    name: string;
     verficationStatus?: DomainVerificationStatus
 }
 

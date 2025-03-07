@@ -1,20 +1,20 @@
 import { db } from "@featherstats/database";
 import { domainsTable, workspaceUsersTable, workspacesTable } from "@featherstats/database/schema/app";
 import { Domain, Workspace } from "@featherstats/database/types";
-import { DomainCreateRequest, WorkspaceCreateRequest, WorkspaceWithDomains } from "types/workspace";
+import { DomainCreateOptions, WorkspaceCreateOptions, WorkspaceWithDomains } from "types/workspace";
 import { eq, getTableColumns } from "drizzle-orm"
 
 class WorkspaceService {
-    async createDefaultUserWorkspace({ userId, ...props }: WorkspaceCreateRequest) {
+    async createDefaultUserWorkspace(userId: string, opts: WorkspaceCreateOptions) {
         const userWorkspaces = await this.findWorkspaceByUserId(userId);
         if (userWorkspaces && userWorkspaces.length > 0) return userWorkspaces[0];
 
-        return await this.createWorkspace({ userId, ...props });
+        return await this.createWorkspace(userId, opts);
     }
 
-    async createWorkspace({ userId }: WorkspaceCreateRequest): Promise<Workspace | undefined> {
+    async createWorkspace(userId: string, { name }: WorkspaceCreateOptions): Promise<Workspace | undefined> {
         return await db.transaction(async (transaction) => {
-            const [workspace] = await transaction.insert(workspacesTable).values({}).returning();
+            const [workspace] = await transaction.insert(workspacesTable).values({ name }).returning();
             await transaction.insert(workspaceUsersTable).values({ userId: userId, workspaceId: workspace!.id });
             return workspace;
         });
@@ -42,9 +42,9 @@ class WorkspaceService {
         };
     }
 
-    async createWorkspaceDomain(request: DomainCreateRequest): Promise<Domain> {
-        const verifiedAt = request.verficationStatus == "verified" ? new Date() : undefined;
-        const [domain] = await db.insert(domainsTable).values({ ...request, verifiedAt }).returning();
+    async createWorkspaceDomain(workspaceId: string, opts: DomainCreateOptions): Promise<Domain> {
+        const verifiedAt = opts.verficationStatus == "verified" ? new Date() : undefined;
+        const [domain] = await db.insert(domainsTable).values({ verifiedAt, workspaceId, ...opts }).returning();
         return domain!
     }
 }

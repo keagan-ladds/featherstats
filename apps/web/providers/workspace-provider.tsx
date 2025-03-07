@@ -16,7 +16,8 @@ export default function WorkspaceProvider({ children, ...props }: WorkspaceProvi
 
     const context = {
         workspace,
-        domains
+        domains,
+        setWorkspace
     };
 
     return <WorkspaceContext.Provider value={context}>{children}</WorkspaceContext.Provider>
