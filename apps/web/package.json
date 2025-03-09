@@ -15,6 +15,7 @@
   "dependencies": {
     "@auth/drizzle-adapter": "^1.8.0",
     "@featherstats/database": "*",
+    "@icons-pack/react-simple-icons": "^12.2.0",
     "@radix-ui/react-dialog": "^1.1.6",
     "@radix-ui/react-separator": "^1.1.2",
     "@radix-ui/react-slot": "^1.1.2",

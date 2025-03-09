@@ -11,6 +11,7 @@ interface TopLocationsCardProps {
 export default function TopLocationsCard({ data }: TopLocationsCardProps) {
 
     const aggregatedByCountry = aggregateByCountry(data);
+    const aggregateddByCity = aggregateByCity(data);
 
     return <>
         <Card>
@@ -52,8 +53,8 @@ export default function TopLocationsCard({ data }: TopLocationsCardProps) {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {data?.map((item, i) => <TableRow key={i}>
-                                    <TableCell className="font-medium">{item.city}</TableCell>
+                                {aggregateddByCity?.map((item, i) => <TableRow key={i}>
+                                    <TableCell className="font-medium">{item.city || 'Unknown'}</TableCell>
                                     <TableCell className="text-right">{item.visits}</TableCell>
                                 </TableRow>)}
                             </TableBody>
@@ -67,6 +68,12 @@ export default function TopLocationsCard({ data }: TopLocationsCardProps) {
 
 type AggregatedCountryData = {
     country: string;
+    visits: number;
+    hits: number;
+}[];
+
+type AggregatedCityData = {
+    city: string;
     visits: number;
     hits: number;
 }[];
@@ -105,4 +112,40 @@ function aggregateByCountry(data: TopLocationsData | null | undefined): Aggregat
 
     // Convert map to array of results
     return Array.from(countryMap.values());
+}
+
+/**
+ * Aggregates location data by city, keeping the maximum visits and hits for each country
+ * @param data - Array of location data or null/undefined
+ * @returns Aggregated data by city
+ */
+function aggregateByCity(data: TopLocationsData | null | undefined): AggregatedCityData {
+    // Handle null or empty array
+    if (!data || !Array.isArray(data) || data.length === 0) {
+        return [];
+    }
+
+    // Create a map to track max values per country
+    const cityMap = new Map<string, { city: string; visits: number; hits: number }>();
+
+    // Process each location entry
+    for (const location of data) {
+        const { city, visits, hits } = location;
+
+        if (!cityMap.has(city)) {
+            // First entry for this country
+            cityMap.set(city, { city, visits, hits });
+        } else {
+            // Update only if current values are higher than stored values
+            const current = cityMap.get(city)!;
+            cityMap.set(city, {
+                city,
+                visits: Math.max(current.visits, visits),
+                hits: Math.max(current.hits, hits)
+            });
+        }
+    }
+
+    // Convert map to array of results
+    return Array.from(cityMap.values());
 }

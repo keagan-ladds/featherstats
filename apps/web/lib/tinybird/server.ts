@@ -50,7 +50,7 @@ export class TinybirdClient {
                     resource: pipe,
                     fixed_params: {
                         "workspace_id": workspaceId,
-                        "hostname": hostName
+                        "domain_name": hostName
                     }
                 }))
             ],

@@ -2,20 +2,12 @@
 
 import * as React from "react"
 import {
-    AudioWaveform,
-    BookOpen,
-    Bot,
-    Command,
-    Frame,
-    GalleryVerticalEnd,
-    Map,
-    PieChart,
-    Settings2,
+    ChartLine,
+    Radio,
     SquareTerminal,
 } from "lucide-react"
 
 import { NavMain } from "./nav-main"
-import { NavProjects } from "./nav-projects"
 import { NavUser } from "./nav-user"
 import {
     Sidebar,
@@ -24,7 +16,11 @@ import {
     SidebarHeader,
     SidebarRail,
 } from "@repo/ui/components/ui/sidebar"
-import { TeamSwitcher } from "./team-switcher"
+import { DomainSwitcher } from "./domain-switcher"
+import { useWorkspace } from "hooks/use-workspace"
+import { useSession } from "next-auth/react"
+import { useEffect, useState } from "react"
+import { Skeleton } from "@repo/ui/components/ui/skeleton"
 
 // This is sample data.
 const data = {
@@ -33,27 +29,56 @@ const data = {
         email: "m@example.com",
         avatar: "/avatars/shadcn.jpg",
     },
-    teams: [
+    navDomain: [
         {
-            name: "Acme Inc",
-            logo: GalleryVerticalEnd,
-            plan: "Enterprise",
+            title: "Realtime",
+            url: "#",
+            icon: Radio
         },
         {
-            name: "Acme Corp.",
-            logo: AudioWaveform,
-            plan: "Startup",
+            title: "Overview",
+            url: "app/",
+            icon: ChartLine,
+            isActive: true,
+            items: [
+                {
+                    title: "Pages",
+                    url: "#",
+                },
+                {
+                    title: "Sources",
+                    url: "#",
+                },
+                {
+                    title: "Locations",
+                    url: "#",
+                },
+                {
+                    title: "Devices",
+                    url: "#",
+                },
+            ],
         },
-        {
-            name: "Evil Corp.",
-            logo: Command,
-            plan: "Free",
-        },
-    ],
-    navMain: [
         {
             title: "Playground",
             url: "#",
+            icon: SquareTerminal,
+            isActive: true,
+        },
+        {
+            title: "Playground",
+            url: "#",
+            icon: SquareTerminal,
+            isActive: true,
+        },
+
+
+    ],
+
+    navWorkspace: [
+        {
+            title: "Domain",
+            url: "app/",
             icon: SquareTerminal,
             isActive: true,
             items: [
@@ -72,102 +97,46 @@ const data = {
             ],
         },
         {
-            title: "Models",
+            title: "Playground",
             url: "#",
-            icon: Bot,
-            items: [
-                {
-                    title: "Genesis",
-                    url: "#",
-                },
-                {
-                    title: "Explorer",
-                    url: "#",
-                },
-                {
-                    title: "Quantum",
-                    url: "#",
-                },
-            ],
+            icon: SquareTerminal,
+            isActive: true,
         },
         {
-            title: "Documentation",
+            title: "Playground",
             url: "#",
-            icon: BookOpen,
-            items: [
-                {
-                    title: "Introduction",
-                    url: "#",
-                },
-                {
-                    title: "Get Started",
-                    url: "#",
-                },
-                {
-                    title: "Tutorials",
-                    url: "#",
-                },
-                {
-                    title: "Changelog",
-                    url: "#",
-                },
-            ],
+            icon: SquareTerminal,
+            isActive: true,
         },
-        {
-            title: "Settings",
-            url: "#",
-            icon: Settings2,
-            items: [
-                {
-                    title: "General",
-                    url: "#",
-                },
-                {
-                    title: "Team",
-                    url: "#",
-                },
-                {
-                    title: "Billing",
-                    url: "#",
-                },
-                {
-                    title: "Limits",
-                    url: "#",
-                },
-            ],
-        },
-    ],
-    projects: [
-        {
-            name: "Design Engineering",
-            url: "#",
-            icon: Frame,
-        },
-        {
-            name: "Sales & Marketing",
-            url: "#",
-            icon: PieChart,
-        },
-        {
-            name: "Travel",
-            url: "#",
-            icon: Map,
-        },
+
+
     ],
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+
+    const [sessionLoading, setSessionLoading] = useState<boolean>(true);
+    const { domains } = useWorkspace()
+    const { data: session } = useSession();
+
+    useEffect(() => {
+        if (session) setSessionLoading(false)
+
+    }, [session])
+
     return (
         <Sidebar collapsible="icon" {...props}>
             <SidebarHeader>
-                <TeamSwitcher teams={data.teams} />
+                <DomainSwitcher domains={domains} />
             </SidebarHeader>
             <SidebarContent>
-                <NavMain items={data.navMain} />
-                <NavProjects projects={data.projects} />
+                <NavMain items={data.navDomain} title="Analytics" />
+                <NavMain items={data.navWorkspace} title="Workspace" />
             </SidebarContent>
             <SidebarFooter>
-                <NavUser user={data.user} />
+                {sessionLoading || !session ? <>
+                    <Skeleton className="w-full h-12" />
+                </> : <NavUser user={session.user!} />}
             </SidebarFooter>
             <SidebarRail />
         </Sidebar>

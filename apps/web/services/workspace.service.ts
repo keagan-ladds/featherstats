@@ -5,7 +5,7 @@ import { DomainCreateOptions, WorkspaceCreateOptions, WorkspaceWithDomains } fro
 import { eq, getTableColumns } from "drizzle-orm"
 
 class WorkspaceService {
-    async createDefaultUserWorkspace(userId: string, opts: WorkspaceCreateOptions) : Promise<Workspace> {
+    async createDefaultUserWorkspace(userId: string, opts: WorkspaceCreateOptions): Promise<Workspace> {
         const userWorkspaces = await this.findWorkspaceByUserId(userId);
         if (userWorkspaces && userWorkspaces.length > 0) return userWorkspaces[0]!;
 
@@ -42,10 +42,24 @@ class WorkspaceService {
         };
     }
 
+    async getWorkspaceDomainByName(domainName: string, userId: string): Promise<Domain | null> {
+        const [domain] = await db.select({ ...getTableColumns(domainsTable) }).from(domainsTable)
+            .innerJoin(workspacesTable, eq(domainsTable.workspaceId, workspacesTable.id))
+            .innerJoin(workspaceUsersTable, eq(workspaceUsersTable.userId, userId))
+            .where(eq(domainsTable.name, this.normalizeDomainName(domainName)))
+
+        return domain || null
+    }
+
     async createWorkspaceDomain(workspaceId: string, opts: DomainCreateOptions): Promise<Domain> {
         const verifiedAt = opts.verficationStatus == "verified" ? new Date() : undefined;
-        const [domain] = await db.insert(domainsTable).values({ verifiedAt, workspaceId, ...opts }).returning();
+        const name = this.normalizeDomainName(opts.name)
+        const [domain] = await db.insert(domainsTable).values({ ...opts, verifiedAt, workspaceId, name }).returning();
         return domain!
+    }
+
+    private normalizeDomainName(domainName: string): string {
+        return domainName.toLowerCase();
     }
 }
 
