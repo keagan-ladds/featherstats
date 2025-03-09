@@ -4,7 +4,8 @@ import OnboardingStepWelcome from './onboarding-welcome'
 import OnboardingStepWorkspace from "./onboarding-workspace"
 import OnboardingStepDomain from "./onboarding-domain"
 import { Button } from '@repo/ui/components/ui/button'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, LoaderCircle } from 'lucide-react'
+import OnboardingStepDone from './onboarding-done'
 
 export default function OnboardingForm() {
 
@@ -15,15 +16,27 @@ export default function OnboardingForm() {
             {onboardingStep == 'welcome' && <OnboardingStepWelcome />}
             {onboardingStep == 'workspace' && <OnboardingStepWorkspace />}
             {onboardingStep == 'domain' && <OnboardingStepDomain />}
+            {onboardingStep == 'done' && <OnboardingStepDone />}
         </div>
     )
 }
 
-export function OnboardingContinueButton() {
+interface OnboardingContinueButtonProps {
+    onClick?: () => void;
+}
+
+export function OnboardingContinueButton({onClick}: OnboardingContinueButtonProps) {
+    const { loading } = useOnboarding()
+
     return (
         <div className='flex flex-col items-center w-full  mt-auto gap-2'>
-            <Button className='group w-full'>Continue
-                <ArrowRight className='group-hover:translate-x-2 transition-transform' />
+            <Button className='group w-full' disabled={loading} onClick={() => onClick?.()}>
+                {loading ? (<>
+                    <LoaderCircle className='animate-spin' />
+                </>) :
+                    (<> Continue
+                        <ArrowRight className='group-hover:translate-x-2 transition-transform' />
+                    </>)}
             </Button>
         </div>
 

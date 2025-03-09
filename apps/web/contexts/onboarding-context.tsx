@@ -1,15 +1,19 @@
 'use client'
 
 import { createContext, useState } from "react";
+import { OnboardingData } from "types/onboarding";
 
-type OnboardingStep = 'welcome' | 'workspace' | 'domain' | 'done';
+export type OnboardingStep = 'welcome' | 'workspace' | 'domain' | 'done';
+
+
 
 interface OnboardingContext {
     onboardingStep: OnboardingStep
-    continueEnabled: boolean;
     loading: boolean;
+    onboardingData: Partial<OnboardingData>;
     setOnboardingStep: (step: OnboardingStep) => void;
-    setContinueEnabled: (enabled: boolean) => void;
+    setOnboardingData: (data: Partial<OnboardingData>) => void;
+    setLoading: (loading: boolean) => void;
 }
 
 interface OnboardingProviderProps {
@@ -18,16 +22,24 @@ interface OnboardingProviderProps {
 
 export const OnboardingContext = createContext<OnboardingContext | null>(null)
 export function OnboardingProvider({ children }: OnboardingProviderProps) {
-    const [continueEnabled, setContinueEnabled] = useState<boolean>(true)
     const [onboardingStep, setOnboardingStep] = useState<OnboardingStep>("welcome")
     const [loading, setLoading] = useState<boolean>(false)
+    const [onboardingData, setOnboardingDataState] = useState<Partial<OnboardingData>>({})
+
+    const setOnboardingData = (data: Partial<OnboardingData>) => {
+        setOnboardingDataState({
+            ...onboardingData, 
+            ...data
+        })
+    }
 
     const context: OnboardingContext = {
         onboardingStep,
-        continueEnabled,
         loading,
+        onboardingData,
         setOnboardingStep,
-        setContinueEnabled
+        setOnboardingData,
+        setLoading
     }
 
     return <OnboardingContext.Provider value={context}>{children}</OnboardingContext.Provider>;

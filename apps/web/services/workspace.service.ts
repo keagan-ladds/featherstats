@@ -5,18 +5,18 @@ import { DomainCreateOptions, WorkspaceCreateOptions, WorkspaceWithDomains } fro
 import { eq, getTableColumns } from "drizzle-orm"
 
 class WorkspaceService {
-    async createDefaultUserWorkspace(userId: string, opts: WorkspaceCreateOptions) {
+    async createDefaultUserWorkspace(userId: string, opts: WorkspaceCreateOptions) : Promise<Workspace> {
         const userWorkspaces = await this.findWorkspaceByUserId(userId);
-        if (userWorkspaces && userWorkspaces.length > 0) return userWorkspaces[0];
+        if (userWorkspaces && userWorkspaces.length > 0) return userWorkspaces[0]!;
 
         return await this.createWorkspace(userId, opts);
     }
 
-    async createWorkspace(userId: string, { name }: WorkspaceCreateOptions): Promise<Workspace | undefined> {
+    async createWorkspace(userId: string, { name }: WorkspaceCreateOptions): Promise<Workspace> {
         return await db.transaction(async (transaction) => {
             const [workspace] = await transaction.insert(workspacesTable).values({ name }).returning();
             await transaction.insert(workspaceUsersTable).values({ userId: userId, workspaceId: workspace!.id });
-            return workspace;
+            return workspace!;
         });
     }
 

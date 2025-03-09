@@ -3,22 +3,25 @@ import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage, FormDes
 import { Input } from "@repo/ui/components/ui/input"
 import { Globe } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { OnboardingContinueButton } from "./onboarding-form";
+import { useOnboarding } from "hooks/use-onboarding";
+import { OnboardingDataDomain } from "types/onboarding";
+import { OnboardingDataDomainSchema } from "lib/validation/onboarding";
 
 export default function OnboardingStepDomain() {
 
-    const formSchema = z.object({
-        domainName: z.string(),
+    const { onboardWorkspace } = useOnboarding();
+
+    const form = useForm<OnboardingDataDomain>({
+        resolver: zodResolver(OnboardingDataDomainSchema),
+        defaultValues: {
+            domainName: ''
+        }
     })
 
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
-    })
-
-    const handleSubmit = () => {
-
+    const handleSubmit = (data: OnboardingDataDomain) => {
+        onboardWorkspace(data);
     }
 
     return (
@@ -26,11 +29,11 @@ export default function OnboardingStepDomain() {
             <div className="flex h-10 w-10 items-center justify-center rounded-md mb-2">
                 <Globe className="size-10" />
             </div>
-            <h1 className="text-xl font-bold">Let's Add a Domain</h1>
+            <h1 className="text-xl font-bold">Add Your First Domain</h1>
             <div className="text-center text-sm">
-                Add a domain to your workspace so you can track it.
+                Where's the magic happening? Enter your domain and let's track some vibes.
             </div>
-            <form className='flex flex-col gap-6 w-full mt-10' onSubmit={form.handleSubmit(handleSubmit)}>
+            <form className='flex flex-col gap-6 w-full mt-8' onSubmit={form.handleSubmit(handleSubmit)}>
                 <Form {...form}>
                     <FormField
                         control={form.control}

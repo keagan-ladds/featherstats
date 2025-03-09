@@ -17,10 +17,18 @@
       ],
       "env": [
         "FEATHERSTATS_CLIENT_BASE_URL",
+        "NEXT_PUBLIC_BASE_URL",
+        "NEXT_PUBLIC_API_URL",
+        "NEXT_PUBLIC_TINYBIRD_HOST",
         "TINYBIRD_API_TOKEN",
         "TINYBIRD_SIGNING_TOKEN",
         "TINYBIRD_WORKSPACE",
-        "NEXT_PUBLIC_TINYBIRD_HOST"
+        "NEXTAUTH_URL",
+        "NEXTAUTH_SECRET",
+        "AUTH_GITHUB_ID",
+        "AUTH_GITHUB_SECRET",
+        "AUTH_GOOGLE_ID",
+        "AUTH_GOOGLE_SECRET"
       ]
     },
     "lint": {

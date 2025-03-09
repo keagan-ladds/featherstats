@@ -10,7 +10,17 @@ class UserService {
     }
 
     async updateUserMetadataById(id: string, metadata: Partial<UserMetadata>) {
-        await db.update(usersTable).set({metadata: metadata}).where(eq(usersTable.id, id));
+        await db.update(usersTable).set({ metadata: metadata }).where(eq(usersTable.id, id));
+    }
+
+    async updateUserById(id: string, data: Partial<Omit<User, 'id'>>): Promise<User> {
+        const [user] = await db.update(usersTable)
+            .set({ ...data })
+            .where(eq(usersTable.id, id)).returning();
+
+        if (!user) throw new Error(`Failed to update, user with id '${id}' could not be found`);
+
+        return user;
     }
 }
 
