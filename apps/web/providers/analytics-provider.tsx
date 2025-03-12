@@ -4,7 +4,7 @@ import { TopSourcesData } from "@repo/ui/types/analytics";
 import { addDays } from "date-fns/addDays";
 import { AnalyticsDataState } from "hooks/use-analytics";
 import { createContext, useMemo, useState } from "react";
-import { KeyMetricsData, TopBrowsersData, TopDevicesData, TopLocationsData, TopOperatingSystemsData, TopPagesData } from "types/analytics";
+import { KeyMetricsData, SourceDetailsData, TopBrowsersData, TopDevicesData, TopLocationsData, TopOperatingSystemsData, TopPagesData } from "types/analytics";
 
 export interface AnalyticsData<T> extends AnalyticsDataState<T> {
     setData: (data: T) => void;
@@ -27,6 +27,7 @@ interface AnalyticsContext {
     topDevices: AnalyticsData<TopDevicesData>
     topBrowsers: AnalyticsData<TopBrowsersData>
     topOperatingSystems: AnalyticsData<TopOperatingSystemsData>;
+    sourceDetails: AnalyticsData<SourceDetailsData>
     dateRange: AnalyticsDateRange
     setDateRange: (dateRange: AnalyticsDateRange) => void;
 
@@ -50,7 +51,8 @@ export function AnalyticsProvider({ children, token }: AnalyticsProviderProps) {
     const [topBrowsersState, setTopBrowsersState] = useState<AnalyticsDataState<TopBrowsersData>>({ data: [], loading: false, error: null })
     const [topOperatingSystemsState, setTopOperatingSystemsState] = useState<AnalyticsDataState<TopOperatingSystemsData>>({ data: [], loading: false, error: null })
     const [metricsState, setMetricsState] = useState<AnalyticsDataState<KeyMetricsData>>({ data: [], loading: false, error: null })
-    
+    const [sourceDetailsState, setSourceDetailsState] = useState<AnalyticsDataState<SourceDetailsData>>({ data: [], loading: false, error: null })
+
     const [dateRange, setDateRange] = useState({
         start: addDays(new Date(), -7),
         end: new Date()
@@ -106,6 +108,13 @@ export function AnalyticsProvider({ children, token }: AnalyticsProviderProps) {
         setError: (error: Error | null) => setTopOperatingSystemsState(prev => ({ ...prev, error }))
     }), [topOperatingSystemsState])
 
+    const sourceDetails = useMemo(() => ({
+        ...sourceDetailsState,
+        setData: (data: SourceDetailsData) => setSourceDetailsState(prev => ({ ...prev, data })),
+        setLoading: (loading: boolean) => setSourceDetailsState(prev => ({ ...prev, loading })),
+        setError: (error: Error | null) => setSourceDetailsState(prev => ({ ...prev, error }))
+    }), [sourceDetailsState])
+
     const context: AnalyticsContext = {
         baseUrl: "https://api.tinybird.co",
         token,
@@ -116,6 +125,7 @@ export function AnalyticsProvider({ children, token }: AnalyticsProviderProps) {
         topDevices,
         topBrowsers,
         topOperatingSystems,
+        sourceDetails,
         dateRange,
         setDateRange
     }

@@ -4,7 +4,7 @@ import { AnalyticsContext } from "providers/analytics-provider"
 import { useCallback, useContext, useMemo, useState } from "react"
 import { KeyMetricsData, TopLocationsData, TopPagesData, TopSourcesData } from "@repo/ui/types/analytics"
 import { formatISO } from 'date-fns'
-import { TopBrowsersData, TopDevicesData } from "types/analytics"
+import { SourceDetailsData, TopBrowsersData, TopDevicesData } from "types/analytics"
 
 
 export interface AnalyticsDataState<T> {
@@ -17,7 +17,7 @@ export function useAnalytics() {
     const context = useContext(AnalyticsContext);
     if (!context) throw new Error("The 'useAnalytics' hook should only be used within an AnalyticsProvider context");
 
-    const {dateRange, setDateRange, keyMetrics, topLocations, topPages, topSources, topDevices, topBrowsers, topOperatingSystems} = context;
+    const {dateRange, setDateRange, keyMetrics, topLocations, topPages, topSources, topDevices, topBrowsers, topOperatingSystems, sourceDetails} = context;
     
 
     const dateRangeQuery = `date_from=${formatISO(dateRange.start, { representation: "date" })}&date_to=${formatISO(dateRange.end, { representation: "date" })}`;
@@ -120,6 +120,22 @@ export function useAnalytics() {
         topBrowsers.setLoading(false);
     }, [dateRange, topDevices])
 
+    const fetchSourceDetails = useCallback(async () => {
+        sourceDetails.setLoading(true);
+        const response = await fetch(`${context.baseUrl}/v0/pipes/source_details.json?limit=25&${dateRangeQuery}`, {
+            headers: {
+                Authorization: 'Bearer ' + context.token
+            }
+        });
+
+        const responseData = await response.json() as {
+            data: SourceDetailsData
+        };
+
+        sourceDetails.setData(responseData.data);
+        sourceDetails.setLoading(false);
+    }, [dateRange, sourceDetails])
+
     const refreshAllData = useCallback(() => {
         fetchKeyMetrics();
         fetchTopLocations();
@@ -130,9 +146,14 @@ export function useAnalytics() {
 
     }, [fetchTopLocations, fetchKeyMetrics, fetchTopPages, fetchTopSources, fetchTopDevices, fetchTopBrowsers])
 
+    const refreshSourceDetailsData = useCallback(() => {
+        fetchSourceDetails();
+    }, [dateRange, fetchSourceDetails])
+
     return {
         setDateRange,
         refreshAllData,
+        refreshSourceDetailsData,
         keyMetrics,
         topPages,
         topSources,
@@ -140,6 +161,7 @@ export function useAnalytics() {
         dateRange,
         topDevices,
         topBrowsers,
-        topOperatingSystems
+        topOperatingSystems,
+        sourceDetails
     }
 }

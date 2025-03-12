@@ -6,7 +6,7 @@ import { cn } from "@repo/ui/lib/utils";
 import { Skeleton } from "@repo/ui/components/ui/skeleton";
 import { KeyMetricsData } from "types/analytics";
 import { useAnalytics } from "hooks/use-analytics";
-import { isSameDay } from "date-fns"
+import { isSameDay, formatDistance  } from "date-fns"
 
 interface DashboardMetricsCardProps {
   className?: string | undefined
@@ -29,7 +29,7 @@ const chartConfig = {
     color: "hsl(var(--chart-3))",
   },
   avg_session_sec: {
-    label: "Session Duration",
+    label: "Average Session Duration",
     color: "hsl(var(--chart-4))",
   }
 } satisfies ChartConfig
@@ -71,13 +71,21 @@ export default function DashboardMetricsCard({ className }: DashboardMetricsCard
   }, [dateRange])
 
   const [activeChart, setActiveChart] = useState<keyof typeof chartConfig>("pageviews")
+
   const aggregate = useMemo(
-    () => ({
-      visits: keyMetrics.data.reduce((acc, curr) => acc + curr.visits, 0),
-      pageviews: keyMetrics.data.reduce((acc, curr) => acc + curr.pageviews, 0),
-      bounce_rate: keyMetrics.data.reduce((acc, curr) => acc + curr.bounce_rate, 0) / keyMetrics.data.length * 100,
-      avg_session_sec: keyMetrics.data.reduce((acc, curr) => acc + curr.avg_session_sec, 0) / keyMetrics.data.length,
-    }), [keyMetrics.data]
+    () => {
+      const visits = keyMetrics.data && keyMetrics.data.reduce((acc, curr) => acc + curr.visits, 0) || 0
+      const pageviews = keyMetrics.data && keyMetrics.data.reduce((acc, curr) => acc + curr.pageviews, 0) || 0
+      const bounce_rate = keyMetrics.data && keyMetrics.data.reduce((acc, curr) => acc + curr.bounce_rate, 0) / keyMetrics.data.length * 100 || 0
+      const avg_session_sec = keyMetrics.data && keyMetrics.data.reduce((acc, curr) => acc + curr.avg_session_sec, 0) / keyMetrics.data.length || 0
+
+      return {
+        visits: visits.toLocaleString(),
+        pageviews: pageviews.toLocaleString(),
+        bounce_rate: bounce_rate.toLocaleString(undefined, {maximumFractionDigits: 0}) + " %",
+        avg_session_sec: formatDistance(0, avg_session_sec * 1000, { includeSeconds: true })
+      }
+    }, [keyMetrics.data]
   )
 
   return <>
@@ -97,7 +105,7 @@ export default function DashboardMetricsCard({ className }: DashboardMetricsCard
                   {chartConfig[chart].label}
                 </span>
                 <span className="text-lg font-bold leading-none sm:text-3xl">
-                  {keyMetrics.loading ? <Skeleton className="w-full h-6 sm:h-10" /> : aggregate[key as keyof typeof aggregate]?.toLocaleString()}
+                  {keyMetrics.loading ? <Skeleton className="w-full h-6 sm:h-10" /> : aggregate[key as keyof typeof aggregate]}
                 </span>
               </button>
             )

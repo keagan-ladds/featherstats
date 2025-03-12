@@ -42,3 +42,11 @@ export type TopOperatingSystemsData = {
     visits: number;
     hits: number
 }[]
+
+export type SourceDetailsData = {
+    referrer: string;
+    visits: number;
+    hits: number;
+    bounce_rate: number;
+    avg_session_sec: number;
+}[]
