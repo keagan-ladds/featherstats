@@ -8,4 +8,4 @@ const domainId = generateUniqueString();
 await db.insert(usersTable).values({ id: "lt2558OZBfiu", name: "Keagan Ladds", email: "ladds.k@gmail.com" }).onConflictDoNothing();
 await db.insert(workspacesTable).values({ id: 'featherstats', name: "Default Workspace" }).onConflictDoNothing();
 await db.insert(workspaceUsersTable).values({ userId: "lt2558OZBfiu", workspaceId: 'featherstats' }).onConflictDoNothing();
-await db.insert(domainsTable).values({ id: "5kmlajx43xfp", name: "www.shop-n-scrap.co.za", workspaceId: 'featherstats', verificationStatus: 'verified' }).onConflictDoNothing();
+await db.insert(domainsTable).values({ id: "5kmlajx43xfp", name: "www.shop-n-scrap.co.za", workspaceId: 'featherstats', verificationStatus: 'verified' }).onConflictDoNothing(); 
