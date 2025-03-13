@@ -13,15 +13,12 @@ interface SourceDetailsCardProps extends React.HTMLAttributes<HTMLDivElement> {
     data: SourceDetailsData
 }
 
-
-
-
 export const columns: ColumnDef<SourceDetailsData[number]>[] = [
     {
         accessorKey: "referrer",
         header: () => <div>Source</div>,
         cell: ({ row }) => {
-            return <div className="font-medium text-clip">{row.getValue("referrer") || 'Direct'}</div>
+            return <div className="font-medium whitespace-nowrap">{row.getValue("referrer") || 'Direct'}</div>
         },
     },
     {
@@ -67,7 +64,7 @@ export const columns: ColumnDef<SourceDetailsData[number]>[] = [
         cell: ({ row }) => {
             const avg_session_sec = parseFloat(row.getValue("avg_session_sec"));
             const formatted = formatDistance(0, avg_session_sec * 1000, { includeSeconds: true })
-            return <div className="text-right">{formatted}</div>
+            return <div className="text-right whitespace-nowrap">{formatted}</div>
         },
     },
 ]

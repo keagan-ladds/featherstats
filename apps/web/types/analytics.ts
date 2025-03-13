@@ -50,3 +50,11 @@ export type SourceDetailsData = {
     bounce_rate: number;
     avg_session_sec: number;
 }[]
+
+export type PageDetailsData = {
+    pathname: string;
+    visits: number;
+    hits: number;
+    bounce_rate: number;
+    avg_session_sec: number;
+}[]

@@ -5,7 +5,7 @@ dotenv.config({ path: ".env.local" });
 if (!process.env.DATABASE_URL) throw new Error('DATABASE_URL is not configured')
 
 export default defineConfig({
-  out: './drizzle',
+  out: '../../packages/database/src/migrations',
   schema: [
     '../../packages/database/src/schema/app.ts',
     '../../packages/database/src/schema/auth.ts',
