@@ -33,6 +33,7 @@ export async function POST(request: Request) {
             userAgent: userAgent,
             country: location.country,
             city: location.city,
+            region: location.countryRegion,
             ...parseUserAgent(userAgent),
         };
 
@@ -41,6 +42,8 @@ export async function POST(request: Request) {
         const eventsWithClientInfo = events.map(event => ({
             ...event,
             host: hostname,
+            domain_name: hostname,
+            workspace_id: appId,
             appId: appId,
             payload: {
                 ...payload,

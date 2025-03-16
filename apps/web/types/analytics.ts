@@ -1,0 +1,60 @@
+export type TopLocationsData = {
+    country: string;
+    city: string;
+    visits: number;
+    hits: number;
+}[]
+
+export type TopPagesData = {
+    pathname: string;
+    visits: number;
+    hits: number;
+}[]
+
+export type TopSourcesData = {
+    referrer: string;
+    visits: number;
+    hits: number;
+}[]
+
+export type KeyMetricsData = {
+    date: Date;
+    visits: number;
+    pageviews: number;
+    bounce_rate: number;
+    avg_session_sec: number
+}[]
+
+export type TopDevicesData = {
+    device: string;
+    visits: number;
+    hits: number;
+}[]
+
+export type TopBrowsersData = {
+    browser: string;
+    visits: number;
+    hits: number;
+}[]
+
+export type TopOperatingSystemsData = {
+    os: string;
+    visits: number;
+    hits: number
+}[]
+
+export type SourceDetailsData = {
+    referrer: string;
+    visits: number;
+    hits: number;
+    bounce_rate: number;
+    avg_session_sec: number;
+}[]
+
+export type PageDetailsData = {
+    pathname: string;
+    visits: number;
+    hits: number;
+    bounce_rate: number;
+    avg_session_sec: number;
+}[]

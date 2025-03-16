@@ -8,7 +8,9 @@
     ],
     "baseUrl": ".",
     "paths": {
-      "@repo/analytics-client": ["../../packages/analytics-client/dist"]
+      "@repo/analytics-client": ["../../packages/analytics-client/dist"],
+      "@featherstats/database/*": ["../../packages/database/dist/*"],
+      "@featherstats/database": ["../../packages/database/dist"]
     }
   },
   "include": [
@@ -17,7 +19,7 @@
     "next-env.d.ts",
     "next.config.ts",
     ".next/types/**/*.ts",
-    "public/js/**/*.ts"
-  ],
+    "public/js/**/*.ts"  
+,  ],
   "exclude": ["node_modules"]
 }

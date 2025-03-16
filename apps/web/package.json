@@ -6,22 +6,42 @@
   "scripts": {
     "dev": "next dev --port 3000 --turbopack",
     "prebuild": "node scripts/build-tracker.mjs",
-    "build": "next build",
+    "build": "next build && npm run db:migrate && npm run db:seed",
     "start": "next start",
     "lint": "next lint --max-warnings 0",
     "check-types": "tsc --noEmit",
-    "build:tracker": "node scripts/build-tracker.mjs"
+    "build:tracker": "node scripts/build-tracker.mjs",
+    "db:migrate": "npx drizzle-kit migrate",
+    "db:seed": "npx tsx scripts/seed-database.ts"
   },
   "dependencies": {
+    "@auth/drizzle-adapter": "^1.8.0",
+    "@featherstats/database": "*",
+    "@icons-pack/react-simple-icons": "^12.2.0",
+    "@radix-ui/react-dialog": "^1.1.6",
+    "@radix-ui/react-separator": "^1.1.2",
+    "@radix-ui/react-slot": "^1.1.2",
+    "@radix-ui/react-tooltip": "^1.1.8",
     "@repo/analytics-client": "*",
     "@repo/ui": "*",
+    "@types/jsonwebtoken": "^9.0.9",
     "@vercel/functions": "^2.0.0",
+    "class-variance-authority": "^0.7.1",
     "cors": "^2.8.5",
+    "date-fns": "^3.6.0",
+    "dotenv": "^16.4.7",
     "ip-anonymize": "^0.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "lucide-react": "^0.477.0",
     "next": "^15.1.6",
+    "next-auth": "^5.0.0-beta.25",
     "react": "^19.0.0",
+    "react-day-picker": "^8.10.1",
     "react-dom": "^19.0.0",
-    "ua-parser-js": "^2.0.2"
+    "react-hook-form": "^7.54.2",
+    "recharts": "^2.15.1",
+    "ua-parser-js": "^2.0.2",
+    "zod": "^3.24.2"
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "^15.1.6",
@@ -37,6 +57,7 @@
     "eslint": "^9.21.0",
     "postcss": "^8.5.1",
     "tailwindcss": "^3.4.17",
+    "tsx": "^4.19.3",
     "typescript": "5.7.3"
   }
 }

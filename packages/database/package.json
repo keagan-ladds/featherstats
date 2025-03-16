@@ -1,0 +1,32 @@
+{
+  "name": "@featherstats/database",
+  "version": "0.0.0",
+  "private": true,
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "tsc --watch",
+    "build": "tsc"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema/*": "./src/schema/*.ts",
+    "./types": "./src/types/index.ts",
+    "./util": "./src/util/index.ts"
+  },
+  "devDependencies": {
+    "@auth/core": "^0.34.2",
+    "@repo/typescript-config": "*",
+    "@types/pg": "^8.11.11",
+    "drizzle-kit": "^0.30.5",
+    "tsx": "^4.19.3",
+    "typescript": "5.7.3"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "drizzle-orm": "^0.40.0",
+    "next-auth": "^5.0.0-beta.25",
+    "pg": "^8.13.3"
+  }
+}
