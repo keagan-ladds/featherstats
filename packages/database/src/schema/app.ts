@@ -26,7 +26,8 @@ export const domainVerificationStatus = pgEnum("domain_verification_status", ["p
 export const domainsTable = pgTable("domains", {
     id: text('id').primaryKey().$default(() => generateUniqueString()),
     workspaceId: text("workspace_id").notNull().references(() => workspacesTable.id, { onDelete: "cascade" }),
-    name: varchar().notNull(),
+    name: varchar('name').notNull().unique(),
+    key: varchar('key').notNull().unique().$default(() => `pk-${generateUniqueString(16)}`),
     verificationStatus: domainVerificationStatus("verification_status").notNull().$default(() => "pending"),
     verifiedAt: timestamp("verified_at"),
     createdAt: timestamp('created_at').notNull().defaultNow(),

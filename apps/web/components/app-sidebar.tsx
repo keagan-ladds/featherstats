@@ -24,6 +24,7 @@ import { useSession } from "next-auth/react"
 import { useEffect, useState } from "react"
 import { Skeleton } from "@repo/ui/components/ui/skeleton"
 import { useParams } from "next/navigation"
+import { NavBrand } from "./nav-brand"
 
 const data = {
     navDomain: [
@@ -64,49 +65,21 @@ const data = {
 
 
     ],
-
     navWorkspace: [
         {
-            title: "Domain",
-            url: "app/",
+            title: "Domains",
+            url: "/",
             icon: SquareTerminal,
-            isActive: true,
-            items: [
-                {
-                    title: "History",
-                    url: "#",
-                },
-                {
-                    title: "Starred",
-                    url: "#",
-                },
-                {
-                    title: "Settings",
-                    url: "#",
-                },
-            ],
-        },
-        {
-            title: "Playground",
-            url: "#",
-            icon: SquareTerminal,
-            isActive: true,
-        },
-        {
-            title: "Playground",
-            url: "#",
-            icon: SquareTerminal,
-            isActive: true,
-        },
+        }
     ],
 }
 
 const navDomainItems = (appBaseUrl: string, domainName: string) => [
-    {
-        title: "Realtime",
-        url: `${appBaseUrl}/${domainName}/realtime`,
-        icon: Radio
-    },
+    // {
+    //     title: "Realtime",
+    //     url: `${appBaseUrl}/${domainName}/realtime`,
+    //     icon: Radio
+    // },
     {
         title: "Overview",
         url: `${appBaseUrl}/${domainName}`,
@@ -136,11 +109,11 @@ const navDomainItems = (appBaseUrl: string, domainName: string) => [
             },
         ],
     },
-    {
-        title: "Insights",
-        url: `${appBaseUrl}/${domainName}/insights`,
-        icon: Lightbulb,
-    },
+    // {
+    //     title: "Insights",
+    //     url: `${appBaseUrl}/${domainName}/insights`,
+    //     icon: Lightbulb,
+    // },
 ]
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -163,12 +136,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     return (
         <Sidebar collapsible="icon" {...props}>
             <SidebarHeader>
-                <DomainSwitcher domains={domains} />
+                <NavBrand/>
             </SidebarHeader>
             <SidebarContent>
                 {paramsLoading ? <Skeleton className="w-full h-52" /> : <>
-                    {domain && <NavMain items={navDomainItems('/app', domain as string)} title="Analytics" />}
-                    <NavMain items={data.navWorkspace} title="Workspace" />
+                    {domain && <NavMain items={navDomainItems('', domain as string)} title="Analytics" />}
+                    {/* <NavMain items={data.navWorkspace} title="Workspace" /> */}
                 </>}
             </SidebarContent>
             <SidebarFooter>

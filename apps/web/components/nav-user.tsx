@@ -29,6 +29,8 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@repo/ui/components/ui/sidebar"
+import { signOut } from "next-auth/react"
+import { useCallback } from "react"
 
 export function NavUser({
   user,
@@ -40,6 +42,9 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
+  const onSignOut = useCallback(() => {
+    signOut({redirectTo: '/login'})
+  }, [])
 
   return (
     <SidebarMenu>
@@ -80,7 +85,7 @@ export function NavUser({
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuGroup>
+            {/* <DropdownMenuGroup>
               <DropdownMenuItem>
                 <Sparkles />
                 Upgrade to Pro
@@ -101,8 +106,8 @@ export function NavUser({
                 Notifications
               </DropdownMenuItem>
             </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuSeparator /> */}
+            <DropdownMenuItem onClick={onSignOut}>
               <LogOut />
               Log out
             </DropdownMenuItem>

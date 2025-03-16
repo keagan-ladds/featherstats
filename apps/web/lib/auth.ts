@@ -1,20 +1,20 @@
-import GitHub from "next-auth/providers/github"
-import Google from "next-auth/providers/google"
 import NextAuth, { NextAuthConfig, Session, type NextAuthResult } from 'next-auth';
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { db } from "@featherstats/database";
 import { usersTable, accountsTable, sessionsTable, verificationTokensTable, authenticatorsTable } from "@featherstats/database/schema/auth";
 import { NextRequest, NextResponse } from "next/server";
+import { AuthConfig } from "./auth-config";
 
 const authOptions = {
-    providers: [GitHub, Google],
+    ...AuthConfig,
     adapter: DrizzleAdapter(db, {
         usersTable: usersTable,
         accountsTable: accountsTable,
         sessionsTable: sessionsTable,
         verificationTokensTable: verificationTokensTable,
         authenticatorsTable: authenticatorsTable
-    })
+    }),
+    session: { strategy: "jwt" },
 
 } satisfies NextAuthConfig
 
