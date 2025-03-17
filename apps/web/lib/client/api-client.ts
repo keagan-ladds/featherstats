@@ -5,8 +5,7 @@ import { ApiErrorResponse } from "types/api";
 import { OnboardingData } from "types/onboarding";
 import { WorkspaceWithDomains } from "types/workspace";
 
-if (!process.env.NEXT_PUBLIC_API_URL) throw new Error('NEXT_PUBLIC_API_URL has not been defined');
-const ApiBaseUrl = process.env.NEXT_PUBLIC_API_URL
+const ApiBaseUrl = process.env.NEXT_PUBLIC_API_URL || '';
 
 async function makeApiRequest<TResponse>(url: string, method: string, body?: any) {
     const response = await fetch(`${ApiBaseUrl}${url}`, {
