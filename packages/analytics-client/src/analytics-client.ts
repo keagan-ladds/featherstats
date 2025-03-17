@@ -112,7 +112,7 @@ export class FeatherstatsClient {
   }
 
   private async sendEvents(events: AnalyticsEvent[]): Promise<void> {
-    await fetch(`${this.config.baseUrl}/api/v1/event`, {
+    await fetch(`${this.config.baseUrl}/api/v1/collect`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

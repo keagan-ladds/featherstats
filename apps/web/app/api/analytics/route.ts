@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
+import { workspaceService } from 'services/workspace.service';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -9,6 +10,9 @@ export async function GET(request: Request) {
   if (!apiKey) {
     return new NextResponse('API key is required', { status: 400 });
   }
+
+  const domain = await workspaceService.getWorkspaceDomainByKey(apiKey);
+  if (!domain) return new NextResponse(null, { status: 401 });
 
   // Read the minified analytics script
   const scriptPath = path.join(process.cwd(), 'public', 'js', 'featherstats.min.js');

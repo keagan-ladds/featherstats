@@ -11,7 +11,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 // Get the base URL from environment variable or use default
-const baseUrl = process.env.FEATHERSTATS_CLIENT_BASE_URL || 'https://featherstats.com';
+const baseUrl = process.env.FEATHERSTATS_CLIENT_BASE_URL || 'https://app.featherstats.com';
 console.log(`Building tracker with base URL: ${baseUrl}`);
 
 build({

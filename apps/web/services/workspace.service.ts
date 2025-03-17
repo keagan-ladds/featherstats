@@ -58,6 +58,13 @@ class WorkspaceService {
         return domain!
     }
 
+    async getWorkspaceDomainByKey(key: string): Promise<Domain | null> {
+        const [domain] = await db.select().from(domainsTable)
+            .where(eq(domainsTable.key, key));
+
+        return domain || null;
+    }
+
     private normalizeDomainName(domainName: string): string {
         return domainName.toLowerCase();
     }
