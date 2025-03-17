@@ -1,0 +1,19 @@
+# Data Source created from Pipe 'analytics_sources'
+
+SCHEMA >
+    `period` DateTime,
+    `workspace_id` String,
+    `domain_name` String,
+    `device` String,
+    `browser` String,
+    `os` String,
+    `referrer` String,
+    `country` String,
+    `city` String,
+    `region` String,
+    `visits` AggregateFunction(uniq, String),
+    `hits` AggregateFunction(count)
+
+ENGINE "AggregatingMergeTree"
+ENGINE_PARTITION_KEY "toYYYYMM(period)"
+ENGINE_SORTING_KEY "period, workspace_id, domain_name, device, browser, os, referrer, country, city, region"

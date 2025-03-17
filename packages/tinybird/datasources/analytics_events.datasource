@@ -1,0 +1,13 @@
+
+SCHEMA >
+    `timestamp` DateTime `json:$.timestamp`,
+    `host` String `json:$.host`,
+    `app_id` String `json:$.appId`,
+    `session_id` String `json:$.sessionId`,
+    `event_type` LowCardinality(String) `json:$.eventType`,
+    `payload` String `json:$.payload`
+
+ENGINE "MergeTree"
+ENGINE_PARTITION_KEY "toYYYYMM(timestamp)"
+ENGINE_SORTING_KEY "timestamp"
+ENGINE_TTL "timestamp + toIntervalDay(90)"

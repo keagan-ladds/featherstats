@@ -1,0 +1,13 @@
+TOKEN "top_browsers_endpoint_read_5592" READ
+
+NODE top_browsers_0
+SQL >
+
+    %
+        select browser, uniqMerge(visits) as visits, countMerge(hits) as hits
+        from analytics_sources_by_date_and_domain
+        group by browser
+        order by visits desc
+        limit {{ Int32(skip, 0) }},{{ Int32(limit, 50) }}
+
+

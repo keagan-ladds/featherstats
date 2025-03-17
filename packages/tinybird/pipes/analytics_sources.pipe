@@ -1,0 +1,34 @@
+NODE analytics_sources_0
+SQL >
+
+    SELECT
+        toStartOfFifteenMinutes(timestamp) AS period,
+        workspace_id,
+        domain_name,
+        device,
+        browser,
+        os,
+        referrer,
+        country,
+        city,
+        region,
+        uniqState(session_id) AS visits,
+        countState() AS hits
+    FROM analytics_hits
+    WHERE domainWithoutWWW(referrer) != domainWithoutWWW(domain_name)
+    GROUP BY
+        period,
+        workspace_id,
+        domain_name,
+        device,
+        browser,
+        os,
+        referrer,
+        country,
+        city,
+        region
+
+TYPE materialized
+DATASOURCE analytics_sources_mv
+
+

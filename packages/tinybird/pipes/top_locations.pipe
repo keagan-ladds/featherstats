@@ -1,0 +1,13 @@
+TOKEN "top_locations_endpoint_read_7905" READ
+
+NODE top_locations_0
+SQL >
+
+    %
+        select country, city, uniqMerge(visits) as visits, countMerge(hits) as hits
+        from analytics_pages_by_date_and_domain
+        group by country, city
+        order by visits desc
+        limit {{ Int32(skip, 0) }},{{ Int32(limit, 50) }}
+
+

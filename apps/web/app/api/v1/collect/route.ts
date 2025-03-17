@@ -44,6 +44,7 @@ export async function POST(request: NextRequest) {
 
         const eventsWithClientInfo = events.map(event => ({
             ...event,
+            timestamp: event.timestamp || new Date().toUTCString(),
             host: domainName,
             domain_name: domainName,
             workspace_id: workspaceId,

@@ -1,0 +1,54 @@
+TOKEN "source_details_endpoint_read_6596" READ
+
+NODE referrers
+SQL >
+
+    %
+    select referrer, uniqMerge(visits) as visits, countMerge(hits) as hits
+    from analytics_sources_by_date_and_domain
+    group by referrer
+    order by visits desc
+
+
+
+NODE sessions
+SQL >
+
+    %
+    SELECT
+        referrer,
+        session_id,
+        uniq(session_id) as visits,
+        countMerge(hits) as pageviews,
+        case when min(first_hit) = max(latest_hit) then 1 else 0 end as is_bounce,
+        max(latest_hit) as latest_hit_aux,
+        min(first_hit) as first_hit_aux
+    FROM analytics_sessions_by_date_and_domain
+    WHERE
+    domainWithoutWWW(referrer) != domainWithoutWWW({{ String(domain_name, required=True) }})
+    group by session_id, referrer
+
+
+
+NODE sessions_by_referrer
+SQL >
+
+    SELECT referrer,
+            uniq(session_id) as visits,
+            sum(case when latest_hit_aux = first_hit_aux then 1 end) / visits as bounce_rate,
+            avg(latest_hit_aux - first_hit_aux) as avg_session_sec
+    FROM sessions
+    GROUP BY referrer
+
+
+
+NODE referrer_with_session_data
+SQL >
+
+    %
+    SELECT r.*, s.bounce_rate, s.avg_session_sec
+    FROM referrers r
+    INNER JOIN sessions_by_referrer s ON s.referrer = r.referrer
+    limit {{ Int32(skip, 0) }},{{ Int32(limit, 50) }}
+
+

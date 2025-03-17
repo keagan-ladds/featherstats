@@ -1,0 +1,29 @@
+NODE analytics_sessions_0
+SQL >
+
+    SELECT
+        toStartOfFifteenMinutes(timestamp) AS period,
+        workspace_id,
+        domain_name,
+        session_id,
+        first_valueSimpleState(referrer) AS referrer,
+        anySimpleState(device) AS device,
+        anySimpleState(browser) AS browser,
+        anySimpleState(os) AS os,
+        anySimpleState(country) AS country,
+        anySimpleState(city) AS city,
+        anySimpleState(region) AS region,
+        minSimpleState(timestamp) AS first_hit,
+        maxSimpleState(timestamp) AS latest_hit,
+        countState() AS hits
+    FROM analytics_hits
+    GROUP BY
+        workspace_id,
+        domain_name,
+        period,
+        session_id
+
+TYPE materialized
+DATASOURCE analytics_sessions_mv
+
+

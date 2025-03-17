@@ -1,0 +1,91 @@
+TOKEN "analytics_hits_endpoint_read_3136" READ
+
+NODE analytics_hits_0
+SQL >
+
+    SELECT 
+    timestamp, 
+    app_id as workspace_id,
+    lower(host) as domain_name,
+    session_id,
+    JSONExtractString(payload, 'pathname') as pathname,
+    JSONExtractString(payload, 'referrer') as referrer,
+    JSONExtractString(payload, 'browser') as browser,
+    JSONExtractString(payload, 'deviceType') as device,
+    JSONExtractString(payload, 'os') as os,
+    JSONExtractString(payload, 'country') as country,
+    JSONExtractString(payload, 'city') as city,
+    JSONExtractString(payload, 'region') as region
+    FROM analytics_events
+    WHERE event_type = 'page_hit' AND domain_name IS NOT NULL
+    ORDER BY timestamp DESC
+
+
+
+NODE clean_referrer
+SQL >
+
+    SELECT 
+    timestamp, 
+    workspace_id,
+    domain_name,
+    session_id,
+    pathname,
+    browser,
+    device,
+    os,
+    country,
+    city,
+    region,
+    case 
+    when match(referrer, '^http(s)?://(?:(www|mail)\.)?google\.(?:com|co\.uk|de|es|it|ca|co\.za)/$')
+    then 'https://www.google.com/'
+    when match(referrer, 'com\.google\.android\.googlequicksearchbox')
+    then 'https://www.google.com/'
+    when match(referrer, '^http(s)?://(?:(www|m|l|lm)\.)?facebook\.(?:com)/$')
+    then 'https://www.facebook.com/'
+    when match(referrer, '^http(s)?://(?:(www)\.)?youtube\.(?:com)/$')
+    then 'https://www.youtube.com/'
+    when match(referrer, '^http(s)?://(?:(www|l)\.)?instagram\.(?:com)/$')
+    then 'https://www.instagram.com/'
+    else 
+    referrer
+    end as referrer
+    FROM analytics_hits_0
+
+
+
+NODE clean_browser
+SQL >
+
+    SELECT 
+    timestamp, 
+    workspace_id,
+    domain_name,
+    session_id,
+    pathname,
+    device,
+    os,
+    country,
+    city,
+    region,
+    referrer,
+    CASE
+    when match(browser, 'Chrome')
+    then 'Chrome'
+    when match(browser, 'Safari')
+    then 'Safari'
+    when match(browser, 'Firefox')
+    then 'Firefox'
+    else browser
+    END as browser
+    FROM clean_referrer
+
+
+
+NODE endpoint
+SQL >
+
+    SELECT * FROM clean_browser
+
+
