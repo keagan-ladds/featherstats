@@ -24,6 +24,11 @@
   --input: 205.2 25% 50%;
   --ring: 205.2 88.7% 45.3%;
   --radius: 0.5rem;
+  --chart-1: 205.2 100% 22%;
+  --chart-2: 205.2 100% 29%;
+  --chart-3: 205.2 100% 37%;
+  --chart-4: 205.2 100% 44%;
+  --chart-5: 205.2 100% 52%;
   --sidebar-background: 205, 50%, 95%;
   --sidebar-foreground: 205, 3%, 9%;
   --sidebar-primary: 205, 100%, 33%;
@@ -55,6 +60,11 @@
   --input: 205.2 25% 18%;
   --ring: 205.2 88.7% 45.3%;
   --radius: 0.5rem;
+  --chart-1: 205.2 100% 22%;
+  --chart-2: 205.2 100% 29%;
+  --chart-3: 205.2 100% 37%;
+  --chart-4: 205.2 100% 44%;
+  --chart-5: 205.2 100% 52%;
   --sidebar-background: 205, 30%, 7%;
   --sidebar-foreground: 205, 3%, 99%;
   --sidebar-primary: 205, 100%, 30%;
