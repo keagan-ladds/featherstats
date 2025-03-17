@@ -17,7 +17,7 @@ export default async function AnalyticsLayout({ children, params }: AnalyticsLay
 
     if (!domain) return notFound();
 
-    const token = tinybirdClient.generateToken('featherstats', domainName);
+    const token = tinybirdClient.generateToken(domain.workspaceId, domainName);
 
     return <>
         <DomainProvider domain={domain}>
