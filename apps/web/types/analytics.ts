@@ -88,3 +88,11 @@ export type DeviceDetailsData = {
     bounce_rate: number;
     avg_session_sec: number;
 }[]
+
+export type OsDetailsData = {
+    os: string;
+    visits: number;
+    pageviews: number;
+    bounce_rate: number;
+    avg_session_sec: number;
+}[]

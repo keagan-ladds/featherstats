@@ -4,7 +4,7 @@ import { TopSourcesData } from "@repo/ui/types/analytics";
 import { addDays } from "date-fns/addDays";
 import { AnalyticsDataState } from "hooks/use-analytics";
 import { createContext, useMemo, useState } from "react";
-import { BrowserDetailsData, DeviceDetailsData, KeyMetricsData, SourceDetailsData, TopBrowsersData, TopDevicesData, TopLocationsData, TopOperatingSystemsData, TopPagesData } from "types/analytics";
+import { BrowserDetailsData, DeviceDetailsData, KeyMetricsData, OsDetailsData, SourceDetailsData, TopBrowsersData, TopDevicesData, TopLocationsData, TopOperatingSystemsData, TopPagesData } from "types/analytics";
 
 export interface AnalyticsData<T> extends AnalyticsDataState<T> {
     setData: (data: T) => void;
@@ -30,6 +30,7 @@ interface AnalyticsContext {
     sourceDetails: AnalyticsData<SourceDetailsData>
     deviceDetails: AnalyticsData<DeviceDetailsData>
     browserDetails: AnalyticsData<BrowserDetailsData>
+    operatingSystemDetails: AnalyticsData<OsDetailsData>
     dateRange: AnalyticsDateRange
     setDateRange: (dateRange: AnalyticsDateRange) => void;
 
@@ -131,6 +132,7 @@ export function AnalyticsProvider({ children, token }: AnalyticsProviderProps) {
 
     const {analyticsData: deviceDetails} = defineAnalyticsDataState<DeviceDetailsData>()
     const {analyticsData: browserDetails} = defineAnalyticsDataState<BrowserDetailsData>();
+    const {analyticsData: operatingSystemDetails} = defineAnalyticsDataState<OsDetailsData>();
 
     const context: AnalyticsContext = {
         baseUrl: "https://api.tinybird.co",
@@ -146,6 +148,7 @@ export function AnalyticsProvider({ children, token }: AnalyticsProviderProps) {
         dateRange,
         deviceDetails,
         browserDetails,
+        operatingSystemDetails,
         setDateRange
     }
 

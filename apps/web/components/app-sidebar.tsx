@@ -176,15 +176,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const domainNavItems = React.useMemo(() => {
         const items = navDomainItems('', domain as string);
         items.forEach(item => {
+            let itemActive = false;
             item.items?.forEach(subItem => {
                 if (pathname.indexOf(subItem.url) > -1) {
                     subItem.isActive = true;
-                    item.isActive = true;
+                    itemActive =  true;
                 } else {
                     subItem.isActive = false;
-                    item.isActive = false;
                 }
             })
+
+            item.isActive = itemActive;
         })
         return items;
     }, [domain, pathname])
