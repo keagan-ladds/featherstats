@@ -27,12 +27,6 @@ export default function DomainDashboardPage() {
     }, [])
 
     return <>
-        <div className="flex items-center justify-between space-y-2">
-            <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
-            <div className="flex items-center space-x-2">
-                <CalendarDateRangePicker onDateSelect={setDate} />
-            </div>
-        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <DashboardMetricsCard className="col-span-full" />
             <TopPagesCard {...topPages} />

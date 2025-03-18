@@ -1,3 +1,4 @@
+import DashboardLayout from "components/analytics/dashboard-layout";
 import { auth } from "lib/auth";
 import { tinybirdClient } from "lib/tinybird/server";
 import { notFound } from "next/navigation";
@@ -22,7 +23,9 @@ export default async function AnalyticsLayout({ children, params }: AnalyticsLay
     return <>
         <DomainProvider domain={domain}>
             <AnalyticsProvider token={token}>
-                {children}
+                <DashboardLayout>
+                    {children}
+                </DashboardLayout>
             </AnalyticsProvider>
         </DomainProvider>
     </>

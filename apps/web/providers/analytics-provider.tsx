@@ -4,7 +4,7 @@ import { TopSourcesData } from "@repo/ui/types/analytics";
 import { addDays } from "date-fns/addDays";
 import { AnalyticsDataState } from "hooks/use-analytics";
 import { createContext, useMemo, useState } from "react";
-import { KeyMetricsData, SourceDetailsData, TopBrowsersData, TopDevicesData, TopLocationsData, TopOperatingSystemsData, TopPagesData } from "types/analytics";
+import { DeviceDetailsData, KeyMetricsData, SourceDetailsData, TopBrowsersData, TopDevicesData, TopLocationsData, TopOperatingSystemsData, TopPagesData } from "types/analytics";
 
 export interface AnalyticsData<T> extends AnalyticsDataState<T> {
     setData: (data: T) => void;
@@ -28,6 +28,7 @@ interface AnalyticsContext {
     topBrowsers: AnalyticsData<TopBrowsersData>
     topOperatingSystems: AnalyticsData<TopOperatingSystemsData>;
     sourceDetails: AnalyticsData<SourceDetailsData>
+    deviceDetails: AnalyticsData<DeviceDetailsData>
     dateRange: AnalyticsDateRange
     setDateRange: (dateRange: AnalyticsDateRange) => void;
 
@@ -39,6 +40,18 @@ interface AnalyticsProviderProps {
 }
 
 
+function defineAnalyticsDataState<T extends any[]>() {
+    const [dataState, setDataState] = useState<AnalyticsDataState<T>>({ data: [] as unknown as T, loading: false, error: null })
+
+    const analyticsData = useMemo(() => ({
+        ...dataState,
+        setData: (data: T) => setDataState(prev => ({ ...prev, data })),
+        setLoading: (loading: boolean) => setDataState(prev => ({ ...prev, loading })),
+        setError: (error: Error | null) => setDataState(prev => ({ ...prev, error }))
+    }), [dataState])
+
+    return { analyticsData }
+}
 
 export const AnalyticsContext = createContext<AnalyticsContext | null>(null)
 
@@ -115,6 +128,8 @@ export function AnalyticsProvider({ children, token }: AnalyticsProviderProps) {
         setError: (error: Error | null) => setSourceDetailsState(prev => ({ ...prev, error }))
     }), [sourceDetailsState])
 
+    const {analyticsData: deviceDetails} = defineAnalyticsDataState<DeviceDetailsData>()
+
     const context: AnalyticsContext = {
         baseUrl: "https://api.tinybird.co",
         token,
@@ -127,6 +142,7 @@ export function AnalyticsProvider({ children, token }: AnalyticsProviderProps) {
         topOperatingSystems,
         sourceDetails,
         dateRange,
+        deviceDetails,
         setDateRange
     }
 

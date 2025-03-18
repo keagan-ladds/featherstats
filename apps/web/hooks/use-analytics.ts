@@ -1,10 +1,10 @@
 'use client'
 
-import { AnalyticsContext } from "providers/analytics-provider"
+import { AnalyticsContext, AnalyticsData } from "providers/analytics-provider"
 import { useCallback, useContext, useMemo, useState } from "react"
 import { KeyMetricsData, TopLocationsData, TopPagesData, TopSourcesData } from "@repo/ui/types/analytics"
 import { formatISO } from 'date-fns'
-import { SourceDetailsData, TopBrowsersData, TopDevicesData } from "types/analytics"
+import { DeviceDetailsData, SourceDetailsData, TopBrowsersData, TopDevicesData } from "types/analytics"
 
 
 export interface AnalyticsDataState<T> {
@@ -13,14 +13,33 @@ export interface AnalyticsDataState<T> {
     error: Error | null;
 }
 
+
+
 export function useAnalytics() {
     const context = useContext(AnalyticsContext);
     if (!context) throw new Error("The 'useAnalytics' hook should only be used within an AnalyticsProvider context");
 
-    const {dateRange, setDateRange, keyMetrics, topLocations, topPages, topSources, topDevices, topBrowsers, topOperatingSystems, sourceDetails} = context;
-    
-
+    const { dateRange, setDateRange, keyMetrics, topLocations, topPages, topSources, topDevices, topBrowsers, topOperatingSystems, sourceDetails, deviceDetails } = context;
     const dateRangeQuery = `date_from=${formatISO(dateRange.start, { representation: "date" })}&date_to=${formatISO(dateRange.end, { representation: "date" })}`;
+
+
+    function fetchAnalyticsData<T>(data: AnalyticsData<T>, pipe: string) {
+        return useCallback(async () => {
+            data.setLoading(true);
+            const response = await fetch(`${context!.baseUrl}/v0/pipes/${pipe}.json?${dateRangeQuery}`, {
+                headers: {
+                    Authorization: 'Bearer ' + context!.token
+                }
+            });
+
+            const responseData = await response.json() as {
+                data: T
+            };
+
+            data.setData(responseData.data);
+            data.setLoading(false);
+        }, [])
+    }
 
     const fetchKeyMetrics = useCallback(async () => {
 
@@ -136,6 +155,8 @@ export function useAnalytics() {
         sourceDetails.setLoading(false);
     }, [dateRange, sourceDetails])
 
+    const fetchDeviceDetails = fetchAnalyticsData<DeviceDetailsData>(context.deviceDetails, "device_details");
+
     const refreshAllData = useCallback(() => {
         fetchKeyMetrics();
         fetchTopLocations();
@@ -150,10 +171,15 @@ export function useAnalytics() {
         fetchSourceDetails();
     }, [dateRange, fetchSourceDetails])
 
+    const refreshDeviceDetails = useCallback(() => {
+        fetchDeviceDetails()
+    }, [dateRange, fetchDeviceDetails])
+
     return {
         setDateRange,
         refreshAllData,
         refreshSourceDetailsData,
+        refreshDeviceDetails,
         keyMetrics,
         topPages,
         topSources,
@@ -162,6 +188,7 @@ export function useAnalytics() {
         topDevices,
         topBrowsers,
         topOperatingSystems,
-        sourceDetails
+        sourceDetails,
+        deviceDetails
     }
 }
