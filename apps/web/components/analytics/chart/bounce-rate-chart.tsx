@@ -3,15 +3,15 @@ import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "
 import { getTopNWithOtherAvg } from "lib/utils"
 import React from "react"
 import { Cell, Label, LabelList, Pie, PieChart, RadialBar, RadialBarChart } from "recharts"
-import { OsDetailsData } from "types/analytics"
 
-interface Props {
-    data: OsDetailsData
+interface Props<T extends any[]> {
+    data: T
     loading?: boolean
+    groupKey: keyof T[number]
 }
 
 
-export default function OsBounceRateChart({ data, loading }: Props) {
+export default function BounceRateChart<T extends any[]>({ data, loading, groupKey }: Props<T>) {
 
     const chartConfig = {
         bounce_rate: {
@@ -20,14 +20,14 @@ export default function OsBounceRateChart({ data, loading }: Props) {
     } satisfies ChartConfig
 
     const chartData = React.useMemo(() => {
-        return getTopNWithOtherAvg(data, "bounce_rate", "os", 3, "asc")
+        return getTopNWithOtherAvg(data, "bounce_rate", groupKey, 3, "asc")
     }, [data])
 
 
     return <>
         <Card className="flex flex-col">
             <CardHeader className="items-center !pb-0">
-                <CardTitle>Bounce Rate By OS</CardTitle>
+                <CardTitle>Bounce Rate</CardTitle>
             </CardHeader>
             <CardContent className="flex-1 !p-0">
                 <ChartContainer
@@ -44,7 +44,7 @@ export default function OsBounceRateChart({ data, loading }: Props) {
                     >
                         <ChartTooltip
                             cursor={false}
-                            content={<ChartTooltipContent hideLabel nameKey="os" />}
+                            content={<ChartTooltipContent hideLabel nameKey={groupKey as string} />}
                         />
                         <RadialBar dataKey="bounce_rate" background>
                             {data.map((entry, index) => (
@@ -52,7 +52,7 @@ export default function OsBounceRateChart({ data, loading }: Props) {
                             ))}
                             <LabelList
                                 position="insideStart"
-                                dataKey="os"
+                                dataKey={groupKey as string}
                                 className="fill-white capitalize mix-blend-luminosity"
                                 fontSize={11}
                             />

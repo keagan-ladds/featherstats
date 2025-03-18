@@ -1,12 +1,11 @@
 'use client'
 
-import BounceRateChart from "components/analytics/chart/bounce-rate-chart"
-import PageViewsChart from "components/analytics/chart/pageviews-chart"
 import SessionDurationChart from "components/analytics/chart/session-duration-chart"
+import PageViewsChart from "components/analytics/chart/pageviews-chart"
 import VisitsChart from "components/analytics/chart/visits-chart"
-import DeviceDetailsTable from "components/analytics/device/device-details-table"
 import { useAnalytics } from "hooks/use-analytics"
 import { useEffect } from "react"
+import BounceRateChart from "components/analytics/chart/bounce-rate-chart"
 
 export default function DevicesDashboardPage() {
 
@@ -21,7 +20,6 @@ export default function DevicesDashboardPage() {
             <PageViewsChart {...deviceDetails} groupKey={"device"}/>
             <BounceRateChart {...deviceDetails} groupKey={"device"}/>
             <SessionDurationChart {...deviceDetails} groupKey={"device"}/>
-            <DeviceDetailsTable {...deviceDetails} className="col-span-full"/>
         </div>
 
     </>

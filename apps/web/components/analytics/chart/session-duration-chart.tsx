@@ -1,53 +1,36 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@repo/ui/components/ui/card"
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@repo/ui/components/ui/chart"
+import { getTopNWithOtherAvg } from "lib/utils"
 import React from "react"
 import { Cell, Label, LabelList, Pie, PieChart, RadialBar, RadialBarChart } from "recharts"
-import { BrowserDetailsData } from "types/analytics"
+import { BrowserDetailsData, OsDetailsData } from "types/analytics"
 
-interface Props {
-    data: BrowserDetailsData
+
+interface Props<T extends any[]> {
+    data: T
     loading?: boolean
+    groupKey: keyof T[number]
 }
 
-
-export function getTop3WithOtherAvg(
-    data: BrowserDetailsData,
-    key: keyof Omit<BrowserDetailsData[number], 'browser'>
-) {
-    // Sort the data by the selected key in descending order
-    const sortedData = [...data].sort((a, b) => b[key] - a[key]);
-    
-    // Extract the top 3 items
-    const top3 = sortedData.slice(0, 3);
-    
-    // Aggregate remaining items into 'Other'
-    const otherData = sortedData.slice(3);
-    const otherValue = otherData.reduce((acc, item) => acc + item[key], 0) / (otherData.length);
-    
-    if (otherData.length > 0) {
-        top3.push({ browser: 'Other', [key]: otherValue } as any);
-    }
-    
-    return top3;
-}
-
-export default function BrowserBounceRateChart({ data, loading }: Props) {
+export default function SessionDurationChart<T extends any[]>({ data, loading, groupKey }: Props<T>) {
 
     const chartConfig = {
-        bounce_rate: {
-            label: "Bounce Rate",
+        sessions: {
+            label: "Sessions",
+        },
+        avg_session_sec: {
+            label: "Sessions",
         },
     } satisfies ChartConfig
 
     const chartData = React.useMemo(() => {
-        return getTop3WithOtherAvg(data, "visits")
+        return getTopNWithOtherAvg(data, "avg_session_sec", groupKey)
     }, [data])
-
 
     return <>
         <Card className="flex flex-col">
             <CardHeader className="items-center !pb-0">
-                <CardTitle>Bounce Rate By Browser</CardTitle>
+                <CardTitle>Avg. Session Duration</CardTitle>
             </CardHeader>
             <CardContent className="flex-1 !p-0">
                 <ChartContainer
@@ -63,15 +46,15 @@ export default function BrowserBounceRateChart({ data, loading }: Props) {
                     >
                         <ChartTooltip
                             cursor={false}
-                            content={<ChartTooltipContent hideLabel nameKey="browser" />}
+                            content={<ChartTooltipContent  nameKey={groupKey as string} />}
                         />
-                        <RadialBar dataKey="bounce_rate" background>
+                        <RadialBar dataKey="avg_session_sec" background>
                             {data.map((entry, index) => (
                                 <Cell key={`cell-${index}`} fill={`hsl(var(--chart-${index + 1}))`} />
                             ))}
                             <LabelList
                                 position="insideStart"
-                                dataKey="browser"
+                                dataKey={groupKey as string}
                                 className="fill-white capitalize mix-blend-luminosity"
                                 fontSize={11}
                             />

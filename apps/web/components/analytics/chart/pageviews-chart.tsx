@@ -1,17 +1,17 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@repo/ui/components/ui/card"
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@repo/ui/components/ui/chart"
-import { getTopNWithOtherSum } from "lib/utils"
+import { getTopNWithOtherAvg, getTopNWithOtherSum } from "lib/utils"
 import React from "react"
 import { Cell, Label, Pie, PieChart } from "recharts"
-import {  OsDetailsData } from "types/analytics"
 
-interface Props {
-    data: OsDetailsData
+interface Props<T extends any[]> {
+    data: T
     loading?: boolean
+    groupKey: keyof T[number]
 }
 
 
-export default function OsSessionsChart({ data, loading }: Props) {
+export default function PageViewsChart<T extends any[]>({ data, loading, groupKey }: Props<T>) {
 
     const chartConfig = {
         sessions: {
@@ -20,17 +20,17 @@ export default function OsSessionsChart({ data, loading }: Props) {
     } satisfies ChartConfig
 
     const chartData = React.useMemo(() => {
-        return getTopNWithOtherSum(data, "visits", "os")
+        return getTopNWithOtherAvg(data, "pageviews", groupKey)
     }, [data])
 
-    const totalSessions = React.useMemo(() => {
-        return data.reduce((acc, curr) => acc + curr.visits, 0)
+    const totalPageViews = React.useMemo(() => {
+        return data.reduce((acc, curr) => acc + curr.pageviews, 0)
     }, [data])
 
     return <>
         <Card className="flex flex-col">
             <CardHeader className="items-center !pb-0">
-                <CardTitle>Sessions By OS</CardTitle>
+                <CardTitle>Page Views</CardTitle>
             </CardHeader>
             <CardContent className="flex-1 !p-0">
                 <ChartContainer
@@ -44,8 +44,8 @@ export default function OsSessionsChart({ data, loading }: Props) {
                         />
                         <Pie
                             data={chartData}
-                            dataKey="visits"
-                            nameKey="os"
+                            dataKey="pageviews"
+                            nameKey={groupKey as string}
                             fillRule="evenodd"
                             innerRadius={60}
                             strokeWidth={5}>
@@ -67,14 +67,14 @@ export default function OsSessionsChart({ data, loading }: Props) {
                                                     y={viewBox.cy}
                                                     className="fill-foreground text-3xl font-bold"
                                                 >
-                                                    {totalSessions.toLocaleString()}
+                                                    {totalPageViews.toLocaleString()}
                                                 </tspan>
                                                 <tspan
                                                     x={viewBox.cx}
                                                     y={(viewBox.cy || 0) + 24}
                                                     className="fill-muted-foreground"
                                                 >
-                                                    Sessions
+                                                    Page Views
                                                 </tspan>
                                             </text>
                                         )

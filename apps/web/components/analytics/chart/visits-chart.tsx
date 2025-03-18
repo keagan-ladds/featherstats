@@ -1,17 +1,17 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@repo/ui/components/ui/card"
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@repo/ui/components/ui/chart"
+import { getTopNWithOtherSum } from "lib/utils"
 import React from "react"
 import { Cell, Label, Pie, PieChart } from "recharts"
-import { BrowserDetailsData } from "types/analytics"
-import { getTop3WithOther } from "./browser-sessions-chart"
 
-interface Props {
-    data: BrowserDetailsData
+interface Props<T extends any[]> {
+    data: T
     loading?: boolean
+    groupKey: keyof T[number]
 }
 
 
-export default function BrowserPageViewsChart({ data, loading }: Props) {
+export default function VisitsChart<T extends any[]>({ data, loading, groupKey }: Props<T>) {
 
     const chartConfig = {
         sessions: {
@@ -20,17 +20,17 @@ export default function BrowserPageViewsChart({ data, loading }: Props) {
     } satisfies ChartConfig
 
     const chartData = React.useMemo(() => {
-        return getTop3WithOther(data, "pageviews")
+        return getTopNWithOtherSum(data, "visits", "os")
     }, [data])
 
-    const totalPageViews = React.useMemo(() => {
-        return data.reduce((acc, curr) => acc + curr.pageviews, 0)
+    const totalSessions = React.useMemo(() => {
+        return data.reduce((acc, curr) => acc + curr.visits, 0)
     }, [data])
 
     return <>
         <Card className="flex flex-col">
             <CardHeader className="items-center !pb-0">
-                <CardTitle>Page Views By Browser</CardTitle>
+                <CardTitle>Sessions</CardTitle>
             </CardHeader>
             <CardContent className="flex-1 !p-0">
                 <ChartContainer
@@ -44,13 +44,13 @@ export default function BrowserPageViewsChart({ data, loading }: Props) {
                         />
                         <Pie
                             data={chartData}
-                            dataKey="pageviews"
-                            nameKey="browser"
+                            dataKey="visits"
+                            nameKey={groupKey as string}
                             fillRule="evenodd"
                             innerRadius={60}
                             strokeWidth={5}>
                             {data.map((entry, index) => (
-                                <Cell key={`cell-${index}`} fill={`hsl(var(--chart-${index+1}))`} />
+                                <Cell key={`cell-${index}`} fill={`hsl(var(--chart-${index + 1}))`} />
                             ))}
                             <Label
                                 content={({ viewBox }) => {
@@ -67,14 +67,14 @@ export default function BrowserPageViewsChart({ data, loading }: Props) {
                                                     y={viewBox.cy}
                                                     className="fill-foreground text-3xl font-bold"
                                                 >
-                                                    {totalPageViews.toLocaleString()}
+                                                    {totalSessions.toLocaleString()}
                                                 </tspan>
                                                 <tspan
                                                     x={viewBox.cx}
                                                     y={(viewBox.cy || 0) + 24}
                                                     className="fill-muted-foreground"
                                                 >
-                                                    Page Views
+                                                    Sessions
                                                 </tspan>
                                             </text>
                                         )

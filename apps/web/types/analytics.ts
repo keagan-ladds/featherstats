@@ -59,12 +59,6 @@ export type PageDetailsData = {
     avg_session_sec: number;
 }[]
 
-export type CountryDetailsData = {
-    country: string;
-    city: string;
-    visits: number;
-    hits: number;
-}[]
 
 export type CityDetailsData = {
     city: string;
@@ -91,6 +85,14 @@ export type DeviceDetailsData = {
 
 export type OsDetailsData = {
     os: string;
+    visits: number;
+    pageviews: number;
+    bounce_rate: number;
+    avg_session_sec: number;
+}[]
+
+export type CountryDetailsData = {
+    country: string;
     visits: number;
     pageviews: number;
     bounce_rate: number;
