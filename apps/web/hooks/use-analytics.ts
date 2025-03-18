@@ -4,7 +4,7 @@ import { AnalyticsContext, AnalyticsData } from "providers/analytics-provider"
 import { useCallback, useContext, useMemo, useState } from "react"
 import { KeyMetricsData, TopLocationsData, TopPagesData, TopSourcesData } from "@repo/ui/types/analytics"
 import { formatISO } from 'date-fns'
-import { DeviceDetailsData, SourceDetailsData, TopBrowsersData, TopDevicesData } from "types/analytics"
+import { BrowserDetailsData, DeviceDetailsData, SourceDetailsData, TopBrowsersData, TopDevicesData } from "types/analytics"
 
 
 export interface AnalyticsDataState<T> {
@@ -19,7 +19,7 @@ export function useAnalytics() {
     const context = useContext(AnalyticsContext);
     if (!context) throw new Error("The 'useAnalytics' hook should only be used within an AnalyticsProvider context");
 
-    const { dateRange, setDateRange, keyMetrics, topLocations, topPages, topSources, topDevices, topBrowsers, topOperatingSystems, sourceDetails, deviceDetails } = context;
+    const { dateRange, setDateRange, keyMetrics, topLocations, topPages, topSources, topDevices, topBrowsers, topOperatingSystems, sourceDetails, deviceDetails, browserDetails } = context;
     const dateRangeQuery = `date_from=${formatISO(dateRange.start, { representation: "date" })}&date_to=${formatISO(dateRange.end, { representation: "date" })}`;
 
 
@@ -156,6 +156,7 @@ export function useAnalytics() {
     }, [dateRange, sourceDetails])
 
     const fetchDeviceDetails = fetchAnalyticsData<DeviceDetailsData>(context.deviceDetails, "device_details");
+    const fetchBrowserDetails = fetchAnalyticsData<BrowserDetailsData>(context.browserDetails, "browser_details");
 
     const refreshAllData = useCallback(() => {
         fetchKeyMetrics();
@@ -175,11 +176,16 @@ export function useAnalytics() {
         fetchDeviceDetails()
     }, [dateRange, fetchDeviceDetails])
 
+    const refreshBrowserDetails = useCallback(() => {
+        fetchBrowserDetails();
+    }, [dateRange, fetchBrowserDetails])
+
     return {
         setDateRange,
         refreshAllData,
         refreshSourceDetailsData,
         refreshDeviceDetails,
+        refreshBrowserDetails,
         keyMetrics,
         topPages,
         topSources,
@@ -189,6 +195,7 @@ export function useAnalytics() {
         topBrowsers,
         topOperatingSystems,
         sourceDetails,
-        deviceDetails
+        deviceDetails,
+        browserDetails
     }
 }

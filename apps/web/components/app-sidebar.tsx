@@ -25,7 +25,7 @@ import { useWorkspace } from "hooks/use-workspace"
 import { useSession } from "next-auth/react"
 import { useEffect, useState } from "react"
 import { Skeleton } from "@repo/ui/components/ui/skeleton"
-import { useParams } from "next/navigation"
+import { useParams, usePathname } from "next/navigation"
 import { NavBrand } from "./nav-brand"
 
 const data = {
@@ -96,6 +96,7 @@ const navDomainItems = (appBaseUrl: string, domainName: string) => [
             {
                 title: "Pages",
                 url: `${appBaseUrl}/${domainName}/pages`,
+                isActive: false
             },
             {
                 title: "Sources",
@@ -119,11 +120,11 @@ const navDomainItems = (appBaseUrl: string, domainName: string) => [
         items: [
             {
                 title: "Country",
-                url: `${appBaseUrl}/${domainName}/devices`,
+                url: `${appBaseUrl}/${domainName}/countries`,
             },
             {
                 title: "City",
-                url: `${appBaseUrl}/${domainName}/browser`,
+                url: `${appBaseUrl}/${domainName}/cities`,
             },
         ]
     },
@@ -139,11 +140,11 @@ const navDomainItems = (appBaseUrl: string, domainName: string) => [
             },
             {
                 title: "Browser",
-                url: `${appBaseUrl}/${domainName}/browser`,
+                url: `${appBaseUrl}/${domainName}/browsers`,
             },
             {
                 title: "Operating System",
-                url: `${appBaseUrl}/${domainName}/os`,
+                url: `${appBaseUrl}/${domainName}/operating-systems`,
             },
         ]
     }
@@ -160,6 +161,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const [paramsLoading, setParamsLoading] = useState<boolean>(true);
     const { domains } = useWorkspace()
     const { data: session } = useSession();
+    const pathname = usePathname()
     const params = useParams()
     const domain = params.domain;
 
@@ -171,6 +173,22 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         if (params) setParamsLoading(false);
     }, [params])
 
+    const domainNavItems = React.useMemo(() => {
+        const items = navDomainItems('', domain as string);
+        items.forEach(item => {
+            item.items?.forEach(subItem => {
+                if (pathname.indexOf(subItem.url) > -1) {
+                    subItem.isActive = true;
+                    item.isActive = true;
+                } else {
+                    subItem.isActive = false;
+                    item.isActive = false;
+                }
+            })
+        })
+        return items;
+    }, [domain, pathname])
+
     return (
         <Sidebar collapsible="icon" {...props}>
             <SidebarHeader>
@@ -178,7 +196,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </SidebarHeader>
             <SidebarContent>
                 {paramsLoading ? <Skeleton className="w-full h-52" /> : <>
-                    {domain && <NavMain items={navDomainItems('', domain as string)} title="Analytics" />}
+                    {domain && <NavMain items={domainNavItems} title="Analytics" />}
                     {/* <NavMain items={data.navWorkspace} title="Workspace" /> */}
                 </>}
             </SidebarContent>
