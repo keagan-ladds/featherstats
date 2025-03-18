@@ -1,15 +1,14 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@repo/ui/components/ui/card"
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@repo/ui/components/ui/chart"
-import { TrendingUp } from "lucide-react"
+import { getTopNWithOtherAvg } from "lib/utils"
 import React from "react"
-import { Bar, BarChart, Cell, Label, Pie, PieChart, XAxis, YAxis } from "recharts"
-import { DeviceDetailsData } from "types/analytics"
+import { Cell, Label, LabelList, Pie, PieChart, PolarAngleAxis, RadialBar, RadialBarChart } from "recharts"
+import { BrowserDetailsData, DeviceDetailsData } from "types/analytics"
 
 interface Props {
     data: DeviceDetailsData
     loading?: boolean
 }
-
 
 
 export default function DeviceBounceRateChart({ data, loading }: Props) {
@@ -18,65 +17,47 @@ export default function DeviceBounceRateChart({ data, loading }: Props) {
         bounce_rate: {
             label: "Bounce Rate",
         },
-        mobile: {
-            label: "Mobile",
-            color: "hsl(var(--chart-1))",
-        },
-        desktop: {
-            label: "Desktop",
-            color: "hsl(var(--chart-2))",
-        },
-        tablet: {
-            label: "Tablet",
-            color: "hsl(var(--chart-3))",
-        },
     } satisfies ChartConfig
 
-
-    const totalSessions = React.useMemo(() => {
-        return data.reduce((acc, curr) => acc + curr.visits, 0)
+    const chartData = React.useMemo(() => {
+        return getTopNWithOtherAvg(data, "visits", "device", 3, "asc")
     }, [data])
+
 
     return <>
         <Card className="flex flex-col">
             <CardHeader className="items-center !pb-0">
-                <CardTitle>Bounce Rate By Device Type</CardTitle>
+                <CardTitle>Bounce Rate By Device</CardTitle>
             </CardHeader>
-            <CardContent className="flex-1 !pb-0">
+            <CardContent className="flex-1 !p-0">
                 <ChartContainer
                     config={chartConfig}
                     className="mx-auto !aspect-square max-h-[250px]"
                 >
-                    <BarChart
-                        accessibilityLayer
-                        data={data}
-                        layout="vertical"
-                        margin={{
-                            left: 0,
-                        }}
+                    <RadialBarChart
+                        data={chartData}
+                        startAngle={-90}
+                        endAngle={380}
+                        innerRadius={30}
+                        outerRadius={110}
                     >
-                        <YAxis
-                            dataKey="device"
-                            type="category"
-                            tickLine={false}
-                            tickMargin={10}
-                            axisLine={false}
-                            tickFormatter={(value) =>
-                                chartConfig[value as keyof typeof chartConfig]?.label
-                            }
-                        />
-                        <XAxis dataKey="bounce_rate" type="number" hide />
                         <ChartTooltip
                             cursor={false}
-                            content={<ChartTooltipContent hideLabel />}
+                            content={<ChartTooltipContent hideLabel nameKey="device" />}
                         />
-                        <Bar dataKey="bounce_rate" layout="vertical" radius={5} >
+                        <PolarAngleAxis type="number" domain={[0, 1.5]} dataKey="bounce_rate" angleAxisId={0} tick={false} />
+                        <RadialBar dataKey="bounce_rate" background angleAxisId={0}>
                             {data.map((entry, index) => (
-                                <Cell key={`cell-${index}`} fill={`var(--color-${entry.device})`} />
+                                <Cell key={`cell-${index}`} fill={`hsl(var(--chart-${index + 1}))`} />
                             ))}
-                        </Bar>
-
-                    </BarChart>
+                            <LabelList
+                                position="insideStart"
+                                dataKey="device"
+                                className="fill-white capitalize mix-blend-luminosity"
+                                fontSize={11}
+                            />
+                        </RadialBar>
+                    </RadialBarChart>
                 </ChartContainer>
             </CardContent>
             {/* <CardFooter className="flex-col gap-2 text-sm">
@@ -90,3 +71,4 @@ export default function DeviceBounceRateChart({ data, loading }: Props) {
         </Card>
     </>
 }
+
