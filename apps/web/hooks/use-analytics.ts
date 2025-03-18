@@ -4,7 +4,7 @@ import { AnalyticsContext, AnalyticsData } from "providers/analytics-provider"
 import { useCallback, useContext, useMemo, useState } from "react"
 import { KeyMetricsData, TopLocationsData, TopPagesData, TopSourcesData } from "@repo/ui/types/analytics"
 import { formatISO } from 'date-fns'
-import { BrowserDetailsData, DeviceDetailsData, OsDetailsData, SourceDetailsData, TopBrowsersData, TopDevicesData } from "types/analytics"
+import { BrowserDetailsData, CountryDetailsData, DeviceDetailsData, OsDetailsData, SourceDetailsData, TopBrowsersData, TopDevicesData } from "types/analytics"
 
 
 export interface AnalyticsDataState<T> {
@@ -19,7 +19,7 @@ export function useAnalytics() {
     const context = useContext(AnalyticsContext);
     if (!context) throw new Error("The 'useAnalytics' hook should only be used within an AnalyticsProvider context");
 
-    const { dateRange, setDateRange, keyMetrics, topLocations, topPages, topSources, topDevices, topBrowsers, topOperatingSystems, sourceDetails, deviceDetails, browserDetails, operatingSystemDetails } = context;
+    const { dateRange, setDateRange, keyMetrics, topLocations, topPages, topSources, topDevices, topBrowsers, topOperatingSystems, sourceDetails, deviceDetails, browserDetails, operatingSystemDetails, countryDetails } = context;
     const dateRangeQuery = `date_from=${formatISO(dateRange.start, { representation: "date" })}&date_to=${formatISO(dateRange.end, { representation: "date" })}`;
 
 
@@ -158,6 +158,7 @@ export function useAnalytics() {
     const fetchDeviceDetails = fetchAnalyticsData<DeviceDetailsData>(context.deviceDetails, "device_details");
     const fetchBrowserDetails = fetchAnalyticsData<BrowserDetailsData>(context.browserDetails, "browser_details");
     const fetchOsDetails = fetchAnalyticsData<OsDetailsData>(operatingSystemDetails, "os_details");
+    const fetchCountryDetails = fetchAnalyticsData<CountryDetailsData>(countryDetails, "country_details");
 
     const refreshAllData = useCallback(() => {
         fetchKeyMetrics();
@@ -185,6 +186,10 @@ export function useAnalytics() {
         fetchOsDetails();
     }, [dateRange, fetchOsDetails])
 
+    const refreshCountryDetails = useCallback(() => {
+        fetchCountryDetails();
+    }, [dateRange, fetchCountryDetails])
+
     return {
         setDateRange,
         refreshAllData,
@@ -192,6 +197,7 @@ export function useAnalytics() {
         refreshDeviceDetails,
         refreshBrowserDetails,
         refreshOperatingSystemDetails,
+        refreshCountryDetails,
         keyMetrics,
         topPages,
         topSources,
@@ -203,6 +209,7 @@ export function useAnalytics() {
         sourceDetails,
         deviceDetails,
         browserDetails,
-        operatingSystemDetails
+        operatingSystemDetails,
+        countryDetails
     }
 }

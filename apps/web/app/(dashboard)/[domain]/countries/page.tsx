@@ -9,17 +9,17 @@ import BounceRateChart from "components/analytics/chart/bounce-rate-chart"
 
 export default function DevicesDashboardPage() {
 
-    const { dateRange, deviceDetails, refreshDeviceDetails } = useAnalytics()
+    const { dateRange, countryDetails, refreshCountryDetails } = useAnalytics()
     useEffect(() => {
-        refreshDeviceDetails();
+        refreshCountryDetails();
     }, [dateRange])
 
     return <>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <VisitsChart {...deviceDetails} groupKey={"device"}/>
-            <PageViewsChart {...deviceDetails} groupKey={"device"}/>
-            <BounceRateChart {...deviceDetails} groupKey={"device"}/>
-            <SessionDurationChart {...deviceDetails} groupKey={"device"}/>
+            <VisitsChart {...countryDetails} groupKey={"country"}/>
+            <PageViewsChart {...countryDetails} groupKey={"country"}/>
+            <BounceRateChart {...countryDetails} groupKey={"country"}/>
+            <SessionDurationChart {...countryDetails} groupKey={"country"}/>
         </div>
 
     </>

@@ -4,10 +4,12 @@ import * as React from "react"
 import {
     ChartBarBig,
     ChartLine,
+    FileText,
     Lightbulb,
     MapPin,
     Microchip,
     Radio,
+    Share2,
     SquareTerminal,
 } from "lucide-react"
 
@@ -28,53 +30,6 @@ import { Skeleton } from "@repo/ui/components/ui/skeleton"
 import { useParams, usePathname } from "next/navigation"
 import { NavBrand } from "./nav-brand"
 
-const data = {
-    navDomain: [
-        {
-            title: "Realtime",
-            url: "#",
-            icon: Radio
-        },
-        {
-            title: "Overview",
-            url: "app/",
-            icon: ChartLine,
-            isActive: true,
-            items: [
-                {
-                    title: "Pages",
-                    url: "pages",
-                },
-                {
-                    title: "Sources",
-                    url: "/sources",
-                },
-                {
-                    title: "Locations",
-                    url: "/locations",
-                },
-                {
-                    title: "Devices",
-                    url: "/devices",
-                },
-            ],
-        },
-        {
-            title: "Insights",
-            url: "#",
-            icon: Lightbulb,
-        },
-
-
-    ],
-    navWorkspace: [
-        {
-            title: "Domains",
-            url: "/",
-            icon: SquareTerminal,
-        }
-    ],
-}
 
 const navDomainItems = (appBaseUrl: string, domainName: string) => [
     // {
@@ -85,32 +40,18 @@ const navDomainItems = (appBaseUrl: string, domainName: string) => [
     {
         title: "Overview",
         url: `${appBaseUrl}/${domainName}`,
-        icon: ChartBarBig
+        icon: ChartBarBig,
+        isActive: false
     },
     {
-        title: "Details",
-        icon: ChartLine,
-        url: "#",
-        isActive: true,
-        items: [
-            {
-                title: "Pages",
-                url: `${appBaseUrl}/${domainName}/pages`,
-                isActive: false
-            },
-            {
-                title: "Sources",
-                url: `${appBaseUrl}/${domainName}/sources`,
-            },
-            {
-                title: "Locations",
-                url: `${appBaseUrl}/${domainName}/locations`,
-            },
-            {
-                title: "Devices",
-                url: `${appBaseUrl}/${domainName}/devices`,
-            },
-        ],
+        title: "Pages",
+        url: `${appBaseUrl}/${domainName}/pages`,
+        icon: FileText
+    },
+    {
+        title: "Sources",
+        url: `${appBaseUrl}/${domainName}/sources`,
+        icon: Share2
     },
     {
         title: "Location",
@@ -121,6 +62,7 @@ const navDomainItems = (appBaseUrl: string, domainName: string) => [
             {
                 title: "Country",
                 url: `${appBaseUrl}/${domainName}/countries`,
+                isActive: false
             },
             {
                 title: "City",
@@ -186,7 +128,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 }
             })
 
-            item.isActive = itemActive;
+            item.isActive = itemActive || pathname.endsWith(item.url);
         })
         return items;
     }, [domain, pathname])

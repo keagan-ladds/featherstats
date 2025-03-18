@@ -13,12 +13,13 @@ interface SourceDetailsCardProps extends React.HTMLAttributes<HTMLDivElement> {
     data: SourceDetailsData
 }
 
+
 export const columns: ColumnDef<SourceDetailsData[number]>[] = [
     {
         accessorKey: "referrer",
-        header: () => <div>Source</div>,
+        header: () => <div>Referrer</div>,
         cell: ({ row }) => {
-            return <div className="font-medium whitespace-nowrap">{row.getValue("referrer") || 'Direct'}</div>
+            return <div className="font-medium whitespace-nowrap">{row.getValue("referrer") }</div>
         },
     },
     {
@@ -39,13 +40,12 @@ export const columns: ColumnDef<SourceDetailsData[number]>[] = [
         },
     },
     {
-        accessorKey: "hits",
-        header: () => <div className="text-right">Hits</div>,
+        accessorKey: "pageviews",
+        header: () => <div className="text-right">Page Views</div>,
         cell: ({ row }) => {
-            return <div className="text-right">{row.getValue("hits")}</div>
+            return <div className="text-right">{row.getValue("pageviews")}</div>
         },
     },
-
     {
         accessorKey: "bounce_rate",
         header: () => <div className="text-right">Bounce Rate</div>,
