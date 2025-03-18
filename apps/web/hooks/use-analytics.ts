@@ -38,7 +38,7 @@ export function useAnalytics() {
 
             data.setData(responseData.data);
             data.setLoading(false);
-        }, [])
+        }, [dateRange])
     }
 
     const fetchKeyMetrics = useCallback(async () => {
