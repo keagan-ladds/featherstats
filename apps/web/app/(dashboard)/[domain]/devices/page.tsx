@@ -1,7 +1,7 @@
 'use client'
 
-import BrowserDetailTable from "components/analytics/device/browser-detail-table"
 import DeviceBounceRateChart from "components/analytics/device/device-bounce-rate-chart"
+import DeviceDetailsTable from "components/analytics/device/device-details-table"
 import DevicePageViewsChart from "components/analytics/device/device-pageviews-chart"
 import DeviceSessionDurationChart from "components/analytics/device/device-session-duration-chart"
 import DeviceSessionsChart from "components/analytics/device/device-sessions-chart"
@@ -21,6 +21,7 @@ export default function DevicesDashboardPage() {
             <DevicePageViewsChart {...deviceDetails} />
             <DeviceBounceRateChart {...deviceDetails} />
             <DeviceSessionDurationChart {...deviceDetails} />
+            <DeviceDetailsTable {...deviceDetails} className="col-span-full"/>
         </div>
 
     </>

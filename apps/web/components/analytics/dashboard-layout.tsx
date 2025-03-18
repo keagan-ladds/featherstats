@@ -28,8 +28,6 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 <CalendarDateRangePicker onDateSelect={setDate} />
             </div>
         </div>
-        <div className="container">
-            {children}
-        </div>
+        {children}
     </>
 }

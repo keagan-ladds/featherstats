@@ -5,6 +5,8 @@ import {
     ChartBarBig,
     ChartLine,
     Lightbulb,
+    MapPin,
+    Microchip,
     Radio,
     SquareTerminal,
 } from "lucide-react"
@@ -109,6 +111,42 @@ const navDomainItems = (appBaseUrl: string, domainName: string) => [
             },
         ],
     },
+    {
+        title: "Location",
+        icon: MapPin,
+        url: `${appBaseUrl}/${domainName}/country`,
+        isActive: false,
+        items: [
+            {
+                title: "Country",
+                url: `${appBaseUrl}/${domainName}/devices`,
+            },
+            {
+                title: "City",
+                url: `${appBaseUrl}/${domainName}/browser`,
+            },
+        ]
+    },
+    {
+        title: "Technology",
+        icon: Microchip,
+        url: `${appBaseUrl}/${domainName}/devices`,
+        isActive: false,
+        items: [
+            {
+                title: "Device",
+                url: `${appBaseUrl}/${domainName}/devices`,
+            },
+            {
+                title: "Browser",
+                url: `${appBaseUrl}/${domainName}/browser`,
+            },
+            {
+                title: "Operating System",
+                url: `${appBaseUrl}/${domainName}/os`,
+            },
+        ]
+    }
     // {
     //     title: "Insights",
     //     url: `${appBaseUrl}/${domainName}/insights`,
@@ -136,7 +174,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     return (
         <Sidebar collapsible="icon" {...props}>
             <SidebarHeader>
-                <NavBrand/>
+                <NavBrand />
             </SidebarHeader>
             <SidebarContent>
                 {paramsLoading ? <Skeleton className="w-full h-52" /> : <>
