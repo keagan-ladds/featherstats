@@ -31,6 +31,7 @@ export default function SessionDurationChart<T extends any[]>({ data, loading, g
         <Card className="flex flex-col">
             <CardHeader className="items-center !pb-0">
                 <CardTitle>Avg. Session Duration</CardTitle>
+                <CardDescription>Average time spent per session</CardDescription>
             </CardHeader>
             <CardContent className="flex-1 !p-0">
                 <ChartContainer
@@ -46,7 +47,7 @@ export default function SessionDurationChart<T extends any[]>({ data, loading, g
                     >
                         <ChartTooltip
                             cursor={false}
-                            content={<ChartTooltipContent  nameKey={groupKey as string} />}
+                            content={<ChartTooltipContent hideLabel  nameKey={groupKey as string} />}
                         />
                         <RadialBar dataKey="avg_session_sec" background>
                             {data.map((entry, index) => (

@@ -1,8 +1,10 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@repo/ui/components/ui/card"
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@repo/ui/components/ui/chart"
-import { getTopNWithOtherSum } from "lib/utils"
+import { group } from "console"
+import { generateInsight, getTopNWithOtherSum } from "lib/utils"
+import { Lightbulb, TrendingUp } from "lucide-react"
 import React from "react"
-import { Cell, Label, Pie, PieChart } from "recharts"
+import { Cell, Label, LabelList, Pie, PieChart } from "recharts"
 
 interface Props<T extends any[]> {
     data: T
@@ -20,17 +22,22 @@ export default function VisitsChart<T extends any[]>({ data, loading, groupKey }
     } satisfies ChartConfig
 
     const chartData = React.useMemo(() => {
-        return getTopNWithOtherSum(data, "visits", "os")
+        return getTopNWithOtherSum(data, "visits", groupKey)
     }, [data])
 
     const totalSessions = React.useMemo(() => {
         return data.reduce((acc, curr) => acc + curr.visits, 0)
     }, [data])
 
+    const insightText = React.useMemo(() => {
+        return generateInsight(chartData, "visits", groupKey)
+    }, [data])
+
     return <>
         <Card className="flex flex-col">
             <CardHeader className="items-center !pb-0">
-                <CardTitle>Sessions</CardTitle>
+                <CardTitle>Visits</CardTitle>
+                <CardDescription>Total number of site visits</CardDescription>
             </CardHeader>
             <CardContent className="flex-1 !p-0">
                 <ChartContainer
@@ -48,7 +55,7 @@ export default function VisitsChart<T extends any[]>({ data, loading, groupKey }
                             nameKey={groupKey as string}
                             fillRule="evenodd"
                             innerRadius={60}
-                            strokeWidth={5}>
+                        >
                             {data.map((entry, index) => (
                                 <Cell key={`cell-${index}`} fill={`hsl(var(--chart-${index + 1}))`} />
                             ))}
@@ -74,7 +81,7 @@ export default function VisitsChart<T extends any[]>({ data, loading, groupKey }
                                                     y={(viewBox.cy || 0) + 24}
                                                     className="fill-muted-foreground"
                                                 >
-                                                    Sessions
+                                                    Visits
                                                 </tspan>
                                             </text>
                                         )
@@ -85,14 +92,11 @@ export default function VisitsChart<T extends any[]>({ data, loading, groupKey }
                     </PieChart>
                 </ChartContainer>
             </CardContent>
-            {/* <CardFooter className="flex-col gap-2 text-sm">
+            <CardFooter className="flex-col gap-2 !text-sm">
                 <div className="flex items-center gap-2 font-medium leading-none">
-                    Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+                    <Lightbulb className="h-4 w-4 flex-shrink-0" /> {insightText}
                 </div>
-                <div className="leading-none text-muted-foreground">
-                    Showing total visitors for the last 6 months
-                </div>
-            </CardFooter> */}
+            </CardFooter>
         </Card>
     </>
 }

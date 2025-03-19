@@ -1,8 +1,9 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@repo/ui/components/ui/card"
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@repo/ui/components/ui/chart"
-import { getTopNWithOtherAvg, getTopNWithOtherSum } from "lib/utils"
+import { generateInsight, getTopNWithOtherAvg, getTopNWithOtherSum } from "lib/utils"
+import { Lightbulb } from "lucide-react"
 import React from "react"
-import { Cell, Label, Pie, PieChart } from "recharts"
+import { Cell, Label, LabelList, Pie, PieChart } from "recharts"
 
 interface Props<T extends any[]> {
     data: T
@@ -16,7 +17,7 @@ export default function PageViewsChart<T extends any[]>({ data, loading, groupKe
     const chartConfig = {
         sessions: {
             label: "Sessions",
-        },
+        }
     } satisfies ChartConfig
 
     const chartData = React.useMemo(() => {
@@ -27,10 +28,15 @@ export default function PageViewsChart<T extends any[]>({ data, loading, groupKe
         return data.reduce((acc, curr) => acc + curr.pageviews, 0)
     }, [data])
 
+    const insightText = React.useMemo(() => {
+        return generateInsight(chartData, "pageviews", groupKey)
+    }, [data])
+
     return <>
         <Card className="flex flex-col">
             <CardHeader className="items-center !pb-0">
                 <CardTitle>Page Views</CardTitle>
+                <CardDescription>Total pages viewed by users</CardDescription>
             </CardHeader>
             <CardContent className="flex-1 !p-0">
                 <ChartContainer
@@ -40,7 +46,7 @@ export default function PageViewsChart<T extends any[]>({ data, loading, groupKe
                     <PieChart>
                         <ChartTooltip
                             cursor={false}
-                            content={<ChartTooltipContent hideLabel />}
+                            content={<ChartTooltipContent hideLabel nameKey={groupKey as string} />}
                         />
                         <Pie
                             data={chartData}
@@ -48,10 +54,11 @@ export default function PageViewsChart<T extends any[]>({ data, loading, groupKe
                             nameKey={groupKey as string}
                             fillRule="evenodd"
                             innerRadius={60}
-                            strokeWidth={5}>
+                            strokeWidth={0}>
                             {data.map((entry, index) => (
                                 <Cell key={`cell-${index}`} fill={`hsl(var(--chart-${index+1}))`} />
                             ))}
+                            
                             <Label
                                 content={({ viewBox }) => {
                                     if (viewBox && "cx" in viewBox && "cy" in viewBox) {
@@ -85,14 +92,11 @@ export default function PageViewsChart<T extends any[]>({ data, loading, groupKe
                     </PieChart>
                 </ChartContainer>
             </CardContent>
-            {/* <CardFooter className="flex-col gap-2 text-sm">
+            <CardFooter className="flex-col gap-2 !text-sm">
                 <div className="flex items-center gap-2 font-medium leading-none">
-                    Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+                    <Lightbulb className="h-4 w-4 flex-shrink-0" /> {insightText}
                 </div>
-                <div className="leading-none text-muted-foreground">
-                    Showing total visitors for the last 6 months
-                </div>
-            </CardFooter> */}
+            </CardFooter>
         </Card>
     </>
 }
