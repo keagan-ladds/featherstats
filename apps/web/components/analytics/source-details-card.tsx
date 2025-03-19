@@ -19,7 +19,7 @@ export const columns: ColumnDef<SourceDetailsData[number]>[] = [
         accessorKey: "referrer",
         header: () => <div>Referrer</div>,
         cell: ({ row }) => {
-            return <div className="font-medium whitespace-nowrap">{row.getValue("referrer") }</div>
+            return <div className="font-medium whitespace-nowrap">{row.getValue("referrer") || 'Direct / None' }</div>
         },
     },
     {

@@ -30,7 +30,7 @@ export default function TopSourcesCard({ data, loading }: TopSourcesCardProps) {
                             </TableHeader>
                             <TableBody>
                                 {data.map((source, i) => <TableRow key={i}>
-                                    <TableCell className="font-medium">{source.referrer}</TableCell>
+                                    <TableCell className="font-medium">{source.referrer || 'Direct / None'}</TableCell>
                                     <TableCell className="text-right">{source.visits}</TableCell>
                                 </TableRow>)}
                             </TableBody>
