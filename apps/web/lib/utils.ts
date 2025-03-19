@@ -96,3 +96,22 @@ export function generateHighestSessionDurationInsight<T extends Record<string, a
   return `Highest ${valueKey.toString()} is from ${highestItem![groupKey]} at ${highestItem![valueKey]} seconds.`;
 }
 
+export function formatDuration(seconds: number): string {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = Math.floor(seconds % 60);
+
+  const parts: string[] = [];
+
+  if (hours > 0) {
+    parts.push(`${hours}h`);
+  }
+  if (minutes > 0) {
+    parts.push(`${minutes}m`);
+  }
+  if (remainingSeconds > 0 || parts.length === 0) {
+    parts.push(`${remainingSeconds}s`);
+  }
+
+  return parts.join(' ');
+}

@@ -4,6 +4,7 @@ import { CountryDetailsData } from "types/analytics";
 import { ColumnDef } from "@tanstack/react-table"
 import { DataTable } from "@repo/ui/components/ui/data-table";
 import { formatDistance } from "date-fns";
+import { formatDuration } from "lib/utils";
 
 interface Props {
     className?: string;
@@ -64,7 +65,7 @@ export const columns: ColumnDef<CountryDetailsData[number]>[] = [
         header: () => <div className="text-right">Average Session Duration</div>,
         cell: ({ row }) => {
             const avg_session_sec = parseFloat(row.getValue("avg_session_sec"));
-            const formatted = formatDistance(0, avg_session_sec * 1000, { includeSeconds: true })
+            const formatted = formatDuration(avg_session_sec as number)
             return <div className="text-right whitespace-nowrap">{formatted}</div>
         },
     },

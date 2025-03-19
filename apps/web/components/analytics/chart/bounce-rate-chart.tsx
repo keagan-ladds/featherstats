@@ -3,7 +3,7 @@ import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "
 import { generateLowestBounceRateInsight, getTopNWithOtherAvg } from "lib/utils"
 import { Lightbulb } from "lucide-react"
 import React from "react"
-import { Cell, Label, LabelList, Pie, PieChart, PolarAngleAxis, RadialBar, RadialBarChart } from "recharts"
+import { Bar, BarChart, CartesianGrid, Cell, Label, LabelList, Pie, PieChart, PolarAngleAxis, RadialBar, RadialBarChart, XAxis } from "recharts"
 
 interface Props<T extends any[]> {
     data: T
@@ -14,14 +14,7 @@ interface Props<T extends any[]> {
 
 export default function BounceRateChart<T extends any[]>({ data, loading, groupKey }: Props<T>) {
 
-    const chartConfig = {
-        sessions: {
-            label: "Sessions",
-        },
-        "Other": {
-            label: "Other",
-        }
-    } satisfies ChartConfig
+
 
     const chartData = React.useMemo(() => {
         return getTopNWithOtherAvg(data, "bounce_rate", groupKey, 3, "asc").map((item, index) => ({
@@ -33,6 +26,18 @@ export default function BounceRateChart<T extends any[]>({ data, loading, groupK
 
     const insightText = React.useMemo(() => {
         return generateLowestBounceRateInsight(chartData, "bounce_rate", groupKey)
+    }, [chartData])
+
+    const chartConfig = React.useMemo(() => {
+
+        return chartData.reduce((config, item) => {
+            return {
+                ...config,
+                [item[groupKey]]: {
+                    label: item[groupKey]
+                }
+            }
+        }, {}) satisfies ChartConfig;
     }, [chartData])
 
 
@@ -47,29 +52,29 @@ export default function BounceRateChart<T extends any[]>({ data, loading, groupK
                     config={chartConfig}
                     className="mx-auto !aspect-square max-h-[250px]"
                 >
-                    <RadialBarChart
-                        data={chartData}
-                        startAngle={-90}
-                        endAngle={270}
-                        innerRadius={30}
-                        outerRadius={110}>
-                            <ChartTooltip
-                            
-                            cursor={true}
-                            content={<ChartTooltipContent nameKey={groupKey as string}  valueFormatter={(value) => `${(value as number * 100).toFixed(1)}%`}/>}
+                    <BarChart accessibilityLayer data={chartData} dataKey={"bounce_rate"}>
+                        <CartesianGrid vertical={false} />
+                        <XAxis
+                            dataKey={groupKey as string}
+                            tickLine={false}
+                            tickMargin={10}
+                            axisLine={false}
+                            tickFormatter={(value) =>
+                                chartConfig[value as keyof typeof chartConfig].label
+                            }
                         />
-                        
-                        <PolarAngleAxis type="number" domain={[0, 1]} dataKey={'bounce_rate'} angleAxisId={0} tick={false} tickFormatter={() => 'test'} />
-                        <RadialBar dataKey="bounce_rate" background angleAxisId={0}>
-                            <LabelList
-                                position="insideStart"
-                                dataKey={groupKey as string}
-                                className="fill-white capitalize mix-blend-luminosity"
-                                fontSize={11}
-                            />
-                        </RadialBar>
-                        
-                    </RadialBarChart>
+                        <ChartTooltip
+                            cursor={false}
+                            content={<ChartTooltipContent nameKey={groupKey as string}  valueFormatter={(value) => `${(value as number * 100).toFixed(1)}%`} />}
+                        />
+                        <Bar
+                            dataKey={"bounce_rate"}
+
+                            strokeWidth={2}
+                            radius={8}
+                            activeIndex={2}
+                        />
+                    </BarChart>
                 </ChartContainer>
             </CardContent>
             <CardFooter className="flex-col gap-2 !text-sm">

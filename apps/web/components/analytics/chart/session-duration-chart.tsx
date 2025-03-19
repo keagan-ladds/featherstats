@@ -1,8 +1,8 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@repo/ui/components/ui/card"
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@repo/ui/components/ui/chart"
-import { getTopNWithOtherAvg } from "lib/utils"
+import { formatDuration, getTopNWithOtherAvg } from "lib/utils"
 import React from "react"
-import { Cell, Label, LabelList, Pie, PieChart, RadialBar, RadialBarChart } from "recharts"
+import { Bar, BarChart, CartesianGrid, Cell, Label, LabelList, Pie, PieChart, RadialBar, RadialBarChart, XAxis } from "recharts"
 import { BrowserDetailsData, OsDetailsData } from "types/analytics"
 
 
@@ -14,18 +14,24 @@ interface Props<T extends any[]> {
 
 export default function SessionDurationChart<T extends any[]>({ data, loading, groupKey }: Props<T>) {
 
-    const chartConfig = {
-        sessions: {
-            label: "Sessions",
-        },
-        avg_session_sec: {
-            label: "Sessions",
-        },
-    } satisfies ChartConfig
-
     const chartData = React.useMemo(() => {
-        return getTopNWithOtherAvg(data, "avg_session_sec", groupKey)
+        return getTopNWithOtherAvg(data, "avg_session_sec", groupKey).map((item, index) => ({
+            ...item,
+            fill: `hsl(var(--chart-${index + 1}))`,
+        }))
     }, [data])
+
+    const chartConfig = React.useMemo(() => {
+
+        return chartData.reduce((config, item) => {
+            return {
+                ...config,
+                [item[groupKey]]: {
+                    label: item[groupKey]
+                }
+            }
+        }, {}) satisfies ChartConfig;
+    }, [chartData])
 
     return <>
         <Card className="flex flex-col">
@@ -38,29 +44,29 @@ export default function SessionDurationChart<T extends any[]>({ data, loading, g
                     config={chartConfig}
                     className="mx-auto !aspect-square max-h-[250px]"
                 >
-                    <RadialBarChart
-                        data={chartData}
-                        startAngle={-90}
-                        endAngle={380}
-                        innerRadius={30}
-                        outerRadius={110}
-                    >
+                    <BarChart accessibilityLayer data={chartData} dataKey={"avg_session_sec"}>
+                        <CartesianGrid vertical={false} />
+                        <XAxis
+                            dataKey={groupKey as string}
+                            tickLine={false}
+                            tickMargin={10}
+                            axisLine={false}
+                            tickFormatter={(value) =>
+                                chartConfig[value as keyof typeof chartConfig].label
+                            }
+                        />
                         <ChartTooltip
                             cursor={false}
-                            content={<ChartTooltipContent hideLabel  nameKey={groupKey as string} />}
+                            content={<ChartTooltipContent nameKey={groupKey as string} valueFormatter={(value) => formatDuration(value as number)}  />}
                         />
-                        <RadialBar dataKey="avg_session_sec" background>
-                            {data.map((entry, index) => (
-                                <Cell key={`cell-${index}`} fill={`hsl(var(--chart-${index + 1}))`} />
-                            ))}
-                            <LabelList
-                                position="insideStart"
-                                dataKey={groupKey as string}
-                                className="fill-white capitalize mix-blend-luminosity"
-                                fontSize={11}
-                            />
-                        </RadialBar>
-                    </RadialBarChart>
+                        <Bar
+                            dataKey={"avg_session_sec"}
+
+                            strokeWidth={2}
+                            radius={8}
+                            activeIndex={2}
+                        />
+                    </BarChart>
                 </ChartContainer>
             </CardContent>
             {/* <CardFooter className="flex-col gap-2 text-sm">

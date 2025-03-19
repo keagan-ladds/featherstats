@@ -14,11 +14,6 @@ interface Props<T extends any[]> {
 
 export default function PageViewsChart<T extends any[]>({ data, loading, groupKey }: Props<T>) {
 
-    const chartConfig = {
-        sessions: {
-            label: "Sessions",
-        }
-    } satisfies ChartConfig
 
     const chartData = React.useMemo(() => {
         return getTopNWithOtherAvg(data, "pageviews", groupKey)
@@ -31,6 +26,17 @@ export default function PageViewsChart<T extends any[]>({ data, loading, groupKe
     const insightText = React.useMemo(() => {
         return generateInsight(chartData, "pageviews", groupKey)
     }, [data])
+
+    const chartConfig = React.useMemo(() => {
+        return chartData.reduce((config, item) => {
+            return {
+                ...config,
+                [item[groupKey]]: {
+                    label: item[groupKey]
+                }
+            }
+        }, {}) satisfies ChartConfig;
+    }, [chartData])
 
     return <>
         <Card className="flex flex-col">

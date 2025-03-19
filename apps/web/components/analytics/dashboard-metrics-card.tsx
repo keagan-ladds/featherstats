@@ -7,6 +7,7 @@ import { Skeleton } from "@repo/ui/components/ui/skeleton";
 import { KeyMetricsData } from "types/analytics";
 import { useAnalytics } from "hooks/use-analytics";
 import { isSameDay, formatDistance  } from "date-fns"
+import { formatDuration } from "lib/utils";
 
 interface DashboardMetricsCardProps {
   className?: string | undefined
@@ -74,19 +75,27 @@ export default function DashboardMetricsCard({ className }: DashboardMetricsCard
 
   const aggregate = useMemo(
     () => {
+
+      const avg_denom = keyMetrics.data && keyMetrics.data.reduce((acc, curr) => acc + (curr.pageviews > 0 ? 1 : 0), 0) || 1
+
       const visits = keyMetrics.data && keyMetrics.data.reduce((acc, curr) => acc + curr.visits, 0) || 0
       const pageviews = keyMetrics.data && keyMetrics.data.reduce((acc, curr) => acc + curr.pageviews, 0) || 0
-      const bounce_rate = keyMetrics.data && keyMetrics.data.reduce((acc, curr) => acc + curr.bounce_rate, 0) / keyMetrics.data.length * 100 || 0
-      const avg_session_sec = keyMetrics.data && keyMetrics.data.reduce((acc, curr) => acc + curr.avg_session_sec, 0) / keyMetrics.data.length || 0
+      const bounce_rate = keyMetrics.data && keyMetrics.data.reduce((acc, curr) => acc + curr.bounce_rate/avg_denom, 0) * 100.0 || 0
+      const avg_session_sec = keyMetrics.data && keyMetrics.data.reduce((acc, curr) => acc + curr.avg_session_sec, 0) / avg_denom || 0
 
       return {
         visits: visits.toLocaleString(),
         pageviews: pageviews.toLocaleString(),
         bounce_rate: bounce_rate.toLocaleString(undefined, {maximumFractionDigits: 0}) + " %",
-        avg_session_sec: formatDistance(0, avg_session_sec * 1000, { includeSeconds: true })
+        avg_session_sec: formatDuration(avg_session_sec as number)
       }
     }, [keyMetrics.data]
   )
+
+  const tooltipValueFormatters = {
+    bounce_rate: (value: any) => `${(value * 100).toFixed()}%`,
+    avg_session_sec: (value: any) => formatDuration(value)
+  }
 
   return <>
     <Card className={cn(className)}>
@@ -145,6 +154,7 @@ export default function DashboardMetricsCard({ className }: DashboardMetricsCard
                   labelFormatter={(value) => {
                     return formatTooltipLabel(new Date(value))
                   }}
+                  valueFormatter={(value)=> tooltipValueFormatters[activeChart as keyof typeof tooltipValueFormatters]?.(value) || value.toLocaleString()}
                 />
               }
             />
