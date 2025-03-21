@@ -11,6 +11,7 @@ interface FeatherstatsClientConfig {
 export interface AnalyticsEvent {
     timestamp: string
     sessionId: string
+    userId: string;
     eventType: string;
     payload: Object;
 }
@@ -31,12 +32,14 @@ export class FeatherstatsClient {
   private readonly config: Required<FeatherstatsClientConfig>;
   private readonly apiKey: string;
   private readonly sessionId: string;
+  private readonly userId: string;
   private flushTimeout?: NodeJS.Timeout;
   private isDestroyed: boolean = false;
 
   public constructor(apiKey: string, config?: FeatherstatsClientConfig) {
     this.apiKey = apiKey;
     this.sessionId = this.getSessionId();
+    this.userId = this.getUserId();
     this.config = { ...DEFAULT_CONFIG, ...config };
     this.startFlushInterval();
   }
@@ -48,6 +51,15 @@ export class FeatherstatsClient {
     sessionId = nanoid();
     sessionStorage.setItem('sessionId', sessionId);
     return sessionId;
+  }
+
+  private getUserId(): string {
+    let userId = localStorage.getItem('userId');
+    if (userId) return userId;
+
+    userId = nanoid();
+    localStorage.setItem('userId', userId);
+    return userId;
   }
 
 
@@ -84,6 +96,7 @@ export class FeatherstatsClient {
     const event: AnalyticsEvent = {
         eventType,
         sessionId: this.sessionId,
+        userId: this.userId,
         timestamp: new Date().toISOString(),
         payload: options.payload || {}
     };

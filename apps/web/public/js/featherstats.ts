@@ -23,9 +23,15 @@ function init() {
     return;
   }
 
+  const utms = getUTMParameters();
   const defaultPayload = {
     referrer: document.referrer,
-    pathname: window.location.pathname
+    pathname: window.location.pathname,
+    utm_source: utms.utm_source,
+    utm_medium: utms.utm_medium,
+    utm_campaign: utms.utm_campaign,
+    utm_term: utms.utm_term,
+    utm_content: utms.utm_content
   }
 
   // Initialize the client
@@ -69,3 +75,14 @@ function init() {
 
 // Initialize when the script loads
 init();
+
+function getUTMParameters() {
+  const params = new URLSearchParams(window.location.search);
+  return {
+    utm_source: params.get('utm_source') || undefined,
+    utm_medium: params.get('utm_medium') || undefined,
+    utm_campaign: params.get('utm_campaign') || undefined,
+    utm_term: params.get('utm_term') || undefined,
+    utm_content: params.get('utm_content') || undefined
+  };
+}
