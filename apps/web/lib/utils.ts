@@ -117,6 +117,3 @@ export function formatDuration(seconds: number): string {
   return parts.join(' ');
 }
 
-export function formatCountryCode(countryCode: string): string {
-  return countryList[countryCode as keyof typeof countryList];
-}

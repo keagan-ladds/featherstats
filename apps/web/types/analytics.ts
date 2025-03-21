@@ -1,20 +1,33 @@
-export type TopLocationsData = {
+export type CountrySummaryData = {
     country: string;
-    city: string;
     visits: number;
-    hits: number;
+    pageviews: number;
 }[]
 
-export type TopPagesData = {
+export type CitySummaryData = {
+    city: string;
+    country: string;
+    visits: number;
+    pageviews: number;
+}[]
+
+export type PageSummaryData = {
     pathname: string;
     visits: number;
-    hits: number;
+    pageviews: number;
 }[]
 
-export type TopSourcesData = {
+export type SourceSummaryData = {
+    source: string;
     referrer: string;
     visits: number;
-    hits: number;
+    pageviews: number;
+}[]
+
+export type ChannelSummaryData = {
+    channel: string;
+    visits: number;
+    pageviews: number;
 }[]
 
 export type KeyMetricsData = {
@@ -25,25 +38,26 @@ export type KeyMetricsData = {
     avg_session_sec: number
 }[]
 
-export type TopDevicesData = {
+export type DeviceSummaryData = {
     device: string;
     visits: number;
-    hits: number;
+    pageviews: number;
 }[]
 
-export type TopBrowsersData = {
+export type BrowserSummaryData = {
     browser: string;
     visits: number;
-    hits: number;
+    pageviews: number;
 }[]
 
-export type TopOperatingSystemsData = {
+export type OperatingSystemSummaryData = {
     os: string;
     visits: number;
-    hits: number
+    pageviews: number
 }[]
 
 export type SourceDetailsData = {
+    source: string;
     referrer: string;
     visits: number;
     pageviews: number;

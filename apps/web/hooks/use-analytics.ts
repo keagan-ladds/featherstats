@@ -1,10 +1,9 @@
 'use client'
 
 import { AnalyticsContext, AnalyticsData } from "providers/analytics-provider"
-import { useCallback, useContext, useMemo, useState } from "react"
-import { KeyMetricsData, TopLocationsData, TopPagesData, TopSourcesData } from "@repo/ui/types/analytics"
+import { useCallback, useContext } from "react"
 import { formatISO } from 'date-fns'
-import { BrowserDetailsData, CountryDetailsData, DeviceDetailsData, OsDetailsData, SourceDetailsData, TopBrowsersData, TopDevicesData } from "types/analytics"
+import { BrowserDetailsData, CountryDetailsData, DeviceDetailsData, OsDetailsData, SourceDetailsData, BrowserSummaryData, DeviceSummaryData, PageSummaryData, CountrySummaryData, KeyMetricsData, SourceSummaryData, OperatingSystemSummaryData, CitySummaryData, ChannelSummaryData } from "types/analytics"
 
 
 export interface AnalyticsDataState<T> {
@@ -13,13 +12,15 @@ export interface AnalyticsDataState<T> {
     error: Error | null;
 }
 
-
-
 export function useAnalytics() {
     const context = useContext(AnalyticsContext);
     if (!context) throw new Error("The 'useAnalytics' hook should only be used within an AnalyticsProvider context");
 
-    const { dateRange, setDateRange, keyMetrics, topLocations, topPages, topSources, topDevices, topBrowsers, topOperatingSystems, sourceDetails, deviceDetails, browserDetails, operatingSystemDetails, countryDetails } = context;
+    const { dateRange, setDateRange, keyMetrics, pageSummary, deviceSummary, browserSummary, osSummary, sourceDetails, deviceDetails, browserDetails, operatingSystemDetails, countryDetails } = context;
+    
+    const {sourceSummary, channelSummary} = context;
+    const {countrySummary, citySummary} = context;
+    
     const dateRangeQuery = `date_from=${formatISO(dateRange.start, { representation: "date" })}&date_to=${formatISO(dateRange.end, { representation: "date" })}`;
 
 
@@ -58,117 +59,21 @@ export function useAnalytics() {
         keyMetrics.setLoading(false);
     }, [dateRange, keyMetrics])
 
-    const fetchTopLocations = useCallback(async () => {
-        topLocations.setLoading(true);
-        const response = await fetch(`${context.baseUrl}/v0/pipes/top_locations.json?limit=10&${dateRangeQuery}`, {
-            headers: {
-                Authorization: 'Bearer ' + context.token
-            }
-        });
+    
+    const fetchPageSummary = fetchAnalyticsData<PageSummaryData>(context.pageSummary, "page_summary");
+    const fetchSourceSummary = fetchAnalyticsData<SourceSummaryData>(context.sourceSummary, "source_summary");
+    const fetchChannelSummary = fetchAnalyticsData<ChannelSummaryData>(context.channelSummary, "channel_summary");
+    const fetchDeviceSummary = fetchAnalyticsData<DeviceSummaryData>(context.deviceSummary, "device_summary");
+    const fetchBrowserSummary = fetchAnalyticsData<BrowserSummaryData>(context.browserSummary, "browser_summary");
+    const fetchOsSummary = fetchAnalyticsData<OperatingSystemSummaryData>(context.osSummary, "os_summary");
+    const fetchCountrySummary = fetchAnalyticsData<CountrySummaryData>(context.countrySummary, "country_summary");
+    const fetchCitySummary = fetchAnalyticsData<CitySummaryData>(context.citySummary, "city_summary");
 
-        const responseData = await response.json() as {
-            data: TopLocationsData
-        };
-
-        topLocations.setData(responseData.data);
-        topLocations.setLoading(false);
-    }, [topLocations, dateRange])
-
-
-    const fetchTopPages = useCallback(async () => {
-        topPages.setLoading(true);
-        const response = await fetch(`${context.baseUrl}/v0/pipes/top_pages.json?limit=10&${dateRangeQuery}`, {
-            headers: {
-                Authorization: 'Bearer ' + context.token
-            }
-        });
-
-        const responseData = await response.json() as {
-            data: TopPagesData
-        };
-
-        topPages.setData(responseData.data);
-        topPages.setLoading(false);
-    }, [dateRange, topPages])
-
-    const fetchTopSources = useCallback(async () => {
-        topSources.setLoading(true);
-        const response = await fetch(`${context.baseUrl}/v0/pipes/top_sources.json?limit=10&${dateRangeQuery}`, {
-            headers: {
-                Authorization: 'Bearer ' + context.token
-            }
-        });
-
-        const responseData = await response.json() as {
-            data: TopSourcesData
-        };
-
-        topSources.setData(responseData.data);
-        topSources.setLoading(false);
-    }, [dateRange, topSources])
-
-    const fetchTopDevices = useCallback(async () => {
-        topDevices.setLoading(true);
-        const response = await fetch(`${context.baseUrl}/v0/pipes/top_devices.json?limit=10&${dateRangeQuery}`, {
-            headers: {
-                Authorization: 'Bearer ' + context.token
-            }
-        });
-
-        const responseData = await response.json() as {
-            data: TopDevicesData
-        };
-
-        topDevices.setData(responseData.data);
-        topDevices.setLoading(false);
-    }, [dateRange, topDevices])
-
-    const fetchTopBrowsers = useCallback(async () => {
-        topBrowsers.setLoading(true);
-        const response = await fetch(`${context.baseUrl}/v0/pipes/top_browsers.json?limit=10&${dateRangeQuery}`, {
-            headers: {
-                Authorization: 'Bearer ' + context.token
-            }
-        });
-
-        const responseData = await response.json() as {
-            data: TopBrowsersData
-        };
-
-        topBrowsers.setData(responseData.data);
-        topBrowsers.setLoading(false);
-    }, [dateRange, topDevices])
-
-    const fetchSourceDetails = useCallback(async () => {
-        sourceDetails.setLoading(true);
-        const response = await fetch(`${context.baseUrl}/v0/pipes/source_details.json?limit=25&${dateRangeQuery}`, {
-            headers: {
-                Authorization: 'Bearer ' + context.token
-            }
-        });
-
-        const responseData = await response.json() as {
-            data: SourceDetailsData
-        };
-
-        sourceDetails.setData(responseData.data);
-        sourceDetails.setLoading(false);
-    }, [dateRange, sourceDetails])
-
+    const fetchSourceDetails = fetchAnalyticsData<SourceDetailsData>(context.sourceDetails, "source_details");
     const fetchDeviceDetails = fetchAnalyticsData<DeviceDetailsData>(context.deviceDetails, "device_details");
     const fetchBrowserDetails = fetchAnalyticsData<BrowserDetailsData>(context.browserDetails, "browser_details");
     const fetchOsDetails = fetchAnalyticsData<OsDetailsData>(operatingSystemDetails, "os_details");
     const fetchCountryDetails = fetchAnalyticsData<CountryDetailsData>(countryDetails, "country_details");
-
-    const refreshAllData = useCallback(() => {
-        fetchKeyMetrics();
-        fetchTopLocations();
-        fetchTopPages();
-        fetchTopSources();
-        fetchTopDevices();
-        fetchTopBrowsers();
-
-    }, [fetchTopLocations, fetchKeyMetrics, fetchTopPages, fetchTopSources, fetchTopDevices, fetchTopBrowsers])
 
     const refreshSourceDetailsData = useCallback(() => {
         fetchSourceDetails();
@@ -192,20 +97,31 @@ export function useAnalytics() {
 
     return {
         setDateRange,
-        refreshAllData,
+        fetchKeyMetrics,
+        fetchPageSummary,
+        fetchSourceSummary,
+        fetchChannelSummary,
+        fetchDeviceSummary,
+        fetchBrowserSummary,
+        fetchOsSummary,
+        fetchCountrySummary,
+        fetchCitySummary,
+
         refreshSourceDetailsData,
         refreshDeviceDetails,
         refreshBrowserDetails,
         refreshOperatingSystemDetails,
         refreshCountryDetails,
         keyMetrics,
-        topPages,
-        topSources,
-        topLocations,
+        pageSummary,
+        sourceSummary,
+        channelSummary,
+        countrySummary,
+        citySummary,
         dateRange,
-        topDevices,
-        topBrowsers,
-        topOperatingSystems,
+        deviceSummary,
+        browserSummary,
+        osSummary,
         sourceDetails,
         deviceDetails,
         browserDetails,

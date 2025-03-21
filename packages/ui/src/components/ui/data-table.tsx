@@ -12,6 +12,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./table"
+import { cn } from "@/lib/utils"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -44,8 +45,8 @@ export function DataTable<TData, TValue>({
   })
 
   return (
-    <div className={className}>
-      <div className="rounded-md border">
+    <div className={cn("rounded-md border", className)}>
+      <div >
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (

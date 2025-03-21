@@ -1,10 +1,9 @@
 'use client'
 
-import { TopSourcesData } from "@repo/ui/types/analytics";
 import { addDays } from "date-fns/addDays";
 import { AnalyticsDataState } from "hooks/use-analytics";
 import { createContext, useMemo, useState } from "react";
-import { BrowserDetailsData, CountryDetailsData, DeviceDetailsData, KeyMetricsData, OsDetailsData, SourceDetailsData, TopBrowsersData, TopDevicesData, TopLocationsData, TopOperatingSystemsData, TopPagesData } from "types/analytics";
+import { BrowserDetailsData, CountryDetailsData, DeviceDetailsData, KeyMetricsData, OsDetailsData, SourceDetailsData, BrowserSummaryData, DeviceSummaryData, CountrySummaryData, OperatingSystemSummaryData, PageSummaryData, CitySummaryData, SourceSummaryData, ChannelSummaryData } from "types/analytics";
 
 export interface AnalyticsData<T> extends AnalyticsDataState<T> {
     setData: (data: T) => void;
@@ -21,17 +20,19 @@ interface AnalyticsContext {
     baseUrl: string;
     token: string;
     keyMetrics: AnalyticsData<KeyMetricsData>
-    topPages: AnalyticsData<TopPagesData>;
-    topLocations: AnalyticsData<TopLocationsData>
-    topSources: AnalyticsData<TopSourcesData>
-    topDevices: AnalyticsData<TopDevicesData>
-    topBrowsers: AnalyticsData<TopBrowsersData>
-    topOperatingSystems: AnalyticsData<TopOperatingSystemsData>;
+    pageSummary: AnalyticsData<PageSummaryData>;
+    countrySummary: AnalyticsData<CountrySummaryData>
+    sourceSummary: AnalyticsData<SourceSummaryData>
+    channelSummary: AnalyticsData<ChannelSummaryData>
+    deviceSummary: AnalyticsData<DeviceSummaryData>
+    browserSummary: AnalyticsData<BrowserSummaryData>
+    osSummary: AnalyticsData<OperatingSystemSummaryData>;
     sourceDetails: AnalyticsData<SourceDetailsData>
     deviceDetails: AnalyticsData<DeviceDetailsData>
     browserDetails: AnalyticsData<BrowserDetailsData>
     operatingSystemDetails: AnalyticsData<OsDetailsData>
     countryDetails: AnalyticsData<CountryDetailsData>
+    citySummary: AnalyticsData<CitySummaryData>
     dateRange: AnalyticsDateRange
     setDateRange: (dateRange: AnalyticsDateRange) => void;
 
@@ -59,78 +60,21 @@ function defineAnalyticsDataState<T extends any[]>() {
 export const AnalyticsContext = createContext<AnalyticsContext | null>(null)
 
 export function AnalyticsProvider({ children, token }: AnalyticsProviderProps) {
-
-    const [topLocationsState, setTopLocationsState] = useState<AnalyticsDataState<TopLocationsData>>({ data: [], loading: false, error: null })
-    const [topPagesState, setTopPagesState] = useState<AnalyticsDataState<TopPagesData>>({ data: [], loading: false, error: null })
-    const [topSourcesState, setTopSourcesState] = useState<AnalyticsDataState<TopSourcesData>>({ data: [], loading: false, error: null })
-    const [topDevicesState, setTopDevicesState] = useState<AnalyticsDataState<TopDevicesData>>({ data: [], loading: false, error: null })
-    const [topBrowsersState, setTopBrowsersState] = useState<AnalyticsDataState<TopBrowsersData>>({ data: [], loading: false, error: null })
-    const [topOperatingSystemsState, setTopOperatingSystemsState] = useState<AnalyticsDataState<TopOperatingSystemsData>>({ data: [], loading: false, error: null })
-    const [metricsState, setMetricsState] = useState<AnalyticsDataState<KeyMetricsData>>({ data: [], loading: false, error: null })
-    const [sourceDetailsState, setSourceDetailsState] = useState<AnalyticsDataState<SourceDetailsData>>({ data: [], loading: false, error: null })
-
     const [dateRange, setDateRange] = useState({
         start: addDays(new Date(), -7),
         end: new Date()
     });
 
-    const keyMetrics = useMemo(() => ({
-        ...metricsState,
-        setData: (data: KeyMetricsData) => setMetricsState(prev => ({ ...prev, data })),
-        setLoading: (loading: boolean) => setMetricsState(prev => ({ ...prev, loading })),
-        setError: (error: Error | null) => setMetricsState(prev => ({ ...prev, error }))
-    }), [metricsState])
-
-
-    const topPages = useMemo(() => ({
-        ...topPagesState,
-        setData: (data: TopPagesData) => setTopPagesState(prev => ({ ...prev, data })),
-        setLoading: (loading: boolean) => setTopPagesState(prev => ({ ...prev, loading })),
-        setError: (error: Error | null) => setTopPagesState(prev => ({ ...prev, error }))
-    }), [topPagesState])
-
-    const topLocations = useMemo(() => ({
-        ...topLocationsState,
-        setData: (data: TopLocationsData) => setTopLocationsState(prev => ({ ...prev, data })),
-        setLoading: (loading: boolean) => setTopLocationsState(prev => ({ ...prev, loading })),
-        setError: (error: Error | null) => setTopLocationsState(prev => ({ ...prev, error }))
-    }), [topLocationsState])
-
-    const topSources = useMemo(() => ({
-        ...topSourcesState,
-        setData: (data: TopSourcesData) => setTopSourcesState(prev => ({ ...prev, data })),
-        setLoading: (loading: boolean) => setTopSourcesState(prev => ({ ...prev, loading })),
-        setError: (error: Error | null) => setTopSourcesState(prev => ({ ...prev, error }))
-    }), [topSourcesState])
-
-    const topDevices = useMemo(() => ({
-        ...topDevicesState,
-        setData: (data: TopDevicesData) => setTopDevicesState(prev => ({ ...prev, data })),
-        setLoading: (loading: boolean) => setTopDevicesState(prev => ({ ...prev, loading })),
-        setError: (error: Error | null) => setTopDevicesState(prev => ({ ...prev, error }))
-    }), [topDevicesState])
-
-    const topBrowsers = useMemo(() => ({
-        ...topBrowsersState,
-        setData: (data: TopBrowsersData) => setTopBrowsersState(prev => ({ ...prev, data })),
-        setLoading: (loading: boolean) => setTopBrowsersState(prev => ({ ...prev, loading })),
-        setError: (error: Error | null) => setTopBrowsersState(prev => ({ ...prev, error }))
-    }), [topBrowsersState])
-
-    const topOperatingSystems = useMemo(() => ({
-        ...topOperatingSystemsState,
-        setData: (data: TopOperatingSystemsData) => setTopOperatingSystemsState(prev => ({ ...prev, data })),
-        setLoading: (loading: boolean) => setTopOperatingSystemsState(prev => ({ ...prev, loading })),
-        setError: (error: Error | null) => setTopOperatingSystemsState(prev => ({ ...prev, error }))
-    }), [topOperatingSystemsState])
-
-    const sourceDetails = useMemo(() => ({
-        ...sourceDetailsState,
-        setData: (data: SourceDetailsData) => setSourceDetailsState(prev => ({ ...prev, data })),
-        setLoading: (loading: boolean) => setSourceDetailsState(prev => ({ ...prev, loading })),
-        setError: (error: Error | null) => setSourceDetailsState(prev => ({ ...prev, error }))
-    }), [sourceDetailsState])
-
+    const {analyticsData: keyMetrics} = defineAnalyticsDataState<KeyMetricsData>();
+    const {analyticsData: topPages} = defineAnalyticsDataState<PageSummaryData>();
+    const {analyticsData: countrySummary} = defineAnalyticsDataState<CountrySummaryData>();
+    const {analyticsData: citySummary} = defineAnalyticsDataState<CitySummaryData>();
+    const {analyticsData: topSources} = defineAnalyticsDataState<SourceSummaryData>()
+    const {analyticsData: deviceSummary} = defineAnalyticsDataState<DeviceSummaryData>()
+    const {analyticsData: browserSummary} = defineAnalyticsDataState<BrowserSummaryData>()
+    const {analyticsData: osSummary} = defineAnalyticsDataState<OperatingSystemSummaryData>()
+    const {analyticsData: sourceDetails} = defineAnalyticsDataState<SourceDetailsData>()
+    const {analyticsData: channelSummary} = defineAnalyticsDataState<ChannelSummaryData>()
     const {analyticsData: deviceDetails} = defineAnalyticsDataState<DeviceDetailsData>()
     const {analyticsData: browserDetails} = defineAnalyticsDataState<BrowserDetailsData>();
     const {analyticsData: operatingSystemDetails} = defineAnalyticsDataState<OsDetailsData>();
@@ -140,12 +84,14 @@ export function AnalyticsProvider({ children, token }: AnalyticsProviderProps) {
         baseUrl: "https://api.tinybird.co",
         token,
         keyMetrics,
-        topPages,
-        topSources,
-        topLocations,
-        topDevices,
-        topBrowsers,
-        topOperatingSystems,
+        pageSummary: topPages,
+        sourceSummary: topSources,
+        channelSummary,
+        countrySummary,
+        citySummary, 
+        deviceSummary,
+        browserSummary,
+        osSummary: osSummary,
         sourceDetails,
         dateRange,
         deviceDetails,
