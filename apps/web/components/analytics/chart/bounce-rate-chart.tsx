@@ -1,5 +1,6 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@repo/ui/components/ui/card"
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@repo/ui/components/ui/chart"
+import LearningTooltip from "components/learning-tooltip"
 import { generateLowestBounceRateInsight, getTopNWithOtherAvg } from "lib/utils"
 import { Lightbulb } from "lucide-react"
 import React from "react"
@@ -44,7 +45,9 @@ export default function BounceRateChart<T extends any[]>({ data, loading, groupK
     return <>
         <Card className="flex flex-col">
             <CardHeader className="items-center !pb-0">
-                <CardTitle>Bounce Rate</CardTitle>
+                <CardTitle className="flex items-center gap-2">Bounce Rate
+                    <LearningTooltip description="Represents the percentage of single-page visits where users left without further interaction. A high bounce rate may indicate poor engagement or mismatched content." />
+                </CardTitle>
                 <CardDescription>Percentage of single-page visits</CardDescription>
             </CardHeader>
             <CardContent className="flex-1 !p-0">
@@ -65,7 +68,7 @@ export default function BounceRateChart<T extends any[]>({ data, loading, groupK
                         />
                         <ChartTooltip
                             cursor={false}
-                            content={<ChartTooltipContent nameKey={groupKey as string}  valueFormatter={(value) => `${(value as number * 100).toFixed(1)}%`} />}
+                            content={<ChartTooltipContent nameKey={groupKey as string} valueFormatter={(value) => `${(value as number * 100).toFixed(1)}%`} />}
                         />
                         <Bar
                             dataKey={"bounce_rate"}

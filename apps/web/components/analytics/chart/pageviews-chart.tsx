@@ -1,5 +1,6 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@repo/ui/components/ui/card"
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@repo/ui/components/ui/chart"
+import LearningTooltip from "components/learning-tooltip"
 import { generateInsight, getTopNWithOtherAvg, getTopNWithOtherSum } from "lib/utils"
 import { Lightbulb } from "lucide-react"
 import React from "react"
@@ -41,7 +42,7 @@ export default function PageViewsChart<T extends any[]>({ data, loading, groupKe
     return <>
         <Card className="flex flex-col">
             <CardHeader className="items-center !pb-0">
-                <CardTitle>Page Views</CardTitle>
+                <CardTitle className="flex items-center gap-2">Page Views <LearningTooltip description="Shows the total number of pageviews, helping you understand how different traffic sources contribute to overall engagement."/></CardTitle>
                 <CardDescription>Total pages viewed by users</CardDescription>
             </CardHeader>
             <CardContent className="flex-1 !p-0">

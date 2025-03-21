@@ -2,6 +2,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@repo/ui/components/ui
 import { Card, CardHeader, CardTitle, CardContent } from "@repo/ui/components/ui/card";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@repo/ui/components/ui/table";
 import { TopLocationsData } from "@repo/ui/types/analytics";
+import { formatCountryCode } from "lib/utils";
 
 interface TopLocationsCardProps {
     data: TopLocationsData | null
@@ -36,7 +37,7 @@ export default function TopLocationsCard({ data }: TopLocationsCardProps) {
                             </TableHeader>
                             <TableBody>
                                 {aggregatedByCountry.map((country, i) => <TableRow key={i}>
-                                    <TableCell className="font-medium">{country.country}</TableCell>
+                                    <TableCell className="font-medium">{formatCountryCode(country.country)}</TableCell>
                                     <TableCell className="text-right">{country.visits}</TableCell>
                                 </TableRow>)}
 

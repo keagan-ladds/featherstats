@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import countryList from "./country-list";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -93,7 +94,7 @@ export function generateHighestSessionDurationInsight<T extends Record<string, a
   const sortedData = [...data].sort((a, b) => b[valueKey] - a[valueKey]);
   const highestItem = sortedData[0];
   
-  return `Highest ${valueKey.toString()} is from ${highestItem![groupKey]} at ${highestItem![valueKey]} seconds.`;
+  return `Highest session duration is from ${highestItem![groupKey]} at ${formatDuration(highestItem![valueKey])}.`;
 }
 
 export function formatDuration(seconds: number): string {
@@ -114,4 +115,8 @@ export function formatDuration(seconds: number): string {
   }
 
   return parts.join(' ');
+}
+
+export function formatCountryCode(countryCode: string): string {
+  return countryList[countryCode as keyof typeof countryList];
 }

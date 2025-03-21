@@ -1,10 +1,12 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@repo/ui/components/ui/card"
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@repo/ui/components/ui/chart"
+import LearningTooltip from "components/learning-tooltip"
 import { group } from "console"
 import { generateInsight, getTopNWithOtherSum } from "lib/utils"
 import { Lightbulb, TrendingUp } from "lucide-react"
 import React from "react"
-import { Cell, Label, LabelList, Pie, PieChart } from "recharts"
+import { Cell, Label, LabelList, Pie, PieChart, Sector } from "recharts"
+import { PieSectorDataItem } from "recharts/types/polar/Pie"
 
 interface Props<T extends any[]> {
     data: T
@@ -36,7 +38,7 @@ export default function VisitsChart<T extends any[]>({ data, loading, groupKey }
     return <>
         <Card className="flex flex-col">
             <CardHeader className="items-center !pb-0">
-                <CardTitle>Visits</CardTitle>
+                <CardTitle className="flex items-center gap-2">Visits <LearningTooltip description="This chart displays the distribution of total visits across different traffic segments, providing insights into where your users are coming from." /></CardTitle>
                 <CardDescription>Total number of site visits</CardDescription>
             </CardHeader>
             <CardContent className="flex-1 !p-0">

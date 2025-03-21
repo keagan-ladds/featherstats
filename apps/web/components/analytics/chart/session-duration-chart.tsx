@@ -1,6 +1,8 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@repo/ui/components/ui/card"
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@repo/ui/components/ui/chart"
-import { formatDuration, getTopNWithOtherAvg } from "lib/utils"
+import LearningTooltip from "components/learning-tooltip"
+import { formatDuration, generateHighestSessionDurationInsight, getTopNWithOtherAvg } from "lib/utils"
+import { Lightbulb } from "lucide-react"
 import React from "react"
 import { Bar, BarChart, CartesianGrid, Cell, Label, LabelList, Pie, PieChart, RadialBar, RadialBarChart, XAxis } from "recharts"
 import { BrowserDetailsData, OsDetailsData } from "types/analytics"
@@ -33,10 +35,17 @@ export default function SessionDurationChart<T extends any[]>({ data, loading, g
         }, {}) satisfies ChartConfig;
     }, [chartData])
 
+    const insightText = React.useMemo(() => {
+        return generateHighestSessionDurationInsight(chartData, "avg_session_sec", groupKey)
+    }, [chartData])
+
     return <>
         <Card className="flex flex-col">
             <CardHeader className="items-center !pb-0">
-                <CardTitle>Avg. Session Duration</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                    Avg. Session Duration
+                    <LearningTooltip description="Displays the average time users spend on your site per session. Longer durations typically indicate higher user engagement." />
+                </CardTitle>
                 <CardDescription>Average time spent per session</CardDescription>
             </CardHeader>
             <CardContent className="flex-1 !p-0">
@@ -57,7 +66,7 @@ export default function SessionDurationChart<T extends any[]>({ data, loading, g
                         />
                         <ChartTooltip
                             cursor={false}
-                            content={<ChartTooltipContent nameKey={groupKey as string} valueFormatter={(value) => formatDuration(value as number)}  />}
+                            content={<ChartTooltipContent nameKey={groupKey as string} valueFormatter={(value) => formatDuration(value as number)} />}
                         />
                         <Bar
                             dataKey={"avg_session_sec"}
@@ -69,14 +78,11 @@ export default function SessionDurationChart<T extends any[]>({ data, loading, g
                     </BarChart>
                 </ChartContainer>
             </CardContent>
-            {/* <CardFooter className="flex-col gap-2 text-sm">
+            <CardFooter className="flex-col gap-2 !text-sm">
                 <div className="flex items-center gap-2 font-medium leading-none">
-                    Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+                    <Lightbulb className="h-4 w-4 flex-shrink-0" /> {insightText}
                 </div>
-                <div className="leading-none text-muted-foreground">
-                    Showing total visitors for the last 6 months
-                </div>
-            </CardFooter> */}
+            </CardFooter>
         </Card>
     </>
 }
