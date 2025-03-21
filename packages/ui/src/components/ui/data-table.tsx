@@ -12,7 +12,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./table"
-import { cn } from "@/lib/utils"
+import { cn } from "@repo/ui/lib/utils"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
