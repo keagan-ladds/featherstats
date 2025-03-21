@@ -111,6 +111,7 @@ const ChartTooltipContent = React.forwardRef<
     nameKey?: string
     labelKey?: string,
     valueFormatter?: (value: ValueType) => string
+    nameFormatter?: (name: any) => string;
   }
 >(
   (
@@ -128,7 +129,8 @@ const ChartTooltipContent = React.forwardRef<
       color,
       nameKey,
       labelKey,
-      valueFormatter
+      valueFormatter,
+      nameFormatter
     },
     ref
   ) => {
@@ -164,6 +166,7 @@ const ChartTooltipContent = React.forwardRef<
       label,
       labelFormatter,
       valueFormatter,
+      nameFormatter,
       payload,
       hideLabel,
       labelClassName,
@@ -237,7 +240,7 @@ const ChartTooltipContent = React.forwardRef<
                       <div className="ui-grid ui-gap-1.5">
                         {nestLabel ? tooltipLabel : null}
                         <span className="ui-text-muted-foreground">
-                          {itemConfig?.label || item.name}
+                          {itemConfig?.label || nameFormatter ? nameFormatter?.(item.name) || item.name : item.name}
                         </span>
                       </div>
                       {item.value && (

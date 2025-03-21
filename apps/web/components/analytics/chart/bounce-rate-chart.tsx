@@ -62,6 +62,7 @@ export default function BounceRateChart<T extends any[]>({ data, loading, groupK
                             tickLine={false}
                             tickMargin={10}
                             axisLine={false}
+                            interval={0}
                             tickFormatter={(value) =>
                                 chartConfig[value as keyof typeof chartConfig].label
                             }

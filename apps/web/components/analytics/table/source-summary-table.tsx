@@ -23,7 +23,7 @@ export const columns: ColumnDef<SourceSummaryData[number]>[] = [
     },
     {
         accessorKey: "visits",
-        header: () => <div>Visits</div>,
+        header: () => <div className="text-right">Visits</div>,
         cell: ({ row }) => {
             return <div className="text-right">{row.getValue("visits")}</div>
         },

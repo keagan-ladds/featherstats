@@ -65,6 +65,14 @@ export type SourceDetailsData = {
     avg_session_sec: number;
 }[]
 
+export type ChannelDetailsData = {
+    channel: string;
+    visits: number;
+    pageviews: number;
+    bounce_rate: number;
+    avg_session_sec: number;
+}[]
+
 export type PageDetailsData = {
     pathname: string;
     visits: number;

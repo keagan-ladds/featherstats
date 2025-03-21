@@ -67,7 +67,7 @@ export function generateInsight<T extends Record<string, any>>(
   const topValue = topItem![valueKey];
   const percentage = ((topValue / total) * 100).toFixed(1); // Rounded to 1 decimal place
 
-  return `${percentage}% of ${valueKey.toString()} come(s) from ${topItem![groupKey]}.`;
+  return `${percentage}% of ${valueKey.toString()} comes from ${topItem![groupKey]}.`;
 }
 
 export function generateLowestBounceRateInsight<T extends Record<string, any>>(

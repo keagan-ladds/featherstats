@@ -32,7 +32,7 @@ export default function SummaryCard({ className, tabs, ...props }: SummaryCardPr
                 <CardHeader>
                     <div className="w-full flex items-center">
                         <CardTitle>{tabs[currentTab]?.title}</CardTitle>
-                        <TabsList className="ml-auto" >
+                        <TabsList className={cn("ml-auto", Object.keys(tabs).length != 1 || "invisible")} >
                             {Object.keys(tabs).map((value) =>
                                 <TabsTrigger value={value} key={value}>{tabs[value]?.triggerText}</TabsTrigger>)}
                         </TabsList>

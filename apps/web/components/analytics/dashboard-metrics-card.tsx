@@ -71,7 +71,7 @@ export default function DashboardMetricsCard({ className }: DashboardMetricsCard
     })
   }, [dateRange])
 
-  const [activeChart, setActiveChart] = useState<keyof typeof chartConfig>("pageviews")
+  const [activeChart, setActiveChart] = useState<keyof typeof chartConfig>("visits")
 
   const aggregate = useMemo(
     () => {

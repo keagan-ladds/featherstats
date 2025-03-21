@@ -3,14 +3,10 @@
 import * as React from "react"
 import {
     ChartBarBig,
-    ChartLine,
     FileText,
-    Lightbulb,
     MapPin,
     Microchip,
-    Radio,
     Share2,
-    SquareTerminal,
 } from "lucide-react"
 
 import { NavMain } from "./nav-main"
@@ -49,9 +45,20 @@ const navDomainItems = (appBaseUrl: string, domainName: string) => [
         icon: FileText
     },
     {
-        title: "Sources",
-        url: `${appBaseUrl}/${domainName}/sources`,
-        icon: Share2
+        title: "Acquisition",
+        url: `#`,
+        icon: Share2,
+        items: [
+            {
+                title: "Source",
+                url: `${appBaseUrl}/${domainName}/sources`,
+                isActive: false
+            },
+            {
+                title: "Channel",
+                url: `${appBaseUrl}/${domainName}/channels`,
+            },
+        ]
     },
     {
         title: "Location",
@@ -122,7 +129,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             item.items?.forEach(subItem => {
                 if (pathname.indexOf(subItem.url) > -1) {
                     subItem.isActive = true;
-                    itemActive =  true;
+                    itemActive = true;
                 } else {
                     subItem.isActive = false;
                 }
@@ -139,7 +146,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <NavBrand />
             </SidebarHeader>
             <SidebarContent>
-                {paramsLoading ? <Skeleton className="w-full h-52" /> : <>
+                {paramsLoading ? <SidebarNavSkeleton /> : <>
                     {domain && <NavMain items={domainNavItems} title="Analytics" />}
                     {/* <NavMain items={data.navWorkspace} title="Workspace" /> */}
                 </>}
@@ -153,3 +160,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </Sidebar>
     )
 }
+
+const SidebarNavSkeleton = () => <>
+    <div className="w-full px-2 flex flex-col gap-1">
+        <Skeleton className="h-3 w-full" />
+        {Array.from({ length: 6 }, (_, i) => 
+            <Skeleton className="h-8 w-full" key={i} />
+        )}
+    </div>
+</>

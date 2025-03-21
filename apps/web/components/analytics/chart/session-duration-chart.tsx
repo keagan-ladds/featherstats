@@ -32,7 +32,11 @@ export default function SessionDurationChart<T extends any[]>({ data, loading, g
                     label: item[groupKey]
                 }
             }
-        }, {}) satisfies ChartConfig;
+        }, {
+            bounce_rate: {
+                label: 'Bounce Rate'
+            }
+        }) satisfies ChartConfig;
     }, [chartData])
 
     const insightText = React.useMemo(() => {
@@ -60,6 +64,7 @@ export default function SessionDurationChart<T extends any[]>({ data, loading, g
                             tickLine={false}
                             tickMargin={10}
                             axisLine={false}
+                            interval={0}
                             tickFormatter={(value) =>
                                 chartConfig[value as keyof typeof chartConfig].label
                             }

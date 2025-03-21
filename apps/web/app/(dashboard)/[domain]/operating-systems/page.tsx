@@ -4,7 +4,7 @@ import BounceRateChart from "components/analytics/chart/bounce-rate-chart"
 import PageViewsChart from "components/analytics/chart/pageviews-chart"
 import SessionDurationChart from "components/analytics/chart/session-duration-chart"
 import VisitsChart from "components/analytics/chart/visits-chart"
-import OsDetailsTable from "components/analytics/operating-system/os-details-table"
+import OsDetailsTable from "components/analytics/table/os-details-table"
 import { useAnalytics } from "hooks/use-analytics"
 import { useEffect } from "react"
 

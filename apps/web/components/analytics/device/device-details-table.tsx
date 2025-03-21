@@ -5,6 +5,7 @@ import { ColumnDef } from "@tanstack/react-table"
 import { DataTable } from "@repo/ui/components/ui/data-table";
 import { formatDistance } from "date-fns";
 import { formatDuration } from "lib/utils";
+import DeviceTypeIcon from "components/icon/device-type-icon";
 
 interface Props {
     className?: string;
@@ -34,7 +35,7 @@ export const columns: ColumnDef<DeviceDetailsData[number]>[] = [
         header: () => <div>Device</div>,
         cell: ({ row }) => {
             const device = row.getValue("device") as string;
-            return <div className="font-medium whitespace-nowrap capitalize">{deviceIcon(device)}{device}</div>
+            return <div className="font-medium whitespace-nowrap capitalize flex items-center gap-2"><DeviceTypeIcon deviceType={device}/>{device}</div>
         },
     },
     {

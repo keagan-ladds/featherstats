@@ -6,6 +6,8 @@ import VisitsChart from "components/analytics/chart/visits-chart"
 import { useAnalytics } from "hooks/use-analytics"
 import { useEffect } from "react"
 import BounceRateChart from "components/analytics/chart/bounce-rate-chart"
+import CountryDetailTable from "components/analytics/table/country-detail-table"
+import { formatCountryCode } from "lib/format-utils"
 
 export default function DevicesDashboardPage() {
 
@@ -16,10 +18,11 @@ export default function DevicesDashboardPage() {
 
     return <>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <VisitsChart {...countryDetails} groupKey={"country"}/>
+            <VisitsChart {...countryDetails} groupKey={"country"} groupFormatter={formatCountryCode}/>
             <PageViewsChart {...countryDetails} groupKey={"country"}/>
             <BounceRateChart {...countryDetails} groupKey={"country"}/>
             <SessionDurationChart {...countryDetails} groupKey={"country"}/>
+            <CountryDetailTable {...countryDetails} className="col-span-full"/>
         </div>
 
     </>

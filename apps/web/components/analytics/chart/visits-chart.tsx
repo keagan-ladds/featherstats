@@ -12,10 +12,12 @@ interface Props<T extends any[]> {
     data: T
     loading?: boolean
     groupKey: keyof T[number]
+    groupFormatter?: (name: any) => string;
 }
 
+const DefaultGroupFormatter = (value: any) => value;
 
-export default function VisitsChart<T extends any[]>({ data, loading, groupKey }: Props<T>) {
+export default function VisitsChart<T extends any[]>({ data, loading, groupKey, groupFormatter = DefaultGroupFormatter }: Props<T>) {
 
     const chartConfig = {
         sessions: {
@@ -49,7 +51,7 @@ export default function VisitsChart<T extends any[]>({ data, loading, groupKey }
                     <PieChart>
                         <ChartTooltip
                             cursor={false}
-                            content={<ChartTooltipContent hideLabel />}
+                            content={<ChartTooltipContent hideLabel nameFormatter={groupFormatter} />}
                         />
                         <Pie
                             data={chartData}

@@ -2,6 +2,7 @@ import {  OperatingSystemSummaryData } from "types/analytics";
 import { ColumnDef } from "@tanstack/react-table"
 import { DataTable } from "@repo/ui/components/ui/data-table";
 import { cn } from "lib/utils";
+import OsIcon from "components/icon/os-type-icon";
 
 
 interface Props {
@@ -18,12 +19,13 @@ export const columns: ColumnDef<OperatingSystemSummaryData[number]>[] = [
         accessorKey: "os",
         header: () => <div>Operating System</div>,
         cell: ({ row }) => {
-            return <div className="font-medium whitespace-nowrap">{row.getValue("os")}</div>
+            const osName = row.getValue("os") as string;
+            return <div className="font-medium whitespace-nowrap flex items-center gap-2"><OsIcon osName={osName}/>{osName || 'Unknown'}</div>
         },
     },
     {
         accessorKey: "visits",
-        header: () => <div>Visits</div>,
+        header: () => <div className="text-right">Visits</div>,
         cell: ({ row }) => {
             return <div className="text-right">{row.getValue("visits")}</div>
         },

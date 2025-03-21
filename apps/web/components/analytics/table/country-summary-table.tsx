@@ -10,7 +10,7 @@ interface Props {
     className?: string;
 }
 
-export default function CountrySummaryTable({data, className}: Props) {
+export default function CountrySummaryTable({ data, className }: Props) {
     return <DataTable columns={columns} data={data} className={cn(className, "border-none")} />
 }
 
@@ -20,12 +20,15 @@ export const columns: ColumnDef<CountrySummaryData[number]>[] = [
         header: () => <div>Country</div>,
         cell: ({ row }) => {
             const countryCode = row.getValue("country") as string;
-            return <div className="font-medium whitespace-nowrap">{formatCountryCode(countryCode)}</div>
+            return <div className="font-medium whitespace-nowrap flex items-center gap-2">
+                <span className="text-muted-foreground">{countryCode}</span>
+                {formatCountryCode(countryCode)}
+            </div>
         },
     },
     {
         accessorKey: "visits",
-        header: () => <div>Visits</div>,
+        header: () => <div className="text-right">Visits</div>,
         cell: ({ row }) => {
             return <div className="text-right">{row.getValue("visits")}</div>
         },

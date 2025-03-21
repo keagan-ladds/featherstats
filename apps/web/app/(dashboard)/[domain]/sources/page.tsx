@@ -1,29 +1,26 @@
 'use client'
-import { CalendarDateRangePicker } from "@repo/ui/components/dashboard/date-range-picker";
-import SourceDetailsCard from "components/analytics/source-details-card";
+import BounceRateChart from "components/analytics/chart/bounce-rate-chart";
+import PageViewsChart from "components/analytics/chart/pageviews-chart";
+import SessionDurationChart from "components/analytics/chart/session-duration-chart";
+import VisitsChart from "components/analytics/chart/visits-chart";
+import SourceDetailTable from "components/analytics/table/source-detail-table";
 import { useAnalytics } from "hooks/use-analytics";
-import { useCallback, useEffect } from "react";
-import { DateRange } from "react-day-picker";
+import { useEffect } from "react";
 
 export default function SourcesDashboardPage() {
-    const {setDateRange, refreshSourceDetailsData, sourceDetails, dateRange} = useAnalytics()
+    const { setDateRange, refreshSourceDetailsData, sourceDetails, dateRange } = useAnalytics()
 
     useEffect(() => {
         refreshSourceDetailsData();
     }, [dateRange])
 
-    const setDate = useCallback((date: DateRange | undefined) => {
-        if (date) {
-            if (date.from) {
-                console.log('Updating date range: ', date)
-                setDateRange({ start: date.from!, end: date.to ?? date.from! })
-            }
-        }
-    }, [])
-
     return <>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <SourceDetailsCard {...sourceDetails}  className="col-span-full"/>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <VisitsChart {...sourceDetails} groupKey={"source"} />
+            <PageViewsChart {...sourceDetails} groupKey={"source"} />
+            <BounceRateChart {...sourceDetails} groupKey={"source"} />
+            <SessionDurationChart {...sourceDetails} groupKey={"source"} />
+            <SourceDetailTable {...sourceDetails} className="col-span-full" />
         </div>
     </>
 }

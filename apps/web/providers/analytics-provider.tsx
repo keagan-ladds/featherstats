@@ -3,7 +3,7 @@
 import { addDays } from "date-fns/addDays";
 import { AnalyticsDataState } from "hooks/use-analytics";
 import { createContext, useMemo, useState } from "react";
-import { BrowserDetailsData, CountryDetailsData, DeviceDetailsData, KeyMetricsData, OsDetailsData, SourceDetailsData, BrowserSummaryData, DeviceSummaryData, CountrySummaryData, OperatingSystemSummaryData, PageSummaryData, CitySummaryData, SourceSummaryData, ChannelSummaryData } from "types/analytics";
+import { BrowserDetailsData, CountryDetailsData, DeviceDetailsData, KeyMetricsData, OsDetailsData, SourceDetailsData, BrowserSummaryData, DeviceSummaryData, CountrySummaryData, OperatingSystemSummaryData, PageSummaryData, CitySummaryData, SourceSummaryData, ChannelSummaryData, ChannelDetailsData, CityDetailsData } from "types/analytics";
 
 export interface AnalyticsData<T> extends AnalyticsDataState<T> {
     setData: (data: T) => void;
@@ -28,10 +28,12 @@ interface AnalyticsContext {
     browserSummary: AnalyticsData<BrowserSummaryData>
     osSummary: AnalyticsData<OperatingSystemSummaryData>;
     sourceDetails: AnalyticsData<SourceDetailsData>
+    channelDetails: AnalyticsData<ChannelDetailsData>
     deviceDetails: AnalyticsData<DeviceDetailsData>
     browserDetails: AnalyticsData<BrowserDetailsData>
     operatingSystemDetails: AnalyticsData<OsDetailsData>
     countryDetails: AnalyticsData<CountryDetailsData>
+    cityDetails: AnalyticsData<CityDetailsData>
     citySummary: AnalyticsData<CitySummaryData>
     dateRange: AnalyticsDateRange
     setDateRange: (dateRange: AnalyticsDateRange) => void;
@@ -74,11 +76,13 @@ export function AnalyticsProvider({ children, token }: AnalyticsProviderProps) {
     const {analyticsData: browserSummary} = defineAnalyticsDataState<BrowserSummaryData>()
     const {analyticsData: osSummary} = defineAnalyticsDataState<OperatingSystemSummaryData>()
     const {analyticsData: sourceDetails} = defineAnalyticsDataState<SourceDetailsData>()
+    const {analyticsData: channelDetails} = defineAnalyticsDataState<ChannelDetailsData>()
     const {analyticsData: channelSummary} = defineAnalyticsDataState<ChannelSummaryData>()
     const {analyticsData: deviceDetails} = defineAnalyticsDataState<DeviceDetailsData>()
     const {analyticsData: browserDetails} = defineAnalyticsDataState<BrowserDetailsData>();
     const {analyticsData: operatingSystemDetails} = defineAnalyticsDataState<OsDetailsData>();
     const {analyticsData: countryDetails} = defineAnalyticsDataState<CountryDetailsData>();
+    const {analyticsData: cityDetails} = defineAnalyticsDataState<CityDetailsData>();
 
     const context: AnalyticsContext = {
         baseUrl: "https://api.tinybird.co",
@@ -93,11 +97,13 @@ export function AnalyticsProvider({ children, token }: AnalyticsProviderProps) {
         browserSummary,
         osSummary: osSummary,
         sourceDetails,
+        channelDetails,
         dateRange,
         deviceDetails,
         browserDetails,
         operatingSystemDetails,
         countryDetails,
+        cityDetails,
         setDateRange
     }
 

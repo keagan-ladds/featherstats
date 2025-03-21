@@ -1,30 +1,29 @@
+import { CountryDetailsData, SourceDetailsData } from "types/analytics";
 import { Button } from "@repo/ui/components/ui/button";
 import { ArrowUpDown } from "lucide-react";
 import { ColumnDef } from "@tanstack/react-table"
-import { CityDetailsData } from "types/analytics";
 import { DataTable } from "@repo/ui/components/ui/data-table";
 import { formatDuration } from "lib/utils";
+import { formatCountryCode } from "lib/format-utils";
 
 interface Props {
     className?: string;
-    data: CityDetailsData
+    data: SourceDetailsData
 }
 
-export default function CityDetailTable({ data, className }: Props) {
-    return <DataTable columns={columns} data={data} className={className} />
+
+export default function SourceDetailTable({ data, className }: Props) {
+    return <>
+    <DataTable columns={columns} data={data} className={className} />
+    </>
 }
 
-export const columns: ColumnDef<CityDetailsData[number]>[] = [
+export const columns: ColumnDef<SourceDetailsData[number]>[] = [
     {
-        accessorKey: "city",
-        header: () => <div>City</div>,
+        accessorKey: "source",
+        header: () => <div>Source</div>,
         cell: ({ row }) => {
-            const countryCode = row.original.country;
-            const city = row.getValue("city") as string
-            return <div className="font-medium whitespace-nowrap flex items-center gap-2">
-                <span className="text-muted-foreground">{countryCode}</span>
-                {city}
-            </div>
+            return <div className="font-medium whitespace-nowrap">{row.getValue("source")}</div>
         },
     },
     {

@@ -5,6 +5,7 @@ import { ColumnDef } from "@tanstack/react-table"
 import { DataTable } from "@repo/ui/components/ui/data-table";
 import { formatDistance } from "date-fns";
 import { formatDuration } from "lib/utils";
+import OsIcon from "components/icon/os-type-icon";
 
 interface Props {
     className?: string;
@@ -21,7 +22,8 @@ export const columns: ColumnDef<OsDetailsData[number]>[] = [
         accessorKey: "os",
         header: () => <div>Operating System</div>,
         cell: ({ row }) => {
-            return <div className="font-medium whitespace-nowrap capitalize">{row.getValue("os") }</div>
+            const osName = row.getValue("os") as string;
+            return <div className="font-medium whitespace-nowrap flex items-center gap-2"><OsIcon osName={osName}/>{osName || 'Unknown'}</div>
         },
     },
     {
