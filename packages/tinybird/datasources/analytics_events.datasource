@@ -1,10 +1,11 @@
 
 SCHEMA >
     `timestamp` DateTime `json:$.timestamp`,
-    `host` String `json:$.host`,
-    `app_id` String `json:$.appId`,
-    `session_id` String `json:$.sessionId`,
     `event_type` LowCardinality(String) `json:$.eventType`,
+    `workspace_id` LowCardinality(String) `json:$.workspaceId`,
+    `domain_name` LowCardinality(String) `json:$.domainName`,
+    `user_id` String `json:$.userId`,
+    `session_id` String `json:$.sessionId`,
     `payload` String `json:$.payload`
 
 ENGINE "MergeTree"

@@ -1,11 +1,10 @@
-TOKEN "source_details_endpoint_read_5046" READ
+TOKEN "browser_details_endpoint_read_5819" READ
 
-NODE source_details_0
+NODE browser_details_0
 SQL >
 
-    %
     SELECT
-        referrer,
+        browser,
         session_id,
         uniq(session_id) as visits,
         countMerge(hits) as pageviews,
@@ -13,23 +12,22 @@ SQL >
         max(latest_hit) as latest_hit_aux,
         min(first_hit) as first_hit_aux
     FROM analytics_sessions_by_date_and_domain
-    WHERE notEmpty(referrer)
-    and domainWithoutWWW(referrer) != domainWithoutWWW({{ String(domain_name, required=True) }})
-    GROUP BY referrer, session_id
+    WHERE notEmpty(browser)
+    GROUP BY browser, session_id
 
 
 
-NODE source_details_1
+NODE browser_details_1
 SQL >
 
     SELECT
-        referrer,
+        browser,
         uniq(session_id) as visits,
         sum(pageviews) as pageviews,
         sum(case when latest_hit_aux = first_hit_aux then 1 end) / visits as bounce_rate,
         avg(latest_hit_aux - first_hit_aux) as avg_session_sec
-    FROM source_details_0
-    GROUP BY referrer
+    FROM browser_details_0
+    GROUP BY browser
     ORDER BY visits DESC
 
 

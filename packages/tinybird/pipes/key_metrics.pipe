@@ -30,8 +30,8 @@ SQL >
                                 required=False,
                             )
                         }}
-                    )
-                , {{String(timezone, 'Europe/Amsterdam')}}) as end
+                    , {{String(timezone, 'Europe/Amsterdam')}})
+                ) as end
             {% else %} toStartOfDay(today()) as end
             {% end %}
         {% if _single_day %}
@@ -54,7 +54,7 @@ SQL >
                 ) as date
         {% end %}
     
-        -- where date <= now()
+      -- where date <= now()
 
 
 

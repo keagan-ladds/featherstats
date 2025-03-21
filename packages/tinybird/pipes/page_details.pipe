@@ -1,0 +1,19 @@
+TOKEN "page_details_endpoint_read_1949" READ
+
+NODE page_details_0
+SQL >
+
+    SELECT pathname, uniqMerge(visits) as visits, countMerge(hits) as pageviews 
+    FROM analytics_pages_by_date_and_domain
+    GROUP BY pathname
+    ORDER BY visits DESC
+
+
+
+NODE page_details_1
+SQL >
+
+    SELECT pathname FROM analytics_sessions_by_date_and_domain
+    GROUP BY pathname
+
+

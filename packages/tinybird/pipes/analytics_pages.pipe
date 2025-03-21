@@ -9,6 +9,7 @@ SQL >
         browser,
         os,
         pathname,
+        referrer,
         country,
         city,
         region,
@@ -18,6 +19,7 @@ SQL >
     GROUP BY
         workspace_id,
         domain_name,
+        referrer,
         period,
         device,
         browser,

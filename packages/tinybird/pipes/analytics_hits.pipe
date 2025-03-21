@@ -37,20 +37,7 @@ SQL >
     country,
     city,
     region,
-    case 
-    when match(referrer, '^http(s)?://(?:(www|mail)\.)?google\.(?:com|co\.uk|de|es|it|ca|co\.za)/$')
-    then 'https://www.google.com/'
-    when match(referrer, 'com\.google\.android\.googlequicksearchbox')
-    then 'https://www.google.com/'
-    when match(referrer, '^http(s)?://(?:(www|m|l|lm)\.)?facebook\.(?:com)/$')
-    then 'https://www.facebook.com/'
-    when match(referrer, '^http(s)?://(?:(www)\.)?youtube\.(?:com)/$')
-    then 'https://www.youtube.com/'
-    when match(referrer, '^http(s)?://(?:(www|l)\.)?instagram\.(?:com)/$')
-    then 'https://www.instagram.com/'
-    else 
-    referrer
-    end as referrer
+    domainWithoutWWW(referrer) as referrer
     FROM analytics_hits_0
 
 

@@ -8,6 +8,7 @@ SCHEMA >
     `browser` String,
     `os` String,
     `pathname` String,
+    `referrer` String,
     `country` String,
     `city` String,
     `region` String,
@@ -16,4 +17,4 @@ SCHEMA >
 
 ENGINE "AggregatingMergeTree"
 ENGINE_PARTITION_KEY "toYYYYMM(period)"
-ENGINE_SORTING_KEY "workspace_id, domain_name, period, device, browser, os, pathname, country, city, region"
+ENGINE_SORTING_KEY "workspace_id, domain_name, referrer, period, device, browser, os, pathname, country, city, region"
