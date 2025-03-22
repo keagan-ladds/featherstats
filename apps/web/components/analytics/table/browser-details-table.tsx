@@ -1,9 +1,10 @@
 import { Button } from "@repo/ui/components/ui/button";
-import { ArrowUpDown, Monitor, MonitorSmartphone, Smartphone, Tablet } from "lucide-react";
-import { BrowserDetailsData, DeviceDetailsData } from "types/analytics";
+import { ArrowUpDown } from "lucide-react";
+import { BrowserDetailsData } from "types/analytics";
 import { ColumnDef } from "@tanstack/react-table"
 import { DataTable } from "@repo/ui/components/ui/data-table";
 import { formatDistance } from "date-fns";
+import BrowserIcon from "components/icon/browser-type-icon";
 
 interface Props {
     className?: string;
@@ -20,7 +21,8 @@ export const columns: ColumnDef<BrowserDetailsData[number]>[] = [
         accessorKey: "browser",
         header: () => <div>Browser</div>,
         cell: ({ row }) => {
-            return <div className="font-medium whitespace-nowrap capitalize">{row.getValue("browser") }</div>
+            const browser = row.getValue("browser") as string;
+            return <div className="font-medium whitespace-nowrap flex items-center gap-2"><BrowserIcon browserName={browser}/>{browser}</div>
         },
     },
     {

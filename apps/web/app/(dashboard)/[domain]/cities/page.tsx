@@ -7,7 +7,7 @@ import { useAnalytics } from "hooks/use-analytics"
 import { useEffect } from "react"
 import BounceRateChart from "components/analytics/chart/bounce-rate-chart"
 import { formatCountryCode } from "lib/format-utils"
-import CityDetailTable from "components/analytics/location/city-details-table"
+import CityDetailTable from "components/analytics/table/city-details-table"
 
 export default function CityDetailsPage() {
 

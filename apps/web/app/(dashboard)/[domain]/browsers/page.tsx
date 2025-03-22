@@ -1,6 +1,6 @@
 'use client'
 
-import BrowserDetailsTable from "components/analytics/browser/browser-details-table"
+import BrowserDetailsTable from "components/analytics/table/browser-details-table"
 import BounceRateChart from "components/analytics/chart/bounce-rate-chart"
 import PageViewsChart from "components/analytics/chart/pageviews-chart"
 import SessionDurationChart from "components/analytics/chart/session-duration-chart"
