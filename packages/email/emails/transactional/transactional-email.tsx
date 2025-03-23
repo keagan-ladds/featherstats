@@ -3,31 +3,50 @@ import React from "react";
 
 interface TransactionalEmailProps {
     previewText: string;
-    children: React.ReactNode
+    title: string;
+    message: string;
+    children?: string | React.ReactElement
+    ctaText?: string;
+    ctaUrl?: string;
 }
 
-export const TransactionalEmail = ({ previewText, children }: TransactionalEmailProps,) => {
+export const TransactionalEmail = ({ previewText, title, message, ctaText, ctaUrl, children }: TransactionalEmailProps,) => {
     return (
         <Html>
             <Head />
-            <Preview>{previewText}</Preview>
             <Tailwind>
-                <Body className="bg-white my-auto mx-auto font-sans px-2">
-                    <Container className="border border-solid border-[#eaeaea] rounded mt-[40px] mx-auto p-[20px] max-w-[465px]">
-                        <Section >
-                            <Img
-                                src={`/static/featherstats-logo.png`}
-                                width="49"
-                                height="49"
-                                alt="Featherstats"
-                                className="mx-auto"
-                            />
+                <Preview>{previewText}</Preview>
+                <Body className="bg-white text-gray-900">
+                    <Container className="p-2 bg-white mx-auto max-w-md">
+                        <Section>
+                            <Text className="text-xl font-semibold">{title}</Text>
+                            <Text className="text-gray-700">{message}</Text>
                         </Section>
-                        {children}
+                        {children && (
+                            <>{children}</>
+                        )}
+                        {ctaText && ctaUrl && (
+                            <Section className="mb-3">
+                                <Button href={ctaUrl} className="bg-blue-600 text-white font-semibold px-4 py-2 rounded-md">
+                                    {ctaText}
+                                </Button>
+                            </Section>
+                        )}
+                        <Section>
+                            <Text className="text-gray-700">Cheers, <br />
+                                The Featherstats Team</Text>
+                        </Section>
+                        <Hr />
+                        <Section>
+                            <Text className="text-xs text-gray-500">
+                                This is an automated email from a no-reply address. Please do not reply.
+                                If you need assistance, visit <Link href="https://featherstats.com/">featherstats.com</Link>.
+                            </Text>
+                            <Text className="text-xs text-gray-500 mt-2">
+                                © Featherstats {new Date().getFullYear()}. All rights reserved.
+                            </Text>
+                        </Section>
                     </Container>
-                    <Section className="mx-auto mb-[40px]">
-                        <Text className="text-center text-xs text-gray-500">Featherstats</Text>
-                    </Section>
                 </Body>
             </Tailwind>
         </Html>

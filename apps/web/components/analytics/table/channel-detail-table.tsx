@@ -5,6 +5,7 @@ import { ColumnDef } from "@tanstack/react-table"
 import { DataTable } from "@repo/ui/components/ui/data-table";
 import { formatDuration } from "lib/utils";
 import { formatCountryCode } from "lib/format-utils";
+import ClarityModeTooltip from "components/clarity-mode/clarity-tooltip";
 
 interface Props {
     className?: string;
@@ -64,7 +65,7 @@ export const columns: ColumnDef<ChannelDetailsData[number]>[] = [
 
     {
         accessorKey: "avg_session_sec",
-        header: () => <div className="text-right">Average Session Duration</div>,
+        header: () => <div className="ml-auto text-right flex items-center justify-end gap-2">Average Session Duration <ClarityModeTooltip content="Session duration"/></div>,
         cell: ({ row }) => {
             const avg_session_sec = parseFloat(row.getValue("avg_session_sec"));
             const formatted = formatDuration(avg_session_sec as number)

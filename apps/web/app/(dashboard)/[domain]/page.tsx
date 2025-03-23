@@ -12,6 +12,7 @@ import DeviceSummaryTable from "components/analytics/table/device-summary-table"
 import BrowserSummaryTable from "components/analytics/table/browser-summary-table";
 import OsSummaryTable from "components/analytics/table/os-summary-table";
 import PageSummaryTable from "components/analytics/table/page-summary-table";
+import ClarityModeTooltip from "components/clarity-mode/clarity-tooltip";
 
 export default function DomainDashboardPage() {
     const analytics = useAnalytics();
@@ -21,12 +22,12 @@ export default function DomainDashboardPage() {
     const locationSummaryTabs = useMemo(() => {
         return {
             countries: {
-                title: "Top Countries",
+                title: <div className="flex items-center gap-2">Top Countries <ClarityModeTooltip content="See where your visitors are coming from! This shows the countries that generate the most traffic to your site. Understanding your audience's location helps with localization, marketing, and content strategies."/></div>,
                 triggerText: 'Countries',
                 content: <CountrySummaryTable {...countrySummary} />
             },
             cities: {
-                title: "Top Cities",
+                title: <div className="flex items-center gap-2">Top Cities <ClarityModeTooltip content="Drill down into specific cities where your visitors are located. This can help you target regional marketing campaigns or understand where demand for your content or services is highest."/></div>,
                 triggerText: 'Cities',
                 content: <CitySummaryTable {...citySummary} />
             }
@@ -36,12 +37,12 @@ export default function DomainDashboardPage() {
     const sourceSummaryTabs = useMemo(() => {
         return {
             sources: {
-                title: "Top Sources",
+                title: <div className="flex items-center gap-2">Top Sources <ClarityModeTooltip content="A 'source' is where your visitors were before they landed on your website. Common sources include search engines (like Google), social media (like Facebook), or other websites linking to yours."/></div>,
                 triggerText: 'Sources',
                 content: <SourceSummaryTable {...sourceSummary} />
             },
             channels: {
-                title: "Top Channels",
+                title: <div className="flex items-center gap-2">Top Channels <ClarityModeTooltip content="A 'channel' groups similar sources together to help you understand where your traffic is coming from at a higher level."/></div>,
                 triggerText: 'Channels',
                 content: <ChannelSummaryTable {...channelSummary} />
             }
@@ -51,7 +52,7 @@ export default function DomainDashboardPage() {
     const pageSummaryTabs = useMemo(() => {
         return {
             pages: {
-                title: "Top Pages",
+                title: <div className="flex items-center gap-2">Top Pages <ClarityModeTooltip content="These are the most visited pages on your site. Understanding which pages attract the most traffic can help you improve popular content and optimize underperforming pages."/></div>,
                 triggerText: 'Pages',
                 content: <PageSummaryTable {...pageSummary} />
             }
@@ -61,17 +62,17 @@ export default function DomainDashboardPage() {
     const deviceSummaryTabs = useMemo(() => {
         return {
             device: {
-                title: "Top Devices",
+                title: <div className="flex items-center gap-2">Top Device <ClarityModeTooltip content="See which types of devices (mobile, desktop, tablet) your visitors use. A high percentage of mobile users might indicate a need for mobile-friendly design and optimization."/></div>,
                 triggerText: 'Device',
                 content: <DeviceSummaryTable {...deviceSummary} />
             },
             browser: {
-                title: "Top Browsers",
+                title: <div className="flex items-center gap-2">Top Browsers <ClarityModeTooltip content="Find out which web browsers (like Chrome, Safari, or Firefox) your visitors use. Ensuring compatibility with the most popular browsers helps improve the user experience on your site."/></div>,
                 triggerText: 'Browsers',
                 content: <BrowserSummaryTable {...browserSummary} />
             },
             os: {
-                title: "Top Operating Systems",
+                title: <div className="flex items-center gap-2">Top Operating Systems <ClarityModeTooltip content="Check which operating systems (Windows, macOS, iOS, Android) your visitors use. This can be useful for optimizing your site's performance across different platforms."/></div>,
                 triggerText: 'OS',
                 content: <OsSummaryTable {...osSummary} />
             }
