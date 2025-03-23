@@ -1,9 +1,11 @@
 'use client'
 import DomainCard from "components/workspace/domain-card";
 import { useWorkspace } from "hooks/use-workspace";
+import { redirect } from "next/navigation";
 
 export default function DefaultDashboardPage() {
     const { domains } = useWorkspace()
+    if (domains.length == 1) redirect(`/${domains[0]?.name}`)
 
     return <>
         <div className="flex items-center justify-between space-y-2">

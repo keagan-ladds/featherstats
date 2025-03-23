@@ -24,6 +24,14 @@ export function CalendarDateRangePicker({ className, onDateSelect }: CalendarDat
         last_7_days: {
             label: "Last 7 days",
             range: {from: addDays(new Date(), -7), to: new Date()}
+        },
+        last_14_days: {
+            label: "Last 14 days",
+            range: {from: addDays(new Date(), -14), to: new Date()}
+        },
+        last_30_days: {
+            label: "Last 30 days",
+            range: {from: addDays(new Date(), -30), to: new Date()}
         }
     }
 

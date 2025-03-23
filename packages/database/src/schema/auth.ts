@@ -2,7 +2,7 @@ import { boolean, timestamp, pgTable, text, primaryKey, integer } from "drizzle-
 import type { AdapterAccountType } from "next-auth/adapters"
 import { generateUniqueString } from "../util";
 import { json } from "drizzle-orm/pg-core";
-import { UserMetadata } from "../types";
+import { UserMetadata, UserPreferences } from "../types";
 
 export const usersTable = pgTable("users", {
   id: text("id").primaryKey().$defaultFn(() => generateUniqueString()),
@@ -11,6 +11,7 @@ export const usersTable = pgTable("users", {
   emailVerified: timestamp("emailVerified", { mode: "date" }),
   image: text("image"),
   metadata: json("metadata").$type<UserMetadata>().default({}).notNull(),
+  preferences: json("preferences").$type<UserPreferences>().default({}).notNull(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at'),
 });

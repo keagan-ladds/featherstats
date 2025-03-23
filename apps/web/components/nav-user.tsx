@@ -4,6 +4,7 @@ import {
   BadgeCheck,
   Bell,
   ChevronsUpDown,
+  Cog,
   CreditCard,
   LogOut,
   Sparkles,
@@ -31,19 +32,20 @@ import {
 } from "@repo/ui/components/ui/sidebar"
 import { signOut } from "next-auth/react"
 import { useCallback } from "react"
+import { UserProfile } from "types/user"
+import { useUser } from "hooks/use-user"
+
+interface Props {
+  user: UserProfile
+}
 
 export function NavUser({
   user,
-}: {
-  user: {
-    name?: string | null
-    email?: string | null
-    image?: string | null
-  }
-}) {
+}: Props) {
   const { isMobile } = useSidebar()
+  const {openPreferences} = useUser();
   const onSignOut = useCallback(() => {
-    signOut({redirectTo: '/login'})
+    signOut({ redirectTo: '/login' })
   }, [])
 
   return (
@@ -91,22 +93,18 @@ export function NavUser({
                 Upgrade to Pro
               </DropdownMenuItem>
             </DropdownMenuGroup>
-            <DropdownMenuSeparator />
+            <DropdownMenuSeparator /> */}
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck />
-                Account
+              <DropdownMenuItem onClick={() => openPreferences()}>
+                <Cog />
+                Preferences
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              {/* <DropdownMenuItem>
                 <CreditCard />
                 Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Bell />
-                Notifications
-              </DropdownMenuItem>
+              </DropdownMenuItem> */}
             </DropdownMenuGroup>
-            <DropdownMenuSeparator /> */}
+            <DropdownMenuSeparator /> 
             <DropdownMenuItem onClick={onSignOut}>
               <LogOut />
               Log out

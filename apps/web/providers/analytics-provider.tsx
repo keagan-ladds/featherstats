@@ -2,8 +2,8 @@
 
 import { addDays } from "date-fns/addDays";
 import { AnalyticsDataState } from "hooks/use-analytics";
-import { createContext, useMemo, useState } from "react";
-import { BrowserDetailsData, CountryDetailsData, DeviceDetailsData, KeyMetricsData, OsDetailsData, SourceDetailsData, BrowserSummaryData, DeviceSummaryData, CountrySummaryData, OperatingSystemSummaryData, PageSummaryData, CitySummaryData, SourceSummaryData, ChannelSummaryData, ChannelDetailsData, CityDetailsData } from "types/analytics";
+import { createContext, useCallback, useMemo, useState } from "react";
+import { BrowserDetailsData, CountryDetailsData, DeviceDetailsData, KeyMetricsData, OsDetailsData, SourceDetailsData, BrowserSummaryData, DeviceSummaryData, CountrySummaryData, OperatingSystemSummaryData, PageSummaryData, CitySummaryData, SourceSummaryData, ChannelSummaryData, ChannelDetailsData, CityDetailsData, PageDetailsData } from "types/analytics";
 
 export interface AnalyticsData<T> extends AnalyticsDataState<T> {
     setData: (data: T) => void;
@@ -27,6 +27,7 @@ interface AnalyticsContext {
     deviceSummary: AnalyticsData<DeviceSummaryData>
     browserSummary: AnalyticsData<BrowserSummaryData>
     osSummary: AnalyticsData<OperatingSystemSummaryData>;
+    pageDetails: AnalyticsData<PageDetailsData>,
     sourceDetails: AnalyticsData<SourceDetailsData>
     channelDetails: AnalyticsData<ChannelDetailsData>
     deviceDetails: AnalyticsData<DeviceDetailsData>
@@ -37,12 +38,13 @@ interface AnalyticsContext {
     citySummary: AnalyticsData<CitySummaryData>
     dateRange: AnalyticsDateRange
     setDateRange: (dateRange: AnalyticsDateRange) => void;
-
+    refreshToken: () => Promise<string>
 }
 
 interface AnalyticsProviderProps {
     children: React.ReactNode
     token: string
+    refreshToken: () => Promise<string>
 }
 
 
@@ -61,7 +63,9 @@ function defineAnalyticsDataState<T extends any[]>() {
 
 export const AnalyticsContext = createContext<AnalyticsContext | null>(null)
 
-export function AnalyticsProvider({ children, token }: AnalyticsProviderProps) {
+export function AnalyticsProvider({ children, ...props }: AnalyticsProviderProps) {
+
+    const [token, setToken] = useState<string>(props.token);
     const [dateRange, setDateRange] = useState({
         start: addDays(new Date(), -7),
         end: new Date()
@@ -75,6 +79,7 @@ export function AnalyticsProvider({ children, token }: AnalyticsProviderProps) {
     const {analyticsData: deviceSummary} = defineAnalyticsDataState<DeviceSummaryData>()
     const {analyticsData: browserSummary} = defineAnalyticsDataState<BrowserSummaryData>()
     const {analyticsData: osSummary} = defineAnalyticsDataState<OperatingSystemSummaryData>()
+    const {analyticsData: pageDetails} = defineAnalyticsDataState<PageDetailsData>()
     const {analyticsData: sourceDetails} = defineAnalyticsDataState<SourceDetailsData>()
     const {analyticsData: channelDetails} = defineAnalyticsDataState<ChannelDetailsData>()
     const {analyticsData: channelSummary} = defineAnalyticsDataState<ChannelSummaryData>()
@@ -83,6 +88,12 @@ export function AnalyticsProvider({ children, token }: AnalyticsProviderProps) {
     const {analyticsData: operatingSystemDetails} = defineAnalyticsDataState<OsDetailsData>();
     const {analyticsData: countryDetails} = defineAnalyticsDataState<CountryDetailsData>();
     const {analyticsData: cityDetails} = defineAnalyticsDataState<CityDetailsData>();
+
+    const refreshToken = useCallback(async () => {
+        const newToken = await props.refreshToken();
+        setToken(newToken)
+        return newToken
+    }, [token])
 
     const context: AnalyticsContext = {
         baseUrl: "https://api.tinybird.co",
@@ -96,6 +107,7 @@ export function AnalyticsProvider({ children, token }: AnalyticsProviderProps) {
         deviceSummary,
         browserSummary,
         osSummary: osSummary,
+        pageDetails,
         sourceDetails,
         channelDetails,
         dateRange,
@@ -104,7 +116,8 @@ export function AnalyticsProvider({ children, token }: AnalyticsProviderProps) {
         operatingSystemDetails,
         countryDetails,
         cityDetails,
-        setDateRange
+        setDateRange,
+        refreshToken
     }
 
     return <>

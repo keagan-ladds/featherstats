@@ -10,7 +10,7 @@ export async function GET(request: NextRequest, context: { params: Promise<{ sou
 }
 
 const getSourceFavicon = unstable_cache(async (source: string) => {
-    const sourceIcon = knowSourceIcons[source.toLowerCase()] || `https://${source}/favicon.ico`;
+    const sourceIcon = knowSourceIcons[source.toLowerCase()] || `https://t2.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://${source}&size=32`;
     return await fetchExternalImage(sourceIcon)
 })
 
@@ -30,13 +30,13 @@ async function fetchExternalImage(href: string) {
 
     }
 
-    const fallbackIconPath = path.join(process.cwd(), 'public', 'icons', 'source', 'fallback.svg');
-    const fallbackIconContent = fs.readFileSync(fallbackIconPath, 'utf-8');
+    const fallbackIconPath = path.join(process.cwd(), 'public', 'icons', 'source', 'fallback.png');
+    const fallbackIconContent = fs.readFileSync(fallbackIconPath);
 
 
     return new NextResponse(fallbackIconContent, {
         headers: {
-            'content-type': 'image/svg+xml',
+            'content-type': 'image/png',
             'cache-control': 'public, max-age=2629800',
         }
     })
@@ -44,7 +44,7 @@ async function fetchExternalImage(href: string) {
 
 const knowSourceIcons: Record<string, string> = {
     "google": "https://google.com/favicon.ico",
-    "instagram": "https://instagram.com/favicon.ico",
+    "instagram": "https://t2.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://instagram.com&size=32",
     "bing": "https://www.bing.com/favicon.ico",
     "facebook": "https://www.facebook.com/favicon.ico",
     "linkedin": "https://www.linkedin.com/favicon.ico"

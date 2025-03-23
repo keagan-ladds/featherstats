@@ -20,11 +20,11 @@ import {
 } from "@repo/ui/components/ui/sidebar"
 import { DomainSwitcher } from "./domain-switcher"
 import { useWorkspace } from "hooks/use-workspace"
-import { useSession } from "next-auth/react"
 import { useEffect, useState } from "react"
 import { Skeleton } from "@repo/ui/components/ui/skeleton"
 import { useParams, usePathname } from "next/navigation"
 import { NavBrand } from "./nav-brand"
+import { useUser } from "hooks/use-user"
 
 
 const navDomainItems = (appBaseUrl: string, domainName: string) => [
@@ -106,17 +106,13 @@ const navDomainItems = (appBaseUrl: string, domainName: string) => [
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
-    const [sessionLoading, setSessionLoading] = useState<boolean>(true);
     const [paramsLoading, setParamsLoading] = useState<boolean>(true);
     const { domains } = useWorkspace()
-    const { data: session } = useSession();
+    const { profile } = useUser();
     const pathname = usePathname()
     const params = useParams()
     const domain = params.domain;
 
-    useEffect(() => {
-        if (session) setSessionLoading(false)
-    }, [session])
 
     useEffect(() => {
         if (params) setParamsLoading(false);
@@ -152,9 +148,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 </>}
             </SidebarContent>
             <SidebarFooter>
-                {sessionLoading || !session ? <>
-                    <Skeleton className="w-full h-12" />
-                </> : <NavUser user={session.user!} />}
+                <NavUser user={profile} />
             </SidebarFooter>
             <SidebarRail />
         </Sidebar>
@@ -164,7 +158,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 const SidebarNavSkeleton = () => <>
     <div className="w-full px-2 flex flex-col gap-1">
         <Skeleton className="h-3 w-full" />
-        {Array.from({ length: 6 }, (_, i) => 
+        {Array.from({ length: 6 }, (_, i) =>
             <Skeleton className="h-8 w-full" key={i} />
         )}
     </div>

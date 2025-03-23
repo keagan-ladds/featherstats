@@ -48,6 +48,7 @@ export class TinybirdClient {
             "device_summary",
             "browser_summary",
             "os_summary",
+            "page_details",
             "source_details",
             "channel_details",
             "device_details",

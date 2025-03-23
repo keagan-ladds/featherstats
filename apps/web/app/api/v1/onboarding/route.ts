@@ -4,9 +4,7 @@ import { OnboardingDataSchema } from "lib/validation/onboarding";
 import { NextRequest, NextResponse } from "next/server";
 import { userService } from "services/user.service";
 import { workspaceService } from "services/workspace.service";
-import { OnboardingData } from "types/onboarding";
 import { WorkspaceWithDomains } from "types/workspace";
-import { z } from "zod";
 
 export function POST(request: NextRequest) {
     return withAuth(request, async (_, userId) => {

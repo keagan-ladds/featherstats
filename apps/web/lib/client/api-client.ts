@@ -1,8 +1,9 @@
 
 'use client'
 
-import { ApiErrorResponse } from "types/api";
+import { ApiErrorResponse, ApiResponse } from "types/api";
 import { OnboardingData } from "types/onboarding";
+import { UpdateUserPreferencesOptions } from "types/user";
 import { WorkspaceWithDomains } from "types/workspace";
 
 const ApiBaseUrl = process.env.NEXT_PUBLIC_API_URL || '';
@@ -29,6 +30,10 @@ async function makeApiRequest<TResponse>(url: string, method: string, body?: any
 
 export async function onboardDefaultWorkspace(onboardingData: OnboardingData): Promise<WorkspaceWithDomains> {
     return makeApiRequest("/api/v1/onboarding", "POST", onboardingData);
+}
+
+export async function updateUserProfile(opts: UpdateUserPreferencesOptions): Promise<ApiResponse> {
+    return makeApiRequest("/api/v1/profile", "POST", opts);
 }
 
 export class ApiError extends Error {

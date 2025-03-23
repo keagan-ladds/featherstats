@@ -1,17 +1,19 @@
 'use client'
-import { CalendarDateRangePicker } from "@repo/ui/components/dashboard/date-range-picker";
-import PageDetailsTable from "components/analytics/page-details-table";
+
+import PageDetailsTable from "components/analytics/table/page-details-table";
 import { useAnalytics } from "hooks/use-analytics";
-import { useCallback } from "react";
-import { DateRange } from "react-day-picker";
+import { useEffect } from "react";
 
 export default function PagesDashboardPage() {
-    const {setDateRange} = useAnalytics()
+    const {dateRange, fetchPageDetails, pageDetails} = useAnalytics()
 
+    useEffect(() => {
+        fetchPageDetails();
+    }, [dateRange, fetchPageDetails])
 
     return <>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <PageDetailsTable data={[]} className="col-span-full"/>
+            <PageDetailsTable {...pageDetails} className="col-span-full"/>
         </div>
     </>
 }

@@ -3,8 +3,15 @@ import { usersTable } from "../schema/auth";
 
 export type User = typeof usersTable.$inferSelect
 export type UserMetadata = {
-    onboardedAt?: Date
+    
 }
+
+export type UserPreferences = {
+    theme?: 'dark' | 'light' | 'system',
+    clarifyModeEnabled?: boolean
+}
+
+
 export type WorkspaceUsers = typeof workspaceUsersTable.$inferSelect;
 export type Domain = typeof domainsTable.$inferSelect
 export type DomainVerificationStatus = typeof domainVerificationStatus.enumValues[number]

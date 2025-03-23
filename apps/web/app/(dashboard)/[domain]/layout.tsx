@@ -11,6 +11,8 @@ interface AnalyticsLayoutProps {
     params: Promise<{ domain: string }>
 }
 
+
+
 export default async function AnalyticsLayout({ children, params }: AnalyticsLayoutProps) {
     const domainName = (await params).domain;
     const session = await auth();
@@ -18,11 +20,16 @@ export default async function AnalyticsLayout({ children, params }: AnalyticsLay
 
     if (!domain) return notFound();
 
-    const token = tinybirdClient.generateToken(domain.workspaceId, domainName);
+    async function refreshToken(): Promise<string> {
+        'use server'
+        return tinybirdClient.generateToken(domain!.workspaceId, domain!.name);
+    }
+
+    const token = await refreshToken();
 
     return <>
         <DomainProvider domain={domain}>
-            <AnalyticsProvider token={token}>
+            <AnalyticsProvider token={token} refreshToken={refreshToken}>
                 <DashboardLayout>
                     {children}
                 </DashboardLayout>

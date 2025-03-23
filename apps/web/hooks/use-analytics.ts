@@ -3,7 +3,7 @@
 import { AnalyticsContext, AnalyticsData } from "providers/analytics-provider"
 import { useCallback, useContext } from "react"
 import { formatISO } from 'date-fns'
-import { BrowserDetailsData, CountryDetailsData, DeviceDetailsData, OsDetailsData, SourceDetailsData, BrowserSummaryData, DeviceSummaryData, PageSummaryData, CountrySummaryData, KeyMetricsData, SourceSummaryData, OperatingSystemSummaryData, CitySummaryData, ChannelSummaryData, ChannelDetailsData, CityDetailsData } from "types/analytics"
+import { BrowserDetailsData, CountryDetailsData, DeviceDetailsData, OsDetailsData, SourceDetailsData, BrowserSummaryData, DeviceSummaryData, PageSummaryData, CountrySummaryData, KeyMetricsData, SourceSummaryData, OperatingSystemSummaryData, CitySummaryData, ChannelSummaryData, ChannelDetailsData, CityDetailsData, PageDetailsData } from "types/analytics"
 
 
 export interface AnalyticsDataState<T> {
@@ -24,14 +24,27 @@ export function useAnalytics() {
     const dateRangeQuery = `date_from=${formatISO(dateRange.start, { representation: "date" })}&date_to=${formatISO(dateRange.end, { representation: "date" })}`;
 
 
+    
+
     function fetchAnalyticsData<T>(data: AnalyticsData<T>, pipe: string) {
         return useCallback(async () => {
             data.setLoading(true);
-            const response = await fetch(`${context!.baseUrl}/v0/pipes/${pipe}.json?${dateRangeQuery}`, {
+            let response = await fetch(`${context!.baseUrl}/v0/pipes/${pipe}.json?${dateRangeQuery}`, {
                 headers: {
                     Authorization: 'Bearer ' + context!.token
                 }
             });
+
+            // If we get a 403, it's likely that the token has expired so refresh and retry
+            if (response.status == 403) {
+                const token = await context!.refreshToken();
+                response = await fetch(`${context!.baseUrl}/v0/pipes/${pipe}.json?${dateRangeQuery}`, {
+                    headers: {
+                        Authorization: 'Bearer ' + token
+                    }
+                });
+            }
+
             if (response.ok) {
                 const responseData = await response.json() as {
                     data: T
@@ -44,24 +57,7 @@ export function useAnalytics() {
         }, [dateRange])
     }
 
-    const fetchKeyMetrics = useCallback(async () => {
-
-        keyMetrics.setLoading(true);
-        const response = await fetch(`${context.baseUrl}/v0/pipes/key_metrics.json?${dateRangeQuery}`, {
-            headers: {
-                Authorization: 'Bearer ' + context.token
-            }
-        });
-
-        const responseData = await response.json() as {
-            data: KeyMetricsData
-        };
-
-        keyMetrics.setData(responseData.data);
-        keyMetrics.setLoading(false);
-    }, [dateRange, keyMetrics])
-
-
+    const fetchKeyMetrics = fetchAnalyticsData<KeyMetricsData>(context.keyMetrics, "key_metrics")
     const fetchPageSummary = fetchAnalyticsData<PageSummaryData>(context.pageSummary, "page_summary");
     const fetchSourceSummary = fetchAnalyticsData<SourceSummaryData>(context.sourceSummary, "source_summary");
     const fetchChannelSummary = fetchAnalyticsData<ChannelSummaryData>(context.channelSummary, "channel_summary");
@@ -71,6 +67,7 @@ export function useAnalytics() {
     const fetchCountrySummary = fetchAnalyticsData<CountrySummaryData>(context.countrySummary, "country_summary");
     const fetchCitySummary = fetchAnalyticsData<CitySummaryData>(context.citySummary, "city_summary");
 
+    const fetchPageDetails = fetchAnalyticsData<PageDetailsData>(context.pageDetails, "page_details");
     const fetchSourceDetails = fetchAnalyticsData<SourceDetailsData>(context.sourceDetails, "source_details");
     const fetchChannelDetails = fetchAnalyticsData<ChannelDetailsData>(context.channelDetails, "channel_details");
     const fetchDeviceDetails = fetchAnalyticsData<DeviceDetailsData>(context.deviceDetails, "device_details");
@@ -110,7 +107,7 @@ export function useAnalytics() {
         fetchOsSummary,
         fetchCountrySummary,
         fetchCitySummary,
-
+        fetchPageDetails,
         fetchChannelDetails,
         refreshSourceDetailsData,
         refreshDeviceDetails,
@@ -128,6 +125,7 @@ export function useAnalytics() {
         deviceSummary,
         browserSummary,
         osSummary,
+        pageDetails: context.pageDetails,
         sourceDetails,
         channelDetails,
         deviceDetails,
