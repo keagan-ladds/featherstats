@@ -30,11 +30,11 @@ export default function SummaryCard({ className, tabs, ...props }: SummaryCardPr
         <Card className={cn("min-h-[380px]", className)} >
             <Tabs defaultValue={props.defaultTab} onValueChange={onValueChange} >
                 <CardHeader>
-                    <div className="w-full flex items-center">
+                    <div className="w-full grid gap-6 lg:flex items-center">
                         <CardTitle>{tabs[currentTab]?.title}</CardTitle>
-                        <TabsList className={cn("ml-auto", Object.keys(tabs).length != 1 || "invisible")} >
+                        <TabsList className={cn("w-full lg:w-auto lg:ml-auto", Object.keys(tabs).length != 1 || "hidden lg:invisible")} >
                             {Object.keys(tabs).map((value) =>
-                                <TabsTrigger value={value} key={value}>{tabs[value]?.triggerText}</TabsTrigger>)}
+                                <TabsTrigger className="w-full lg:w-auto" value={value} key={value}>{tabs[value]?.triggerText}</TabsTrigger>)}
                         </TabsList>
                     </div>
                 </CardHeader>

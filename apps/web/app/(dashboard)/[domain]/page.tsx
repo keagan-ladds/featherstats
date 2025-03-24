@@ -13,8 +13,10 @@ import BrowserSummaryTable from "components/analytics/table/browser-summary-tabl
 import OsSummaryTable from "components/analytics/table/os-summary-table";
 import PageSummaryTable from "components/analytics/table/page-summary-table";
 import ClarityModeTooltip from "components/clarity-mode/clarity-tooltip";
+import useAppShell from "hooks/use-app-shell";
 
 export default function DomainDashboardPage() {
+    const {setPageTitle} = useAppShell()
     const analytics = useAnalytics();
     const { countrySummary, citySummary, sourceSummary, channelSummary, deviceSummary, browserSummary, osSummary, pageSummary, dateRange } = analytics;
     const { fetchKeyMetrics, fetchPageSummary, fetchSourceSummary, fetchChannelSummary, fetchCountrySummary, fetchCitySummary, fetchDeviceSummary, fetchBrowserSummary, fetchOsSummary } = analytics;
@@ -89,6 +91,10 @@ export default function DomainDashboardPage() {
     const [sourceSummaryTab, setSourceSummaryTab] = useState<SourceSummaryTabs>("sources");
     const [locationSummaryTab, setLocationSummaryTab] = useState<LocationSummaryTabs>("countries")
     const [deviceSummaryTab, setDeviceSummaryTab] = useState<DeviceSummaryTabs>("device")
+
+    useEffect(() => {
+        setPageTitle("")
+    }, [])
 
     // Always load key metrics & pages summary data
     useEffect(() => {

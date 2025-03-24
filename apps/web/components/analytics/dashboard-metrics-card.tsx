@@ -1,13 +1,13 @@
-import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@repo/ui/components/ui/card";
+import { Card, CardHeader, CardContent } from "@repo/ui/components/ui/card";
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@repo/ui/components/ui/chart";
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts"
 import { useCallback, useMemo, useState } from "react";
 import { cn } from "@repo/ui/lib/utils";
 import { Skeleton } from "@repo/ui/components/ui/skeleton";
-import { KeyMetricsData } from "types/analytics";
 import { useAnalytics } from "hooks/use-analytics";
-import { isSameDay, formatDistance  } from "date-fns"
+import { isSameDay } from "date-fns"
 import { formatDuration } from "lib/utils";
+import ClarityModeTooltip from "components/clarity-mode/clarity-tooltip";
 
 interface DashboardMetricsCardProps {
   className?: string | undefined
@@ -18,19 +18,19 @@ const chartConfig = {
     label: "Page Views",
   },
   visits: {
-    label: "Sessions",
+    label: <div className="flex items-center gap-2">Visits <ClarityModeTooltip className="size-3" content="A visit (or session) is when a user comes to your site and interacts with it." /></div>,
     color: "hsl(var(--chart-1))"
   },
   pageviews: {
-    label: "Page Views",
+    label: <div className="flex items-center gap-2">Pageviews <ClarityModeTooltip className="size-3" content="A pageview is recorded each time a page on your website is loaded or reloaded. One visit can include multiple pageviews if the user navigates through different pages." /></div>,
     color: "hsl(var(--chart-2))",
   },
   bounce_rate: {
-    label: "Bounce Rate",
+    label: <div className="flex items-center gap-2">Bounce Rate <ClarityModeTooltip className="size-3" content="Bounce rate is the percentage of visitors who leave after viewing only one page without interacting. A high bounce rate may indicate that users didn't find what they were looking for." /></div>,
     color: "hsl(var(--chart-3))",
   },
   avg_session_sec: {
-    label: "Average Session Duration",
+    label: <div className="flex items-center gap-2">Avg. Session Duration <ClarityModeTooltip className="size-3" content="This is the average time visitors spend on your site during a session. A higher session duration usually means users are engaged with your content." /></div>,
     color: "hsl(var(--chart-4))",
   }
 } satisfies ChartConfig
@@ -80,13 +80,13 @@ export default function DashboardMetricsCard({ className }: DashboardMetricsCard
 
       const visits = keyMetrics.data && keyMetrics.data.reduce((acc, curr) => acc + curr.visits, 0) || 0
       const pageviews = keyMetrics.data && keyMetrics.data.reduce((acc, curr) => acc + curr.pageviews, 0) || 0
-      const bounce_rate = keyMetrics.data && keyMetrics.data.reduce((acc, curr) => acc + curr.bounce_rate/avg_denom, 0) * 100.0 || 0
+      const bounce_rate = keyMetrics.data && keyMetrics.data.reduce((acc, curr) => acc + curr.bounce_rate / avg_denom, 0) * 100.0 || 0
       const avg_session_sec = keyMetrics.data && keyMetrics.data.reduce((acc, curr) => acc + curr.avg_session_sec, 0) / avg_denom || 0
 
       return {
         visits: visits.toLocaleString(),
         pageviews: pageviews.toLocaleString(),
-        bounce_rate: bounce_rate.toLocaleString(undefined, {maximumFractionDigits: 0}) + " %",
+        bounce_rate: bounce_rate.toLocaleString(undefined, { maximumFractionDigits: 0 }) + " %",
         avg_session_sec: formatDuration(avg_session_sec as number)
       }
     }, [keyMetrics.data]
@@ -121,7 +121,7 @@ export default function DashboardMetricsCard({ className }: DashboardMetricsCard
           })}
         </div>
       </CardHeader>
-      <CardContent className="px-2 sm:p-6">
+      <CardContent className="px-2 sm:p-6 mt-6">
         <ChartContainer
           config={chartConfig}
           className="aspect-auto h-[250px] w-full"
@@ -135,6 +135,13 @@ export default function DashboardMetricsCard({ className }: DashboardMetricsCard
             }}
           >
             <CartesianGrid vertical={false} />
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              tickCount={3}
+              tickFormatter={(value) => tooltipValueFormatters[activeChart as keyof typeof tooltipValueFormatters]?.(value) || value.toLocaleString()}
+            />
             <XAxis
               dataKey="date"
               tickLine={false}
@@ -154,7 +161,7 @@ export default function DashboardMetricsCard({ className }: DashboardMetricsCard
                   labelFormatter={(value) => {
                     return formatTooltipLabel(new Date(value))
                   }}
-                  valueFormatter={(value)=> tooltipValueFormatters[activeChart as keyof typeof tooltipValueFormatters]?.(value) || value.toLocaleString()}
+                  valueFormatter={(value) => tooltipValueFormatters[activeChart as keyof typeof tooltipValueFormatters]?.(value) || value.toLocaleString()}
                 />
               }
             />
