@@ -8,6 +8,7 @@ export const AuthConfig = {
     providers: [GitHub, Google, Resend({
         apiKey: process.env.RESEND_API_KEY,
         from: 'no-reply@featherstats.com',
+        maxAge: 300,
         generateVerificationToken: () => {
             const rnd = Math.floor(Math.random() * 899999 + 100000)
             return `${rnd}`;

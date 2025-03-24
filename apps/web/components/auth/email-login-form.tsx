@@ -12,7 +12,6 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@repo/ui/components/ui/form";
 import { REGEXP_ONLY_DIGITS } from "input-otp"
 import React from "react";
-import { redirect } from "next/navigation";
 
 interface Props {
     className?: string;
@@ -22,7 +21,9 @@ export default function EmailLoginForm({ className, ...props }: Props) {
 
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [isVerify, setIsVerify] = useState<boolean>(false)
+    const [isRedirecting, setIsRedirecting] = useState<boolean>(false)
     const [token, setToken] = useState<string>()
+    const [error, setError] = useState<string>();
 
     const emailFormSchema = z.object({
         email: z.string().email()
@@ -35,22 +36,39 @@ export default function EmailLoginForm({ className, ...props }: Props) {
         },
     })
 
-
-
     const onSubmit = async (data: z.infer<typeof emailFormSchema>) => {
         const email = data.email;
         setIsLoading(true);
         try {
-            const signInResult = await signIn("resend", { redirect: false, email })
+            await signIn("resend", { redirect: false, email })
             setIsVerify(true)
         } catch (err) { }
-        setIsLoading(true);
+        setIsLoading(false);
     }
 
-    const onVerify = useCallback((token: string) => {
+    const onVerify = useCallback(async (token: string) => {
         const email = emailForm.getValues().email.toLocaleLowerCase();
-        redirect(`/api/auth/callback/resend?token=${token}&email=${email}`)
+        setIsLoading(true);
+        const res = await fetch(`/api/auth/callback/resend?token=${token}&email=${encodeURIComponent(email)}`)
+        if (res.ok) {
+            setIsRedirecting(true);
+            window.location.href = '/'
+        } else {
+            setError("The OTP you entered is invalid or has expired. Please request a new code and try again.")
+        }
+        setIsLoading(false);
     }, [token])
+
+    if (isRedirecting) {
+        return <>
+            <div className={cn("grid gap-6 items-center", className)} {...props}>
+                <div className="flex items-center gap-2 justify-center">
+                    <Loader className="mr-2 h-4 w-4 animate-spin" />
+                    <h1 className="text-xl font-bold text-center">Redirecting...</h1>
+                </div>
+            </div>
+        </>
+    }
 
     if (isVerify) {
         return <>
@@ -62,17 +80,40 @@ export default function EmailLoginForm({ className, ...props }: Props) {
                     </div>
                 </div>
                 <div className="flex flex-col items-center gap-2">
-                    <InputOTP maxLength={6} pattern={REGEXP_ONLY_DIGITS} value={token} onChange={setToken} onComplete={onVerify}>
+                    <InputOTP className={cn(error && "animate-shake")} disabled={isLoading} maxLength={6} pattern={REGEXP_ONLY_DIGITS} value={token} onChange={setToken} onComplete={onVerify}>
                         <InputOTPGroup>
-                            <InputOTPSlot index={0} className="!h-20 !w-12" />
-                            <InputOTPSlot index={1} className="!h-20 !w-12" />
-                            <InputOTPSlot index={2} className="!h-20 !w-12" />
-                            <InputOTPSlot index={3} className="!h-20 !w-12" />
-                            <InputOTPSlot index={4} className="!h-20 !w-12" />
-                            <InputOTPSlot index={5} className="!h-20 !w-12" />
+                            <InputOTPSlot index={0} className="!h-16 !w-12" />
+                        </InputOTPGroup>
+                        <InputOTPGroup>
+                            <InputOTPSlot index={1} className="!h-16 !w-12" />
+                        </InputOTPGroup>
+                        <InputOTPGroup>
+                            <InputOTPSlot index={2} className="!h-16 !w-12" />
+                        </InputOTPGroup>
+                        <InputOTPGroup>
+                            <InputOTPSlot index={3} className="!h-16 !w-12" />
+                        </InputOTPGroup>
+                        <InputOTPGroup>
+                            <InputOTPSlot index={4} className="!h-16 !w-12" />
+                        </InputOTPGroup>
+                        <InputOTPGroup>
+                            <InputOTPSlot index={5} className="!h-16 !w-12" />
                         </InputOTPGroup>
                     </InputOTP>
+
                 </div>
+                {isLoading && (<div className="flex flex-col items-center">
+                    <div className="flex items-center gap-2 text-muted-foreground text-sm">
+                        <Loader className="mr-2 h-4 w-4 animate-spin" />
+                        Verifying...
+                    </div>
+                </div>)}
+
+                {error && (<div className="flex flex-col items-center text-sm">
+                    <div className="flex items-center text-destructive text-center">
+                        {error}
+                    </div>
+                </div>)}
             </div></>
     }
 
