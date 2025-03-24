@@ -8,6 +8,7 @@ import SocialLoginGithub from "./login-social-github";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
+
 export function LoginForm({
     className,
     ...props
@@ -44,7 +45,7 @@ export function LoginForm({
                     </span>
                 </div>
                 <div className="text-sm hover:underline">
-                    <Link href="#" className="flex items-center justify-center text-primary font-bold ">Continue with Email
+                    <Link href="login/email" className="flex items-center justify-center text-primary font-bold ">Continue with Email
                         <ArrowRight className="inline ml-2 size-4" />
                     </Link>
                 </div>

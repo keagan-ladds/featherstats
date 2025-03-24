@@ -7,10 +7,10 @@ interface Props {
     oneTimePasscode: string;
 }
 
-const OtpEmail = ({ userName, oneTimePasscode }: Props) => {
+export const OtpEmail = ({ userName, oneTimePasscode }: Props) => {
     return (
         <TransactionalEmail
-            previewText="Welcome to Featherstats! Get started with your dashboard."
+            previewText="Your login code for Featherstats."
             title={`Hi, ${userName}`}
             message="Use the code below to log into your Featherstats account:">
             <Section>
