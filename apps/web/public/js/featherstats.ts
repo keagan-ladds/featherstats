@@ -71,6 +71,16 @@ function init() {
     }
   });
 
+  window.addEventListener("beforeunload", function (event) {
+    client.track('page_leave', {
+      payload: {
+        ...defaultPayload,
+        pathname: pathname
+      }
+    });
+    client.cleanup();
+  });
+
 }
 
 // Initialize when the script loads
