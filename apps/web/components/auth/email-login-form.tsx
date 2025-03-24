@@ -74,13 +74,13 @@ export default function EmailLoginForm({ className, ...props }: Props) {
         return <>
             <div className={cn("grid gap-6", className)} {...props}>
                 <div className="flex flex-col items-center gap-2">
-                    <h1 className="text-3xl font-bold">Verification</h1>
+                    <h1 className={cn("text-3xl font-bold", error && "animate-shake")}>Verification</h1>
                     <div className="text-center text-sm">
                         If you have an account, we have sent a code to {emailForm.getValues().email}. Enter it below.
                     </div>
                 </div>
                 <div className="flex flex-col items-center gap-2">
-                    <InputOTP className={cn(error && "animate-shake")} disabled={isLoading} maxLength={6} pattern={REGEXP_ONLY_DIGITS} value={token} onChange={setToken} onComplete={onVerify}>
+                    <InputOTP disabled={isLoading} maxLength={6} pattern={REGEXP_ONLY_DIGITS} value={token} onChange={setToken} onComplete={onVerify}>
                         <InputOTPGroup>
                             <InputOTPSlot index={0} className="!h-16 !w-12" />
                         </InputOTPGroup>
