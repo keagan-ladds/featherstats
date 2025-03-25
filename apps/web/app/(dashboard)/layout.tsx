@@ -11,6 +11,8 @@ import { userService } from "services/user.service"
 import UserPreferencesDialog from "components/user/user-preferences-dialog"
 import AppShellProvider from "providers/app-shell-provider"
 import NavHeader from "components/nav-header"
+import UserSubscriptionDialog from "components/user/user-subscription-dialog"
+import DialogProvider from "providers/dialog-provier"
 
 interface AppLayoutProps {
     children: React.ReactNode
@@ -29,33 +31,36 @@ export default async function AppLayout({ children }: AppLayoutProps) {
     return <>
         <UserProvider userProfile={userProfile}>
             <AppShellProvider>
-                <WorkspaceProvider workspace={workspace} domains={workspace.domains || []}>
-                    <SidebarProvider>
-                        <AppSidebar />
-                        <SidebarInset>
-                            <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
-                                <div className="flex items-center gap-2 px-4">
-                                    <SidebarTrigger className="-ml-1" />
-                                    <Separator orientation="vertical" className="mr-2 h-4" />
-                                    <Breadcrumb>
-                                        <BreadcrumbList>
-                                            <BreadcrumbItem className="!hidden !md:block">
-                                                <BreadcrumbLink>
-                                                    {workspace.name}
-                                                </BreadcrumbLink>
-                                            </BreadcrumbItem>
-                                        </BreadcrumbList>
-                                    </Breadcrumb>
+                <DialogProvider>
+                    <WorkspaceProvider workspace={workspace} domains={workspace.domains || []}>
+                        <SidebarProvider>
+                            <AppSidebar />
+                            <SidebarInset>
+                                <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+                                    <div className="flex items-center gap-2 px-4">
+                                        <SidebarTrigger className="-ml-1" />
+                                        <Separator orientation="vertical" className="mr-2 h-4" />
+                                        <Breadcrumb>
+                                            <BreadcrumbList>
+                                                <BreadcrumbItem className="!hidden !md:block">
+                                                    <BreadcrumbLink>
+                                                        {workspace.name}
+                                                    </BreadcrumbLink>
+                                                </BreadcrumbItem>
+                                            </BreadcrumbList>
+                                        </Breadcrumb>
+                                    </div>
+                                    <NavHeader />
+                                </header>
+                                <div className="flex-1 space-y-4 p-4 pt-0">
+                                    {children}
                                 </div>
-                                <NavHeader/>
-                            </header>
-                            <div className="flex-1 space-y-4 p-4 pt-0">
-                                {children}
-                            </div>
-                        </SidebarInset>
-                    </SidebarProvider>
-                    <UserPreferencesDialog />
-                </WorkspaceProvider>
+                            </SidebarInset>
+                        </SidebarProvider>
+                        <UserPreferencesDialog />
+                        <UserSubscriptionDialog />
+                    </WorkspaceProvider>
+                </DialogProvider>
             </AppShellProvider>
         </UserProvider>
     </>

@@ -34,6 +34,7 @@ import { signOut } from "next-auth/react"
 import { useCallback } from "react"
 import { UserProfile } from "types/user"
 import { useUser } from "hooks/use-user"
+import useDialog from "hooks/use-dialog"
 
 interface Props {
   user: UserProfile
@@ -43,7 +44,8 @@ export function NavUser({
   user,
 }: Props) {
   const { isMobile } = useSidebar()
-  const {openPreferences} = useUser();
+  const { openPreferences } = useUser();
+  const { open: openSubscriptionDialog } = useDialog("subscription")
   const onSignOut = useCallback(() => {
     signOut({ redirectTo: '/login' })
   }, [])
@@ -99,12 +101,12 @@ export function NavUser({
                 <Cog />
                 Preferences
               </DropdownMenuItem>
-              {/* <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => openSubscriptionDialog()}>
                 <CreditCard />
-                Billing
-              </DropdownMenuItem> */}
+                Subscription
+              </DropdownMenuItem>
             </DropdownMenuGroup>
-            <DropdownMenuSeparator /> 
+            <DropdownMenuSeparator />
             <DropdownMenuItem onClick={onSignOut}>
               <LogOut />
               Log out
