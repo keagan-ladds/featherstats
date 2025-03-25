@@ -25,15 +25,17 @@ export default function OnboardingStepDomain() {
     }
 
     return (
-        <div className="flex flex-col items-center">
-            <div className="flex h-10 w-10 items-center justify-center rounded-md mb-2">
-                <Globe className="size-10" />
+        <div className="flex flex-col gap-4">
+            <div className="flex flex-col">
+                <div className="flex h-10 w-10 justify-center rounded-md mb-2">
+                    <Globe className="size-10" />
+                </div>
+                <h1 className="text-xl font-bold">Add Your First Domain</h1>
+                <div className="text-muted-foreground text-sm">
+                    Where's the magic happening? Enter your domain and let's track some vibes.
+                </div>
             </div>
-            <h1 className="text-xl font-bold">Add Your First Domain</h1>
-            <div className="text-center text-sm">
-                Where's the magic happening? Enter your domain and let's track some vibes.
-            </div>
-            <form className='flex flex-col gap-6 w-full mt-8' onSubmit={form.handleSubmit(handleSubmit)}>
+            <form className='flex flex-col gap-4 w-full' onSubmit={form.handleSubmit(handleSubmit)}>
                 <Form {...form}>
                     <FormField
                         control={form.control}
@@ -44,7 +46,7 @@ export default function OnboardingStepDomain() {
                                 <FormControl>
                                     <Input placeholder="example.com" {...field} />
                                 </FormControl>
-                                <FormDescription>This is the domain name of the website you want to track.</FormDescription>
+                                <FormDescription>This is the domain name of your website without the https://</FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )} />

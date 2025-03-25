@@ -13,7 +13,7 @@ export const OnboardingDataWorkspaceSchema = z.object({
 })
 
 export const OnboardingDataDomainSchema = z.object({
-    domainName: z.string().min(2),
+    domainName: z.string().min(2, "Domain name must be at least 2 characters."),
 })
 
 export const OnboardingDataSchema = OnboardingDataWelcomeSchema.and(OnboardingDataWorkspaceSchema).and(OnboardingDataDomainSchema);

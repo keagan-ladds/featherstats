@@ -8,7 +8,6 @@ import { ArrowRight, LoaderCircle } from 'lucide-react'
 import OnboardingStepDone from './onboarding-done'
 
 export default function OnboardingForm() {
-
     const { onboardingStep } = useOnboarding();
 
     return (

@@ -1,5 +1,5 @@
 'use client'
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription } from "@repo/ui/components/ui/form";
+import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@repo/ui/components/ui/form";
 import { Input } from "@repo/ui/components/ui/input"
 import { useOnboarding } from "hooks/use-onboarding";
 import { useSession } from "next-auth/react";
@@ -34,15 +34,18 @@ export default function OnboardingStepWelcome() {
     }
 
     return (
-        <div className="flex flex-col items-center">
-            <div className="flex h-10 w-10 items-center justify-center mb-2">
-                <Image src="/featherstats.png" width={256} height={256} alt="featherstats" className="rounded-xs"></Image>
+        <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-0">
+                <div className="flex h-10 w-10 justify-center mb-2">
+                    <Image src="/featherstats.png" width={64} height={64} alt="featherstats" className="rounded-xs"></Image>
+                </div>
+                <h1 className="text-xl font-bold">Hey There! Let's Get You Set Up</h1>
+                <div className="text-muted-foreground text-sm">
+                    We're stoked to have you on board!
+                </div>
             </div>
-            <h1 className="text-xl font-bold">Hey there, let's get you set up!</h1>
-            <div className="text-center text-sm">
-            Stoked to have you on board! Drop your details below, and let's roll.
-            </div>
-            <form className='flex flex-col gap-6 w-full mt-8' onSubmit={form.handleSubmit(handleSubmit)}>
+
+            <form className='flex flex-col gap-4 w-full' onSubmit={form.handleSubmit(handleSubmit)}>
                 <Form {...form}>
                     <FormField
                         control={form.control}
@@ -53,7 +56,6 @@ export default function OnboardingStepWelcome() {
                                 <FormControl>
                                     <Input placeholder="Enter your name" {...field} />
                                 </FormControl>
-                                <FormDescription>This is just so we know what to call you when you log in.</FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )} />

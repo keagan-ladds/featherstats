@@ -9,8 +9,6 @@ import { OnboardingContinueButton } from "./onboarding-form";
 import { OnboardingDataWorkspaceSchema } from "lib/validation/onboarding";
 import { OnboardingDataWorkspace } from "types/onboarding";
 
-
-
 export default function OnboardingStepWorkspace() {
     const { onContinue } = useOnboarding();
 
@@ -26,15 +24,17 @@ export default function OnboardingStepWorkspace() {
     }
 
     return (
-        <div className="flex flex-col items-center">
-            <div className="flex h-10 w-10 items-center justify-center rounded-md mb-2">
-                <Blocks className="size-10" />
+        <div className="flex flex-col gap-4">
+            <div className="flex flex-col">
+                <div className="flex h-10 w-10  justify-center rounded-md mb-2">
+                    <Blocks className="size-10" />
+                </div>
+                <h1 className="text-xl font-bold">Create Your Workspace</h1>
+                <div className="text-muted-foreground text-sm">
+                    Your workspace is home base for all your domains. Name it something cool!
+                </div>
             </div>
-            <h1 className="text-xl font-bold">Create Your HQ</h1>
-            <div className="text-center text-sm">
-                Your workspace is home base for all your domains. Name it something cool!
-            </div>
-            <form className='flex flex-col gap-6 w-full mt-8' onSubmit={form.handleSubmit(handleSubmit)}>
+            <form className='flex flex-col gap-4 w-full' onSubmit={form.handleSubmit(handleSubmit)}>
                 <Form {...form}>
                     <FormField
                         control={form.control}
@@ -45,7 +45,6 @@ export default function OnboardingStepWorkspace() {
                                 <FormControl>
                                     <Input placeholder="Default Workspace" {...field} />
                                 </FormControl>
-                                <FormDescription>This is the name of the workspace you will use to access your data.</FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )} />
