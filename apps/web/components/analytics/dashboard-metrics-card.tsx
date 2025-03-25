@@ -18,19 +18,24 @@ const chartConfig = {
     label: "Page Views",
   },
   visits: {
-    label: <div className="flex items-center gap-2">Visits <ClarityModeTooltip className="size-3" content="A visit (or session) is when a user comes to your site and interacts with it." /></div>,
+    //label: <div className="flex items-center gap-2">Visits <ClarityModeTooltip className="size-3" content="A visit (or session) is when a user comes to your site and interacts with it." /></div>,
+    
+    label: "Visits",
     color: "hsl(var(--chart-1))"
   },
   pageviews: {
-    label: <div className="flex items-center gap-2">Pageviews <ClarityModeTooltip className="size-3" content="A pageview is recorded each time a page on your website is loaded or reloaded. One visit can include multiple pageviews if the user navigates through different pages." /></div>,
+    //label: <div className="flex items-center gap-2">Pageviews <ClarityModeTooltip className="size-3" content="A pageview is recorded each time a page on your website is loaded or reloaded. One visit can include multiple pageviews if the user navigates through different pages." /></div>,
+    label: "Pageviews",
     color: "hsl(var(--chart-2))",
   },
   bounce_rate: {
-    label: <div className="flex items-center gap-2">Bounce Rate <ClarityModeTooltip className="size-3" content="Bounce rate is the percentage of visitors who leave after viewing only one page without interacting. A high bounce rate may indicate that users didn't find what they were looking for." /></div>,
+    //label: <div className="flex items-center gap-2">Bounce Rate <ClarityModeTooltip className="size-3" content="Bounce rate is the percentage of visitors who leave after viewing only one page without interacting. A high bounce rate may indicate that users didn't find what they were looking for." /></div>,
+    label: "Bounce Rate",
     color: "hsl(var(--chart-3))",
   },
   avg_session_sec: {
-    label: <div className="flex items-center gap-2">Avg. Session Duration <ClarityModeTooltip className="size-3" content="This is the average time visitors spend on your site during a session. A higher session duration usually means users are engaged with your content." /></div>,
+    //label: <div className="flex items-center gap-2">Avg. Session Duration <ClarityModeTooltip className="size-3" content="This is the average time visitors spend on your site during a session. A higher session duration usually means users are engaged with your content." /></div>,
+    label: "Avg. Session Duration",
     color: "hsl(var(--chart-4))",
   }
 } satisfies ChartConfig
