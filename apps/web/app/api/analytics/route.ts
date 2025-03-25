@@ -24,7 +24,7 @@ export async function GET(request: Request) {
   return new NextResponse(scriptWithKey, {
     headers: {
       'Content-Type': 'application/javascript',
-      'Cache-Control': 'public, max-age=31536000', // Cache for 1 year
+      'Cache-Control': 'public, max-age=86400', // Cache for 1 day
     },
   });
 }

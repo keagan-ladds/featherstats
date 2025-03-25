@@ -31,25 +31,32 @@ export class FeatherstatsClient {
   private eventQueue: AnalyticsEvent[] = [];
   private readonly config: Required<FeatherstatsClientConfig>;
   private readonly apiKey: string;
-  private readonly sessionId: string;
   private readonly userId: string;
   private flushTimeout?: NodeJS.Timeout;
   private isDestroyed: boolean = false;
 
   public constructor(apiKey: string, config?: FeatherstatsClientConfig) {
     this.apiKey = apiKey;
-    this.sessionId = this.getSessionId();
     this.userId = this.getUserId();
     this.config = { ...DEFAULT_CONFIG, ...config };
     this.startFlushInterval();
   }
 
-  private getSessionId(): string {
+  private getSessionId(sessionDurationMinutes: number = 30): string {
+    const now = Date.now();
     let sessionId = sessionStorage.getItem('sessionId');
-    if (sessionId) return sessionId;
+    let expiryTime = sessionStorage.getItem('sessionIdExpiry');
+
+    if (sessionId && expiryTime) {
+      if (now < parseInt(expiryTime)) {
+        return sessionId;
+      }
+    }
 
     sessionId = nanoid();
+    expiryTime = (now + sessionDurationMinutes * 60 * 1000).toString();
     sessionStorage.setItem('sessionId', sessionId);
+    sessionStorage.setItem('sessionIdExpiry', expiryTime);
     return sessionId;
   }
 
@@ -95,7 +102,7 @@ export class FeatherstatsClient {
 
     const event: AnalyticsEvent = {
         eventType,
-        sessionId: this.sessionId,
+        sessionId: this.getSessionId(),
         userId: this.userId,
         timestamp: new Date().toISOString(),
         payload: options.payload || {}

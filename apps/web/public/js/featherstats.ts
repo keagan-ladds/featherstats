@@ -81,6 +81,17 @@ function init() {
     client.cleanup();
   });
 
+  document.addEventListener("visibilitychange", function logData() {
+    if (document.visibilityState === "hidden") {
+      client.track('page_leave', {
+        payload: {
+          ...defaultPayload,
+          pathname: pathname
+        }
+      });
+      client.cleanup();
+    }
+  });
 }
 
 // Initialize when the script loads
