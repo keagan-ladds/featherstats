@@ -22,7 +22,7 @@ export default async function AnalyticsLayout({ children, params }: AnalyticsLay
 
     async function refreshToken(): Promise<string> {
         'use server'
-        return tinybirdClient.generateToken(domain!.workspaceId, domain!.name);
+        return tinybirdClient.generateAnalyticsToken(domain!.workspaceId, domain!.name);
     }
 
     const token = await refreshToken();

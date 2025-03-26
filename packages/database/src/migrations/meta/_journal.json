@@ -15,6 +15,13 @@
       "when": 1742722995307,
       "tag": "0001_groovy_red_wolf",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1743006744865,
+      "tag": "0002_cheerful_pixie",
+      "breakpoints": true
     }
   ]
 }
