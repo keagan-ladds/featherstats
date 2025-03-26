@@ -1,4 +1,3 @@
-import { unstable_cache } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 import fs from 'fs';
 import path from 'path';
@@ -6,13 +5,11 @@ import path from 'path';
 export async function GET(request: NextRequest, context: { params: Promise<{ source: string }> }): Promise<any> {
     const [source] = (await context.params).source;
     if (!source) return new NextResponse();
-    return await getSourceFavicon(source);
-}
 
-const getSourceFavicon = unstable_cache(async (source: string) => {
     const sourceIcon = knowSourceIcons[source.toLowerCase()] || `https://t2.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://${source}&size=32`;
     return await fetchExternalImage(sourceIcon)
-})
+}
+
 
 async function fetchExternalImage(href: string) {
     try {
