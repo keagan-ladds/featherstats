@@ -31,7 +31,8 @@
         "AUTH_GOOGLE_SECRET",
         "DATABASE_URL",
         "RESEND_API_KEY",
-        "STRIPE_SECRET_KEY"
+        "STRIPE_SECRET_KEY",
+        "STRIPE_WEBHOOK_SIGNING_KEY"
       ]
     },
     "lint": {
