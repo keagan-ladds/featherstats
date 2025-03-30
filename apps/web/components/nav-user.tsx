@@ -3,6 +3,7 @@
 import {
   BadgeCheck,
   Bell,
+  ChartLine,
   ChevronsUpDown,
   Cog,
   CreditCard,
@@ -46,6 +47,7 @@ export function NavUser({
   const { isMobile } = useSidebar()
   const { openPreferences } = useUser();
   const { open: openSubscriptionDialog } = useDialog("subscription")
+  const { open: openUsageDialog } = useDialog("usage")
   const onSignOut = useCallback(() => {
     signOut({ redirectTo: '/login' })
   }, [])
@@ -104,6 +106,10 @@ export function NavUser({
               <DropdownMenuItem onClick={() => openSubscriptionDialog()}>
                 <CreditCard />
                 Subscription
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => openUsageDialog()}>
+                <ChartLine />
+                Usage
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />

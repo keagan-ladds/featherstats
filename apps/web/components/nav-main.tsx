@@ -70,7 +70,7 @@ export function NavMain({
                 </CollapsibleContent>
               </SidebarMenuItem>
             </Collapsible> :
-            <SidebarMenuButton asChild key={i} isActive={item.isActive}>
+            <SidebarMenuButton asChild key={i} isActive={item.isActive} tooltip={item.title}>
               <Link href={item.url}>
                 {item.icon && <item.icon />}
                 <span>{item.title}</span>

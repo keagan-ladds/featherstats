@@ -1,6 +1,6 @@
 import { createContext } from "react";
 
-export type AppDialog = 'preferences' | 'subscription'
+export type AppDialog = 'preferences' | 'subscription' | 'upgrade' | 'usage'
 
 interface DialogContext {
     dialog: AppDialog | undefined

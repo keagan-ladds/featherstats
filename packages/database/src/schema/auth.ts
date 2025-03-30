@@ -12,6 +12,7 @@ export const usersTable = pgTable("users", {
   image: text("image"),
   metadata: json("metadata").$type<UserMetadata>().default({}).notNull(),
   preferences: json("preferences").$type<UserPreferences>().default({}).notNull(),
+  stripeCustomerId: text("stripe_customer_id").unique(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at'),
 });

@@ -13,6 +13,8 @@ import AppShellProvider from "providers/app-shell-provider"
 import NavHeader from "components/nav-header"
 import UserSubscriptionDialog from "components/user/user-subscription-dialog"
 import DialogProvider from "providers/dialog-provier"
+import UserPlanSelectionDialog from "components/user/user-plan-selection-dialog"
+import UserUsageDialog from "components/user/user-usage-dialog"
 
 interface AppLayoutProps {
     children: React.ReactNode
@@ -57,8 +59,10 @@ export default async function AppLayout({ children }: AppLayoutProps) {
                                 </div>
                             </SidebarInset>
                         </SidebarProvider>
+                        <UserPlanSelectionDialog/>
                         <UserPreferencesDialog />
                         <UserSubscriptionDialog />
+                        <UserUsageDialog/>
                     </WorkspaceProvider>
                 </DialogProvider>
             </AppShellProvider>
