@@ -5,5 +5,5 @@ const { auth } = NextAuth(AuthConfig)
 export const middleware: NextAuthResult['auth'] = auth
 
 export const config = {
-    matcher: ["/((?!api|_next/static|_next/image|favicon.ico|login|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)"],
+    matcher: ["/((?!api|tracker.js|_next/static|_next/image|favicon.ico|login|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)"],
 }

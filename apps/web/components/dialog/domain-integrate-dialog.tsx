@@ -56,8 +56,8 @@ add_action('wp_head', 'add_analytics_tracking_code');
                     </DialogHeader>
 
 
-                    <ScrollArea className={cn("flex flex-1 overflow-y-auto pr-1 !max-h-[65vh]")}>
-                        <Tabs defaultValue="javascript" className="w-full mt-4">
+                    <ScrollArea className={cn("flex flex-col flex-1 overflow-y-auto pr-1 !max-h-[65vh]")}>
+                        <Tabs defaultValue="javascript" className="flex flex-col mt-4">
                             <TabsList className="grid grid-cols-4">
                                 <TabsTrigger value="javascript" className="!flex items-center gap-1.5 !w-full">
                                     <Code className="h-4 w-4" />
@@ -104,7 +104,7 @@ add_action('wp_head', 'add_analytics_tracking_code');
                                         <Alert className="mt-4">
                                             <Info className="h-4 w-4" />
                                             <AlertDescription>
-                                                Your tracking ID (<code className="bg-muted px-1 py-0.5 rounded text-sm">{trackingId}</code>) is
+                                                Your tracking ID (<code className="bg-muted px-1  rounded text-sm">{trackingId}</code>) is
                                                 already included in the code snippet above.
                                             </AlertDescription>
                                         </Alert>
@@ -222,8 +222,8 @@ add_action('wp_head', 'add_analytics_tracking_code');
                                             </Button>
                                         </div>
 
-                                        <Alert className="flex items-center">
-                                            <Info className="h-4 w-4" />
+                                        <Alert>
+                                            <Info className="size-4" />
                                             <AlertDescription>
                                                 After adding the code, make sure to save your changes and test your tracking on your live store.
                                             </AlertDescription>
@@ -286,7 +286,7 @@ add_action('wp_head', 'add_analytics_tracking_code');
                                             </ol>
                                         </div>
                                     </CardContent>
-                                    <CardFooter className="flex justify-between">
+                                    <CardFooter className="flex justify-between gap-2">
                                         <Button variant="outline" className="gap-1.5" onClick={() => copyToClipboard(jsSnippet, "other")}>
                                             {copied === "other" ? (
                                                 <>
