@@ -29,7 +29,13 @@ class UserService {
                 amount: subscription?.plan_prices.amount || 0,
                 billingPeriod: subscription?.plan_prices.billingPeriod || "monthly",
                 currency: subscription?.plan_prices.currency || "usd",
-                currentPeriodEnd: subscription?.subscriptions.currentPeriodEnd
+                currentPeriodEnd: subscription?.subscriptions.currentPeriodEnd,
+                usageLimits: subscription?.plans.usageLimits || {
+                    maxDomains: 1,
+                    dataRetentionDays: 90,
+                    maxMonthlyPageviews: 10000,
+                    maxWorkspaces: 1
+                }
             }
         }
     }

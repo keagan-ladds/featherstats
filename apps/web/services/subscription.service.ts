@@ -7,7 +7,6 @@ import { fromUnixTime } from "date-fns";
 import { stripe } from "lib/stripe/server";
 import { usersTable } from "@featherstats/database/schema/auth";
 import { PlanWithPrices, UpdateSubscriptionPlanOptions, UpdateSubscriptionPlanResult } from "types/subscription";
-import { NextResponse } from "next/server";
 import { getURL } from "lib/utils";
 
 export class SubscriptionService {
@@ -93,7 +92,7 @@ export class SubscriptionService {
         }, [])
     }
 
-    async getActiveUserSubscription(userId: string): Promise<Subscription | null> {
+    private async getActiveUserSubscription(userId: string): Promise<Subscription | null> {
         const [subscription] = await db.select({ ...getTableColumns(subscriptionsTable) })
             .from(subscriptionsTable)
             .where(and(notInArray(subscriptionsTable.status, ["canceled"]), eq(subscriptionsTable.userId, userId)))
@@ -220,9 +219,6 @@ export class SubscriptionService {
             canceledAt: subscription.canceled_at ? fromUnixTime(subscription.canceled_at) : null,
         }).where(eq(subscriptionsTable.id, subscription.id));
     }
-
-    
-
 }
 
 export const subscriptionService = new SubscriptionService();

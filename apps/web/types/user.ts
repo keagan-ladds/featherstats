@@ -1,4 +1,4 @@
-import { BillingPeriod, SubscriptionStatus, User } from "@featherstats/database/types";
+import { BillingPeriod, PlanUsageLimit, SubscriptionStatus, User } from "@featherstats/database/types";
 import { UpdateUserPreferencesSchema } from "lib/validation/user";
 import { z } from "zod";
 
@@ -9,7 +9,8 @@ export type UserSubscription = {
     currency: string;
     status: SubscriptionStatus
     billingPeriod: BillingPeriod;
-    currentPeriodEnd?: Date | null
+    currentPeriodEnd?: Date | null;
+    usageLimits: PlanUsageLimit
 }
 
 export type UserProfile = Omit<User, "metadata" | "stripeCustomerId"> & {

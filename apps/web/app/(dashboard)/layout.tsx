@@ -15,6 +15,8 @@ import UserSubscriptionDialog from "components/user/user-subscription-dialog"
 import DialogProvider from "providers/dialog-provier"
 import UserPlanSelectionDialog from "components/user/user-plan-selection-dialog"
 import UserUsageDialog from "components/user/user-usage-dialog"
+import DomainCreateDialog from "components/dialog/domain-create-dialog"
+import { DomainSwitcher } from "components/domain-switcher"
 
 interface AppLayoutProps {
     children: React.ReactNode
@@ -41,6 +43,7 @@ export default async function AppLayout({ children }: AppLayoutProps) {
                                 <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
                                     <div className="flex items-center gap-2 px-4">
                                         <SidebarTrigger className="-ml-1" />
+                                        <DomainSwitcher/>
                                         <Separator orientation="vertical" className="mr-2 h-4" />
                                         <Breadcrumb>
                                             <BreadcrumbList>
@@ -63,6 +66,7 @@ export default async function AppLayout({ children }: AppLayoutProps) {
                         <UserPreferencesDialog />
                         <UserSubscriptionDialog />
                         <UserUsageDialog/>
+                        <DomainCreateDialog/>
                     </WorkspaceProvider>
                 </DialogProvider>
             </AppShellProvider>

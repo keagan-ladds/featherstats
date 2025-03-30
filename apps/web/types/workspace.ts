@@ -7,6 +7,8 @@ export type WorkspaceCreateOptions = {
 export type DomainCreateOptions = {
     name: string;
     verficationStatus?: DomainVerificationStatus
+    enforce_origin_match: boolean,
+    normalize_www: boolean
 }
 
 export type WorkspaceWithDomains = Workspace & {

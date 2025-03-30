@@ -1,11 +1,12 @@
 
 'use client'
 
+import { Domain } from "@featherstats/database/types";
 import { ApiErrorResponse, ApiResponse } from "types/api";
 import { OnboardingData } from "types/onboarding";
 import { PlanWithPrices, UpdateSubscriptionPlanOptions, UpdateSubscriptionPlanResult } from "types/subscription";
 import { UpdateUserPreferencesOptions } from "types/user";
-import { WorkspaceWithDomains } from "types/workspace";
+import { DomainCreateOptions, WorkspaceWithDomains } from "types/workspace";
 
 const ApiBaseUrl = process.env.NEXT_PUBLIC_API_URL || '';
 
@@ -43,6 +44,10 @@ export async function getSubscriptionPlans(): Promise<PlanWithPrices[]> {
 
 export async function updateSubscriptionPlan(opts: UpdateSubscriptionPlanOptions): Promise<UpdateSubscriptionPlanResult> {
     return makeApiRequest("/api/v1/subscription", "PUT", opts);
+}
+
+export async function createDomain(workspaceId: string, opts: DomainCreateOptions): Promise<Domain> {
+    return makeApiRequest("/api/v1/workspace/" + workspaceId + "/domain", "POST", opts);
 }
 
 export class ApiError extends Error {
