@@ -1,8 +1,11 @@
 'use client'
 
 import { CalendarDateRangePicker } from "@repo/ui/components/dashboard/date-range-picker"
+import { Button } from "@repo/ui/components/ui/button";
 import { useAnalytics } from "hooks/use-analytics";
 import useAppShell from "hooks/use-app-shell";
+import useDialog from "hooks/use-dialog";
+import {  Waypoints } from "lucide-react";
 import { useCallback, useEffect, useMemo } from "react";
 import { DateRange } from "react-day-picker";
 
@@ -12,6 +15,7 @@ interface DashboardLayoutProps {
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
     const { pageTitle, setHeaderContent } = useAppShell();
+    const { open: openDomainIntegrate } = useDialog("dialog_integrate")
     const { setDateRange } = useAnalytics();
 
     const setDate = useCallback((date: DateRange | undefined) => {
@@ -26,13 +30,18 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     const headerContent = useMemo<React.ReactElement>(() => {
         return <>
             <div className="ml-auto flex flex-grow items-center justify-end space-y-2 px-4">
+
                 <div className="ml-auto flex items-center space-x-2">
+
+                    <Button variant={"ghost"} onClick={() => openDomainIntegrate()}>
+                        <Waypoints className="size-4" />
+                    </Button>
                     <CalendarDateRangePicker onDateSelect={setDate} />
                 </div>
             </div>
 
         </>
-    }, [])
+    }, [openDomainIntegrate])
 
     useEffect(() => {
         setHeaderContent(headerContent)

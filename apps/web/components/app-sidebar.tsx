@@ -18,7 +18,6 @@ import {
     SidebarHeader,
     SidebarRail,
 } from "@repo/ui/components/ui/sidebar"
-import { DomainSwitcher } from "./domain-switcher"
 import { useWorkspace } from "hooks/use-workspace"
 import { useEffect, useState } from "react"
 import { Skeleton } from "@repo/ui/components/ui/skeleton"

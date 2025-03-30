@@ -1,4 +1,5 @@
 import DashboardLayout from "components/analytics/dashboard-layout";
+import AnalyticsIntegrationDialog from "components/dialog/domain-integrate-dialog";
 import { auth } from "lib/auth";
 import { tinybirdClient } from "lib/tinybird/server";
 import { notFound } from "next/navigation";
@@ -10,8 +11,6 @@ interface AnalyticsLayoutProps {
     children: React.ReactNode,
     params: Promise<{ domain: string }>
 }
-
-
 
 export default async function AnalyticsLayout({ children, params }: AnalyticsLayoutProps) {
     const domainName = (await params).domain;
@@ -33,6 +32,7 @@ export default async function AnalyticsLayout({ children, params }: AnalyticsLay
                 <DashboardLayout>
                     {children}
                 </DashboardLayout>
+                <AnalyticsIntegrationDialog trackingId={domain.key} />
             </AnalyticsProvider>
         </DomainProvider>
     </>
