@@ -21,14 +21,14 @@ export default function AnalyticsIntegrationDialog({ trackingId = "ABC-123456" }
     const [copied, setCopied] = useState<string | null>(null)
 
     const jsSnippet = `<!-- Analytics Tracking Code -->
-<script src="${getURL("/api/analytics")}?key=${trackingId}"></script>`
+<script src="${getURL("/tracker.js")}?key=${trackingId}"></script>`
 
     const wordpressSnippet = `<?php
 // Add this code to your theme's functions.php file
 function add_analytics_tracking_code() {
 ?>
   <!-- Analytics Tracking Code -->
-  <script src="${getURL("/api/analytics")}?key=${trackingId}"></script>
+  <script src="${getURL("/tracker.js")}?key=${trackingId}"></script>
 <?php
 }
 add_action('wp_head', 'add_analytics_tracking_code');
