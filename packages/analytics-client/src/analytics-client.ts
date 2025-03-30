@@ -118,19 +118,44 @@ export class FeatherstatsClient {
 
   private registerEventHandlers(): void {
     var client = this;
-    window.addEventListener("beforeunload", function (event) {
+    function trackPageHit() {
+      client.track('page_hit');
+    }
+
+    function trackPageLeave() {
       client.track('page_leave');
       client.flush();
+    }
+
+    window.addEventListener("beforeunload", function (event) {
+      trackPageLeave();
     });
 
     document.addEventListener("visibilitychange", function logData() {
       if (document.visibilityState === "visible") {
-        client.track('page_hit');
+        trackPageHit();
       } else if (document.visibilityState === "hidden") {
-        client.track('page_leave');
-        client.flush();
+        trackPageLeave();
       }
     });
+
+    // Handle back/forward navigation
+    window.addEventListener("popstate", function () {
+      trackPageLeave(); // Trigger page leave for the current page
+      setTimeout(trackPageHit, 0); // Track new page view
+    });
+
+    // Intercept pushState and replaceState to track navigation
+    function wrapHistoryMethod(method: 'pushState' | 'replaceState') {
+      const original = history[method];
+      history[method] = function (...args) {
+        trackPageLeave(); // Track leave before changing route
+        setTimeout(trackPageHit, 0); // Track new page hit
+        return original.apply(this, args);
+      };
+    }
+    wrapHistoryMethod('pushState');
+    wrapHistoryMethod('replaceState');
   }
 
   private getUtmParameters() {
