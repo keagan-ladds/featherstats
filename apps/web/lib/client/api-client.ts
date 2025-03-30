@@ -3,7 +3,7 @@
 
 import { ApiErrorResponse, ApiResponse } from "types/api";
 import { OnboardingData } from "types/onboarding";
-import { PlanWithPrices } from "types/subscription";
+import { PlanWithPrices, UpdateSubscriptionPlanOptions, UpdateSubscriptionPlanResult } from "types/subscription";
 import { UpdateUserPreferencesOptions } from "types/user";
 import { WorkspaceWithDomains } from "types/workspace";
 
@@ -39,6 +39,10 @@ export async function updateUserProfile(opts: UpdateUserPreferencesOptions): Pro
 
 export async function getSubscriptionPlans(): Promise<PlanWithPrices[]> {
     return makeApiRequest("/api/v1/subscription/plans", "GET");
+}
+
+export async function updateSubscriptionPlan(opts: UpdateSubscriptionPlanOptions): Promise<UpdateSubscriptionPlanResult> {
+    return makeApiRequest("/api/v1/subscription", "PUT", opts);
 }
 
 export class ApiError extends Error {

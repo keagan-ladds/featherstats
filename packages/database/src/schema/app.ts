@@ -57,6 +57,7 @@ export const plansTable = pgTable("plans", {
     name: text("name").notNull(),
     description: text("description"),
     usageLimits: json("usage_limits").$type<PlanUsageLimits>().notNull(),
+    stripeProductId: text("stripe_product_id").notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").$onUpdate(() => new Date()),
 })

@@ -6,7 +6,9 @@ import { PlanPrice, Subscription, User } from "@featherstats/database/types";
 import { fromUnixTime } from "date-fns";
 import { stripe } from "lib/stripe/server";
 import { usersTable } from "@featherstats/database/schema/auth";
-import { PlanWithPrices } from "types/subscription";
+import { PlanWithPrices, UpdateSubscriptionPlanOptions, UpdateSubscriptionPlanResult } from "types/subscription";
+import { NextResponse } from "next/server";
+import { getURL } from "lib/utils";
 
 export class SubscriptionService {
     async handleSubscriptionCreated(subscription: Stripe.Subscription) {
@@ -99,6 +101,85 @@ export class SubscriptionService {
         return subscription || null;
     }
 
+    async updateSubscriptionPlan(userId: string, opts: UpdateSubscriptionPlanOptions): Promise<UpdateSubscriptionPlanResult> {
+        const [price] = await db.select({ amount: planPricesTable.amount, stripePriceId: planPricesTable.stripePriceId, stripeProductId: plansTable.stripeProductId }).from(planPricesTable)
+            .innerJoin(plansTable, eq(plansTable.id, planPricesTable.planId))
+            .where(eq(planPricesTable.id, opts.priceId))
+        if (!price) throw new Error(`The could not find the stripe price id associated with the given price '${opts.priceId}'.`);
+
+        const customerId = await this.findOrCreateStripeCustomerId(userId);
+        const existingSubscription = await this.getActiveUserSubscription(userId);
+        if (!existingSubscription) {
+
+            // If it's a free subscription, don't worry about the checkout session, just create the subscription
+            if (price.amount === 0) {
+                await stripe.subscriptions.create({
+                    customer: customerId,
+                    items: [
+                        {
+                            price: price.stripePriceId,
+                        }
+                    ]
+                })
+                return {}
+            }
+
+            const checkoutSession = await stripe.checkout.sessions.create({
+                customer: customerId,
+                line_items: [
+                    {
+                        price: price.stripePriceId,
+                        quantity: 1,
+                    },
+                ],
+                mode: 'subscription',
+                success_url: getURL(),
+                cancel_url: getURL(),
+            });
+
+            return { url: checkoutSession.url! };
+        }
+
+        const configuration = await stripe.billingPortal.configurations.create({
+            business_profile: {
+                headline: "Manage your subscription",
+            },
+            features: {
+                payment_method_update: {
+                    enabled: true,
+                },
+                subscription_update: {
+                    enabled: true,
+                    default_allowed_updates: ["price"],
+                    products: [
+                        {
+                            product: price.stripeProductId,
+                            prices: [price.stripePriceId]
+                        }
+                    ]
+                },
+                subscription_cancel: {
+                    enabled: false
+                },
+                customer_update: {
+                    enabled: false
+                },
+                invoice_history: {
+                    enabled: false
+                }
+            }
+        });
+
+        // Create a Stripe Portal session with the configuration
+        const stripeSession = await stripe.billingPortal.sessions.create({
+            customer: customerId,
+            return_url: getURL(),
+            configuration: configuration.id
+        });
+
+        return { url: stripeSession.url };
+    }
+
     private async findOrCreateStripeCustomerId(userId: string): Promise<string> {
         const [user] = await db.select().from(usersTable).where(eq(usersTable.id, userId));
         if (!user) throw new Error(`The user with id '${userId}' could not be found.`);
@@ -119,9 +200,19 @@ export class SubscriptionService {
         return user || null
     }
 
+    private async getPlanPriceByStripePriceId(priceId: string): Promise<PlanPrice | null> {
+        const [price] = await db.select().from(planPricesTable).where(eq(planPricesTable.stripePriceId, priceId));
+        return price || null
+    }
+
     private async updateSubscription(subscription: Stripe.Subscription) {
+
+        const stripePriceId = subscription.items.data[0]?.price.id || "";
+        const price = await this.getPlanPriceByStripePriceId(stripePriceId);
+
         await db.update(subscriptionsTable).set({
             status: subscription.status,
+            priceId: price && price.id || undefined,
             currentPeriodStart: fromUnixTime(subscription.current_period_start),
             currentPeriodEnd: subscription.current_period_end ? fromUnixTime(subscription.current_period_end) : null,
             trialStart: subscription.trial_start ? fromUnixTime(subscription.trial_start) : null,
@@ -130,10 +221,7 @@ export class SubscriptionService {
         }).where(eq(subscriptionsTable.id, subscription.id));
     }
 
-    private async getPlanPriceByStripePriceId(priceId: string): Promise<PlanPrice | null> {
-        const [price] = await db.select().from(planPricesTable).where(eq(planPricesTable.stripePriceId, priceId));
-        return price || null
-    }
+    
 
 }
 

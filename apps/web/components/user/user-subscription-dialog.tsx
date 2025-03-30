@@ -44,13 +44,13 @@ export default function UserSubscriptionDialog() {
                     </CardContent>
                 </Card>
                 <DialogFooter>
-                    <Button variant="outline" className="gap-1 w-full">
+                    {subscription.amount > 0 && (<Button variant="outline" className="gap-1 w-full">
                         <Settings className="h-4 w-4" />
                         Update Billing
-                    </Button>
+                    </Button>)}
                     <Button className="gap-1 w-full" onClick={() => openUpgrade()}>
                         <PlusCircle className="h-4 w-4" />
-                        Upgrade Plan
+                        Switch Plan
                     </Button>
                 </DialogFooter>
             </DialogContent>

@@ -1,14 +1,15 @@
 "use client"
 
 import { useState } from "react"
-import { Check, ChevronDown, ChevronUp } from "lucide-react"
-import { BillingPeriod, Plan } from "@featherstats/database/types"
+import { Check, } from "lucide-react"
+import { BillingPeriod } from "@featherstats/database/types"
 import { PlanWithPrices } from "types/subscription"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@repo/ui/components/ui/card"
 import { cn } from "lib/utils"
 import { Button } from "@repo/ui/components/ui/button"
 import { Switch } from "@repo/ui/components/ui/switch"
 import { useSubscription } from "hooks/use-subscription"
+import { useUser } from "hooks/use-user"
 
 // Helper function to format currency
 const formatCurrency = (amount: number) => {
@@ -25,16 +26,16 @@ const formatNumber = (num: number) => {
 }
 
 interface Props {
-    currentPlanId?: string
-    currentBillingPeriod?: BillingPeriod
+
 }
 
 export default function SubscriptionPlanSelection({
-    currentPlanId,
-    currentBillingPeriod = "monthly",
 }: Props) {
-    const { plans: subscriptionPlans } = useSubscription();
-    const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>(currentBillingPeriod)
+    const { plans: subscriptionPlans, isLoading, updateSubscriptionPlan } = useSubscription();
+    const { profile } = useUser()
+    const subscription = profile.subscription
+    const currentPlanId = subscription.planId;
+    const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>(subscription.billingPeriod)
     const [selectedPlan, setSelectedPlan] = useState<string | null>(null)
 
     // Default to expanding the current plan if it exists, otherwise the Growth plan
@@ -43,8 +44,10 @@ export default function SubscriptionPlanSelection({
     // Function to get the price for a plan based on the selected billing period
     const getPlanPrice = (plan: PlanWithPrices) => {
         const price = plan.prices.find((p) => p.billingPeriod === billingPeriod)
-        return price ? price.amount : plan.prices[0]!.amount
+        return price ? price : plan.prices[0]!
     }
+
+
 
     // Function to check if a plan has a specific billing period
     const hasBillingPeriod = (plan: PlanWithPrices, period: BillingPeriod) => {
@@ -52,10 +55,10 @@ export default function SubscriptionPlanSelection({
     }
 
     // Function to handle plan selection
-    const handleSelectPlan = (planId: string) => {
-        setSelectedPlan(planId)
-        // In a real application, you would handle the subscription process here
-        console.log(`Selected plan: ${planId} with ${billingPeriod} billing`)
+    const handleSelectPlan = (plan: PlanWithPrices) => {
+        setSelectedPlan(plan.id)
+        const { id: priceId } = getPlanPrice(plan)
+        updateSubscriptionPlan(plan.id, priceId);
     }
 
     // Function to toggle plan details expansion
@@ -68,7 +71,7 @@ export default function SubscriptionPlanSelection({
 
     return (
         <div>
-            <div className="flex items-center justify-center md:justify-start space-x-2 my-3">
+            <div className="flex items-center justify-center space-x-2 my-3">
                 <span className={cn("text-xs", billingPeriod === "monthly" ? "font-medium" : "text-muted-foreground")}>
                     Monthly
                 </span>
@@ -88,19 +91,19 @@ export default function SubscriptionPlanSelection({
                 </div>
             )}
 
-            <div className="space-y-3 mt-2">
+            <div className="space-y-3 mt-2 md:space-y-0 md:gap-4 md:grid md:grid-cols-3">
+
                 {subscriptionPlans.map((plan) => {
                     const price = getPlanPrice(plan)
                     const hasYearly = hasBillingPeriod(plan, "yearly")
                     const isPopular = plan.name === "Growth"
-                    const isExpanded = expandedPlan === plan.id
                     const isCurrentPlan = currentPlanId === plan.id
 
                     return (
                         <Card
                             key={plan.id}
                             className={cn(
-                                "overflow-hidden",
+                                "flex flex-col",
                                 isPopular && "border-primary",
                                 isCurrentPlan && "border-2 border-primary/70 bg-primary/5",
                             )}
@@ -115,15 +118,10 @@ export default function SubscriptionPlanSelection({
                                                     POPULAR
                                                 </span>
                                             )}
-                                            {isCurrentPlan && (
-                                                <span className="bg-primary/20 text-primary text-[10px] font-medium py-0.5 px-1.5 rounded">
-                                                    CURRENT PLAN
-                                                </span>
-                                            )}
                                         </div>
                                     </CardTitle>
                                     <div className="flex items-center">
-                                        <span className="text-lg font-bold mr-1">{formatCurrency(price)}</span>
+                                        <span className="text-lg font-bold mr-1">{formatCurrency(price.amount)}</span>
                                         <span className="text-xs text-muted-foreground">
                                             /{billingPeriod === "monthly" ? "mo" : "yr"}
                                         </span>
@@ -131,43 +129,30 @@ export default function SubscriptionPlanSelection({
                                 </div>
                             </CardHeader>
 
-                            <CardContent className="p-3 !pt-0">
-                                <div
-                                    className="flex items-center justify-between cursor-pointer text-sm"
-                                    onClick={() => togglePlanExpansion(plan.id)}
-                                >
-                                    <span className="text-muted-foreground">{isExpanded ? "Hide details" : "Show details"}</span>
-                                    {isExpanded ? (
-                                        <ChevronUp className="h-4 w-4 text-muted-foreground" />
-                                    ) : (
-                                        <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                                    )}
-                                </div>
-
-                                {isExpanded && (
-                                    <ul className="space-y-1.5 mt-2 text-sm">
-                                        <li className="flex items-start">
-                                            <Check className="h-4 w-4 text-primary mr-1.5 mt-0.5 flex-shrink-0" />
-                                            <span>{formatNumber(plan.usageLimits.maxMonthlyPageviews)} monthly pageviews</span>
-                                        </li>
-                                        <li className="flex items-start">
-                                            <Check className="h-4 w-4 text-primary mr-1.5 mt-0.5 flex-shrink-0" />
-                                            <span>
-                                                Up to {plan.usageLimits.maxDomains} domain{plan.usageLimits.maxDomains > 1 ? "s" : ""}
-                                            </span>
-                                        </li>
-                                        {/* <li className="flex items-start">
+                            <CardContent className="p-3 !pt-0 !flex-1">
+                                <ul className="space-y-1.5 mt-2 text-sm">
+                                    <li className="flex items-start">
+                                        <Check className="h-4 w-4 text-primary mr-1.5 mt-0.5 flex-shrink-0" />
+                                        <span>{formatNumber(plan.usageLimits.maxMonthlyPageviews)} monthly pageviews</span>
+                                    </li>
+                                    <li className="flex items-start">
+                                        <Check className="h-4 w-4 text-primary mr-1.5 mt-0.5 flex-shrink-0" />
+                                        <span>
+                                            Up to {plan.usageLimits.maxDomains} domain{plan.usageLimits.maxDomains > 1 ? "s" : ""}
+                                        </span>
+                                    </li>
+                                    {/* <li className="flex items-start">
                                             <Check className="h-4 w-4 text-primary mr-1.5 mt-0.5 flex-shrink-0" />
                                             <span>
                                                 {plan.usageLimits.maxWorkspaces} workspace{plan.usageLimits.maxWorkspaces > 1 ? "s" : ""}
                                             </span>
                                         </li> */}
-                                        <li className="flex items-start">
-                                            <Check className="h-4 w-4 text-primary mr-1.5 mt-0.5 flex-shrink-0" />
-                                            <span>{plan.usageLimits.dataRetentionDays} days data retention</span>
-                                        </li>
-                                    </ul>
-                                )}
+                                    <li className="flex items-start">
+                                        <Check className="h-4 w-4 text-primary mr-1.5 mt-0.5 flex-shrink-0" />
+                                        <span>{plan.usageLimits.dataRetentionDays} days data retention</span>
+                                    </li>
+                                </ul>
+
                             </CardContent>
 
                             <CardFooter className="p-3 pt-0">
@@ -179,8 +164,8 @@ export default function SubscriptionPlanSelection({
                                     <Button
                                         className="w-full text-sm py-1.5 h-auto"
                                         variant={isPopular ? "default" : "outline"}
-                                        onClick={() => handleSelectPlan(plan.id)}
-                                        disabled={!hasYearly && billingPeriod === "yearly"}
+                                        onClick={() => handleSelectPlan(plan)}
+                                        disabled={!hasYearly && billingPeriod === "yearly" || isLoading}
                                     >
                                         {selectedPlan === plan.id
                                             ? "Selected"

@@ -32,12 +32,12 @@ export async function POST(request: NextRequest) {
 
         case "customer.subscription.updated":
             const updatedSubscription = event.data.object as Stripe.Subscription
-            subscriptionService.handleSubscriptionCreated(updatedSubscription);
+            subscriptionService.handleSubscriptionUpdated(updatedSubscription);
             break;
 
         case "customer.subscription.deleted":
             const deletedSubscription = event.data.object as Stripe.Subscription
-            subscriptionService.handleSubscriptionCreated(deletedSubscription);
+            subscriptionService.handleSubscriptionCancelled(deletedSubscription);
             break;
 
         default:
