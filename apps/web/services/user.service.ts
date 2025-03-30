@@ -1,8 +1,9 @@
 import { db } from "@featherstats/database"
 import { usersTable } from "@featherstats/database/schema/auth"
 import { User, UserMetadata } from "@featherstats/database/types"
-import { eq, sql } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { UpdateUserPreferencesOptions, UserProfile } from "types/user";
+import { planPricesTable, plansTable, subscriptionsTable } from "@featherstats/database/schema/app";
 
 class UserService {
     async getUserById(id: string): Promise<User | undefined> {
@@ -15,8 +16,21 @@ class UserService {
 
         if (!user) throw new Error('User not found');
 
+        const [subscription] = await db.select().from(subscriptionsTable)
+            .innerJoin(planPricesTable, eq(planPricesTable.id, subscriptionsTable.priceId))
+            .innerJoin(plansTable, eq(planPricesTable.planId, plansTable.id));
+
         return {
-            ...user
+            ...user,
+            subscription: {
+                planId: subscription?.plans.id || "",
+                status: subscription?.subscriptions.status || "active",
+                name: subscription?.plans.name || "Free",
+                amount: subscription?.plan_prices.amount || 0,
+                billingPeriod: subscription?.plan_prices.billingPeriod || "monthly",
+                currency: subscription?.plan_prices.currency || "usd",
+                currentPeriodEnd: subscription?.subscriptions.currentPeriodEnd
+            }
         }
     }
 
