@@ -23,20 +23,10 @@ function init() {
     return;
   }
 
-  const utms = getUTMParameters();
-  const defaultPayload = {
-    referrer: document.referrer,
-    pathname: window.location.pathname,
-    utm_source: utms.utm_source,
-    utm_medium: utms.utm_medium,
-    utm_campaign: utms.utm_campaign,
-    utm_term: utms.utm_term,
-    utm_content: utms.utm_content
-  }
 
   // Initialize the client
   const client = new FeatherstatsClient(apiKey, { baseUrl: FEATHERSTATS_BASE_URL });
-  client.track('page_hit', { payload: defaultPayload });
+  client.track('page_hit');
 
   // Process any queued commands
   const w = window;
@@ -56,54 +46,7 @@ function init() {
       fn.apply(null, args);
     }
   });
-
-
-  let pathname = location.pathname;
-  window.addEventListener("click", function () {
-    if (location.pathname != pathname) {
-      pathname = location.pathname;
-      client.track('page_hit', {
-        payload: {
-          ...defaultPayload,
-          pathname: pathname
-        }
-      });
-    }
-  });
-
-  window.addEventListener("beforeunload", function (event) {
-    client.track('page_leave', {
-      payload: {
-        ...defaultPayload,
-        pathname: pathname
-      }
-    });
-    client.cleanup();
-  });
-
-  document.addEventListener("visibilitychange", function logData() {
-    if (document.visibilityState === "hidden") {
-      client.track('page_leave', {
-        payload: {
-          ...defaultPayload,
-          pathname: pathname
-        }
-      });
-      client.cleanup();
-    }
-  });
 }
 
 // Initialize when the script loads
 init();
-
-function getUTMParameters() {
-  const params = new URLSearchParams(window.location.search);
-  return {
-    utm_source: params.get('utm_source') || undefined,
-    utm_medium: params.get('utm_medium') || undefined,
-    utm_campaign: params.get('utm_campaign') || undefined,
-    utm_term: params.get('utm_term') || undefined,
-    utm_content: params.get('utm_content') || undefined
-  };
-}
