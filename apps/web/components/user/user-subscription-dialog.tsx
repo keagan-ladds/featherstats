@@ -23,7 +23,7 @@ export default function UserSubscriptionDialog() {
                     </DialogDescription>
                 </DialogHeader>
                 <Card>
-                    <CardHeader className="!pb-3">
+                    <CardHeader>
                         <div className="flex items-center justify-between">
                             <CardTitle>Current Plan</CardTitle>
                             <div className="rounded-full px-3 py-1 text-xs bg-primary/10 text-primary font-medium capitalize">{subscription.status}</div>

@@ -47,7 +47,7 @@ export default async function AppLayout({ children }: AppLayoutProps) {
                                         <Separator orientation="vertical" className="mr-2 h-4" />
                                         <Breadcrumb>
                                             <BreadcrumbList>
-                                                <BreadcrumbItem className="!hidden !md:block">
+                                                <BreadcrumbItem className="hidden md:block">
                                                     <BreadcrumbLink>
                                                         {workspace.name}
                                                     </BreadcrumbLink>

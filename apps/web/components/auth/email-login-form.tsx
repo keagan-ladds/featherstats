@@ -82,22 +82,22 @@ export default function EmailLoginForm({ className, ...props }: Props) {
                 <div className="flex flex-col items-center gap-2">
                     <InputOTP disabled={isLoading} maxLength={6} pattern={REGEXP_ONLY_DIGITS} value={token} onChange={setToken} onComplete={onVerify}>
                         <InputOTPGroup>
-                            <InputOTPSlot index={0} className="!h-16 !w-12" />
+                            <InputOTPSlot index={0} className="h-16 w-12" />
                         </InputOTPGroup>
                         <InputOTPGroup>
-                            <InputOTPSlot index={1} className="!h-16 !w-12" />
+                            <InputOTPSlot index={1} className="h-16 w-12" />
                         </InputOTPGroup>
                         <InputOTPGroup>
-                            <InputOTPSlot index={2} className="!h-16 !w-12" />
+                            <InputOTPSlot index={2} className="h-16 w-12" />
                         </InputOTPGroup>
                         <InputOTPGroup>
-                            <InputOTPSlot index={3} className="!h-16 !w-12" />
+                            <InputOTPSlot index={3} className="h-16 w-12" />
                         </InputOTPGroup>
                         <InputOTPGroup>
-                            <InputOTPSlot index={4} className="!h-16 !w-12" />
+                            <InputOTPSlot index={4} className="h-16 w-12" />
                         </InputOTPGroup>
                         <InputOTPGroup>
-                            <InputOTPSlot index={5} className="!h-16 !w-12" />
+                            <InputOTPSlot index={5} className="h-16 w-12" />
                         </InputOTPGroup>
                     </InputOTP>
 

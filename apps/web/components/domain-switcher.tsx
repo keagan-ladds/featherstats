@@ -55,7 +55,7 @@ export function DomainSwitcher() {
       const active = domains.find((domain) => domain.name === params.domain)
       setActiveDomain(active)
     }
-    
+
   }, [params])
 
 
@@ -92,10 +92,11 @@ export function DomainSwitcher() {
             {domains.map((domain, index) => (
               <DropdownMenuItem
                 key={domain.name}
-                onClick={() => onDomainSelected(domain)}
+                onSelect={() => onDomainSelected(domain)}
                 className="gap-2 p-2"
               >
-                <div className="flex size-6 items-center justify-center rounded-sm border">
+
+                <div className="flex size-6 items-center justify-center rounded-sm border" >
                   <SourceIcon className="size-4 shrink-0" source={domain.name} />
                 </div>
                 {domain.name}

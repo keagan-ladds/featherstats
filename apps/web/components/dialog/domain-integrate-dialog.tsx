@@ -47,7 +47,7 @@ add_action('wp_head', 'add_analytics_tracking_code');
     return (
         <div className="flex items-center justify-center p-4">
             <Dialog open={isOpen} onOpenChange={close}>
-                <DialogContent className="md:!max-w-[900px] !max-h-[85vh]">
+                <DialogContent className="md:max-w-[900px] max-h-[85vh]">
                     <DialogHeader>
                         <DialogTitle>Integrate Analytics Tracking</DialogTitle>
                         <DialogDescription>
@@ -56,10 +56,10 @@ add_action('wp_head', 'add_analytics_tracking_code');
                     </DialogHeader>
 
 
-                    <ScrollArea className={cn("flex flex-col flex-1 overflow-y-auto pr-1 !max-h-[65vh]")}>
+                    <ScrollArea className={cn("flex flex-col flex-1 overflow-y-auto pr-1 max-h-[65vh]")}>
                         <Tabs defaultValue="javascript" className="flex flex-col mt-4">
                             <TabsList className="grid grid-cols-4">
-                                <TabsTrigger value="javascript" className="!flex items-center gap-1.5 !w-full">
+                                <TabsTrigger value="javascript" className="flex items-center gap-1.5 !w-full">
                                     <Code className="h-4 w-4" />
                                     <span>JavaScript</span>
                                 </TabsTrigger>
@@ -109,7 +109,7 @@ add_action('wp_head', 'add_analytics_tracking_code');
                                             </AlertDescription>
                                         </Alert>
                                     </CardContent>
-                                    <CardFooter className="!flex !flex-col !items-start">
+                                    <CardFooter className="flex flex-col items-start">
                                         <h4 className="font-medium mb-2">Implementation Tips:</h4>
                                         <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
                                             <li>Place the code just before the closing &lt;/head&gt; tag for optimal performance</li>
