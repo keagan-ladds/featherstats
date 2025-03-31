@@ -109,74 +109,60 @@ export class SubscriptionService {
         const customerId = await this.findOrCreateStripeCustomerId(userId);
         const existingSubscription = await this.getActiveUserSubscription(userId);
         if (!existingSubscription) {
-
-            // If it's a free subscription, don't worry about the checkout session, just create the subscription
-            if (price.amount === 0) {
-                await stripe.subscriptions.create({
-                    customer: customerId,
-                    items: [
-                        {
-                            price: price.stripePriceId,
-                        }
-                    ]
-                })
-                return {}
-            }
-
-            const checkoutSession = await stripe.checkout.sessions.create({
+            await stripe.subscriptions.create({
+                payment_behavior: "default_incomplete",
                 customer: customerId,
-                line_items: [
+                items: [
                     {
                         price: price.stripePriceId,
-                        quantity: 1,
-                    },
+                    }
                 ],
-                mode: 'subscription',
-                success_url: getURL(),
-                cancel_url: getURL(),
-            });
-
-            return { url: checkoutSession.url! };
+                expand: ['latest_invoice.payment_intent', 'pending_setup_intent']
+            })
+            return {}
         }
 
-        const configuration = await stripe.billingPortal.configurations.create({
-            business_profile: {
-                headline: "Manage your subscription",
-            },
-            features: {
-                payment_method_update: {
-                    enabled: true,
-                },
-                subscription_update: {
-                    enabled: true,
-                    default_allowed_updates: ["price"],
-                    products: [
-                        {
-                            product: price.stripeProductId,
-                            prices: [price.stripePriceId]
-                        }
-                    ]
-                },
-                subscription_cancel: {
-                    enabled: false
-                },
-                customer_update: {
-                    enabled: false
-                },
-                invoice_history: {
-                    enabled: false
+        const subscriptionId = existingSubscription.id;
+        const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+        const prorationDate = Math.floor(Date.now() / 1000)
+
+
+        // // See what the next invoice would look like with a price switch
+        // // and proration set:
+        // const items = [{
+        //     id: subscription.items.data[0]!.id,
+        //     price: price.stripePriceId, // Switch to new price
+        // }];
+
+        // const invoice = await stripe.invoices.createPreview({
+        //     customer: customerId,
+        //     subscription: subscriptionId,
+        //     subscription_details: {
+        //         items: items,
+        //         proration_date: prorationDate
+        //     },
+        // });
+
+        const updatedSubscription = await stripe.subscriptions.update(subscriptionId, {
+            payment_behavior: "default_incomplete",
+            items: [
+                {
+                    id: subscription.items.data[0]!.id,
+                    price: price.stripePriceId
                 }
-            }
+            ],
+            expand: ['latest_invoice.payment_intent', 'pending_setup_intent']
         });
 
-        // Create a Stripe Portal session with the configuration
-        const stripeSession = await stripe.billingPortal.sessions.create({
-            customer: customerId,
-            return_url: getURL(),
-            configuration: configuration.id
-        });
-
-        return { url: stripeSession.url };
+        if (updatedSubscription.pending_setup_intent !== null) {
+            const setupIntent = updatedSubscription.pending_setup_intent as Stripe.SetupIntent;
+            
+            return { intentType: "setup_intent", clientSecret: setupIntent.client_secret! }
+        } else {
+            const latestInvoice = updatedSubscription.latest_invoice as Stripe.Invoice
+            const paymentIntent = latestInvoice.payment_intent as Stripe.PaymentIntent
+            return { intentType: "payment_intent", clientSecret: paymentIntent.client_secret! }
+        }
     }
 
     private async findOrCreateStripeCustomerId(userId: string): Promise<string> {

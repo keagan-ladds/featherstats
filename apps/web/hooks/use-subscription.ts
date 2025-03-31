@@ -1,14 +1,17 @@
 'use client'
 import { getSubscriptionPlans, updateSubscriptionPlan as updateSubscriptionPlanApi } from "lib/client/api-client";
 import { useCallback, useEffect, useState } from "react";
-import { PlanWithPrices } from "types/subscription";
+import { PlanWithPrices, UpdateSubscriptionPlanOptions, UpdateSubscriptionPlanResult } from "types/subscription";
 import { toast } from "sonner"
 import useDialog from "./use-dialog";
 
 export function useSubscription() {
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [plans, setPlans] = useState<PlanWithPrices[]>([])
+    const [updateResult, setUpdateResult] = useState<UpdateSubscriptionPlanResult | null>()
     const { close } = useDialog("upgrade")
+
+
     const fetchPlans = useCallback(async () => {
         setIsLoading(true);
         try {
@@ -25,27 +28,25 @@ export function useSubscription() {
         fetchPlans()
     }, [fetchPlans])
 
-    const updateSubscriptionPlan = useCallback(async (planId: string, priceId: string) => {
+    const updateSubscriptionPlan = useCallback(async (opts: UpdateSubscriptionPlanOptions) => {
         setIsLoading(true);
         try {
-            const data = await updateSubscriptionPlanApi({ planId, priceId });
-            if (data.url)
-                window.location.href = data.url;
-            else {
-                close();
-                toast("Your subscription has been updated successfully")
-            }
+            const data = await updateSubscriptionPlanApi(opts);
+            setUpdateResult(data);
         } catch (err) {
             toast.error("Something went wrong while processing subscription plan update, please refresh the page and try again.")
+        } finally {
+            setIsLoading(false)
         }
-
-        setIsLoading(false)
     }, [])
 
     return {
         plans,
         isLoading,
+        clientSecret: updateResult?.clientSecret,
+        intentType: updateResult?.intentType,
         fetchPlans,
-        updateSubscriptionPlan
+        updateSubscriptionPlan,
+
     }
 }

@@ -33,7 +33,8 @@
         "DATABASE_URL",
         "RESEND_API_KEY",
         "STRIPE_SECRET_KEY",
-        "STRIPE_WEBHOOK_SIGNING_KEY"
+        "STRIPE_WEBHOOK_SIGNING_KEY",
+        "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY"
       ]
     },
     "lint": {

@@ -8,8 +8,6 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@repo/ui/c
 import { cn } from "lib/utils"
 import { Button } from "@repo/ui/components/ui/button"
 import { Switch } from "@repo/ui/components/ui/switch"
-import { useSubscription } from "hooks/use-subscription"
-import { useUser } from "hooks/use-user"
 
 // Helper function to format currency
 const formatCurrency = (amount: number) => {
@@ -26,20 +24,17 @@ const formatNumber = (num: number) => {
 }
 
 interface Props {
-
+    subscriptionPlans: PlanWithPrices[],
+    isLoading?: boolean,
+    currentPlanId?: string;
+    currentBillingPeriod?: BillingPeriod
+    onPlanSelected?: (planId: string, priceId: string) => void
 }
 
-export default function SubscriptionPlanSelection({
-}: Props) {
-    const { plans: subscriptionPlans, isLoading, updateSubscriptionPlan } = useSubscription();
-    const { profile } = useUser()
-    const subscription = profile.subscription
-    const currentPlanId = subscription.planId;
-    const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>(subscription.billingPeriod)
-    const [selectedPlan, setSelectedPlan] = useState<string | null>(null)
+export default function SubscriptionPlanSelection({ subscriptionPlans, isLoading, currentPlanId, onPlanSelected, currentBillingPeriod = "monthly" }: Props) {
 
-    // Default to expanding the current plan if it exists, otherwise the Growth plan
-    const [expandedPlan, setExpandedPlan] = useState<string | null>(currentPlanId || null)
+    const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>(currentBillingPeriod)
+
 
     // Function to get the price for a plan based on the selected billing period
     const getPlanPrice = (plan: PlanWithPrices) => {
@@ -56,15 +51,10 @@ export default function SubscriptionPlanSelection({
 
     // Function to handle plan selection
     const handleSelectPlan = (plan: PlanWithPrices) => {
-        setSelectedPlan(plan.id)
         const { id: priceId } = getPlanPrice(plan)
-        updateSubscriptionPlan(plan.id, priceId);
+        onPlanSelected?.(plan.id, priceId)
     }
 
-    // Function to toggle plan details expansion
-    const togglePlanExpansion = (planId: string) => {
-        setExpandedPlan(expandedPlan === planId ? null : planId)
-    }
 
     // Find the current plan object
     const currentPlan = currentPlanId ? subscriptionPlans.find((plan) => plan.id === currentPlanId) : null
@@ -165,17 +155,8 @@ export default function SubscriptionPlanSelection({
                                         className="w-full text-sm py-1.5 h-auto"
                                         variant={isPopular ? "default" : "outline"}
                                         onClick={() => handleSelectPlan(plan)}
-                                        disabled={!hasYearly && billingPeriod === "yearly" || isLoading}
-                                    >
-                                        {selectedPlan === plan.id
-                                            ? "Selected"
-                                            : currentPlanId
-                                                ? getPlanPrice(plan) > (currentPlan ? getPlanPrice(currentPlan) : 0)
-                                                    ? "Upgrade"
-                                                    : getPlanPrice(plan) < (currentPlan ? getPlanPrice(currentPlan) : 0)
-                                                        ? "Downgrade"
-                                                        : "Switch Plan"
-                                                : "Select Plan"}
+                                        disabled={!hasYearly && billingPeriod === "yearly" || isLoading}>
+                                        {currentPlanId ? "Switch Plan" : "Select Plan"}
                                     </Button>
                                 )}
                             </CardFooter>
