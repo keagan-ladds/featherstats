@@ -3,19 +3,19 @@ import React, { useState } from 'react';
 import { useStripe, useElements, PaymentElement } from '@stripe/react-stripe-js';
 import { StripeError } from '@stripe/stripe-js';
 import { Button } from '@repo/ui/components/ui/button';
-import { UpdateSubscriptionPlanResult } from 'types/subscription';
+import { SubscriptionPaymentIntent, UpdateSubscriptionPlanResult } from 'types/subscription';
 import { getURL } from 'lib/utils';
 import { formatCurrency } from 'lib/format-utils';
 
 
 interface Props {
     clientSecret: string;
-    intentType:  UpdateSubscriptionPlanResult["intentType"];
+    intentType:  SubscriptionPaymentIntent["intentType"];
     amount?: number;
     currency?: string
 }
 
-export default function SubscriptionBillingForm({clientSecret, intentType, amount, currency}: Props) {
+export default function SubscriptionCheckoutForm({clientSecret, intentType, amount, currency}: Props) {
     const stripe = useStripe();
     const elements = useElements();
 

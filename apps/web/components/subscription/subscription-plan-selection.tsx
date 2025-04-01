@@ -93,22 +93,23 @@ export default function SubscriptionPlanSelection({ subscriptionPlans, isLoading
                         <Card
                             key={plan.id}
                             className={cn(
-                                "flex flex-col",
+                                "relative",
                                 isPopular && "border-primary",
                                 isCurrentPlan && "border-2 border-primary/70 bg-primary/5",
                             )}
                         >
-                            <CardHeader className="p-3 !pb-2">
-                                <div className="flex items-center">
+                            <div className={cn("absolute top-0 h-5 w-full items-center justify-center flex flex-col rounded-t-xl", isPopular && "bg-primary")}>
+                                    {isPopular && (
+                                        <span className="text-primary-foreground text-[10px] font-medium">
+                                            POPULAR
+                                        </span>
+                                    )}
+                                </div>
+                            <CardHeader>
+                                
+                                <div className="flex items-center mt-4">
                                     <CardTitle className="text-base flex-1">
                                         {plan.name}
-                                        <div className="flex flex-wrap gap-1 mt-1">
-                                            {isPopular && (
-                                                <span className="bg-primary text-primary-foreground text-[10px] font-medium py-0.5 px-1.5 rounded">
-                                                    POPULAR
-                                                </span>
-                                            )}
-                                        </div>
                                     </CardTitle>
                                     <div className="flex items-center">
                                         <span className="text-lg font-bold mr-1">{formatCurrency(price.amount)}</span>
@@ -119,7 +120,7 @@ export default function SubscriptionPlanSelection({ subscriptionPlans, isLoading
                                 </div>
                             </CardHeader>
 
-                            <CardContent className="p-3 !pt-0 !flex-1">
+                            <CardContent className="flex-1">
                                 <ul className="space-y-1.5 mt-2 text-sm">
                                     <li className="flex items-start">
                                         <Check className="h-4 w-4 text-primary mr-1.5 mt-0.5 flex-shrink-0" />
@@ -145,7 +146,7 @@ export default function SubscriptionPlanSelection({ subscriptionPlans, isLoading
 
                             </CardContent>
 
-                            <CardFooter className="p-3 pt-0">
+                            <CardFooter className="p-3">
                                 {isCurrentPlan ? (
                                     <Button className="w-full text-sm py-1.5 h-auto" variant="secondary" disabled>
                                         Current Plan

@@ -17,6 +17,7 @@ import UserPlanSelectionDialog from "components/user/user-plan-selection-dialog"
 import UserUsageDialog from "components/user/user-usage-dialog"
 import DomainCreateDialog from "components/dialog/domain-create-dialog"
 import { DomainSwitcher } from "components/domain-switcher"
+import SubscriptionCheckoutDialog from "components/subscription/subscription-checkout-dialog"
 
 interface AppLayoutProps {
     children: React.ReactNode
@@ -65,6 +66,7 @@ export default async function AppLayout({ children }: AppLayoutProps) {
                         <UserPlanSelectionDialog/>
                         <UserPreferencesDialog />
                         <UserSubscriptionDialog />
+                        <SubscriptionCheckoutDialog/>
                         <UserUsageDialog/>
                         <DomainCreateDialog/>
                     </WorkspaceProvider>

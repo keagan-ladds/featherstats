@@ -164,12 +164,12 @@ export class SubscriptionService {
                 return { complete: true }
             }
 
-            return { complete: false, intentType: "payment_intent", clientSecret: paymentIntent.client_secret!, amount: paymentIntent.amount, currency: paymentIntent.currency }
+            return { complete: false, paymentIntent: { intentType: "payment_intent", clientSecret: paymentIntent.client_secret!, amount: paymentIntent.amount, currency: paymentIntent.currency } }
         }
 
         if (stripeSubscription.pending_setup_intent !== null) {
             const setupIntent = stripeSubscription.pending_setup_intent as Stripe.SetupIntent;
-            return { complete: false, intentType: "setup_intent", clientSecret: setupIntent.client_secret! }
+            return { complete: false, paymentIntent: { intentType: "setup_intent", clientSecret: setupIntent.client_secret! } }
         }
 
         return { complete: true }

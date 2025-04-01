@@ -10,6 +10,10 @@ export type UpdateSubscriptionPlanOptions = z.infer<typeof UpdateUserSubscriptio
 
 export type UpdateSubscriptionPlanResult = {
     complete: boolean;
+    paymentIntent?: SubscriptionPaymentIntent
+}
+
+export type SubscriptionPaymentIntent = {
     intentType?: 'payment_intent' | 'setup_intent'
     clientSecret?: string;
     amount?: number;

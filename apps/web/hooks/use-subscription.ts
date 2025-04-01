@@ -1,14 +1,14 @@
 'use client'
 import { getSubscriptionPlans, updateSubscriptionPlan as updateSubscriptionPlanApi } from "lib/client/api-client";
 import { useCallback, useEffect, useState } from "react";
-import { PlanWithPrices, UpdateSubscriptionPlanOptions, UpdateSubscriptionPlanResult } from "types/subscription";
+import { PlanWithPrices, SubscriptionPaymentIntent, UpdateSubscriptionPlanOptions, UpdateSubscriptionPlanResult } from "types/subscription";
 import { toast } from "sonner"
 import useDialog from "./use-dialog";
 
 export function useSubscription() {
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [plans, setPlans] = useState<PlanWithPrices[]>([])
-    const [updateResult, setUpdateResult] = useState<UpdateSubscriptionPlanResult | null>()
+    const [paymentIntent, setPaymentIntent] = useState<SubscriptionPaymentIntent | null>()
     const { close } = useDialog("upgrade")
 
 
@@ -32,12 +32,11 @@ export function useSubscription() {
         setIsLoading(true);
         try {
             const result = await updateSubscriptionPlanApi(opts);
-            if (result.complete) {
-                toast.success("Your subscription was successfully updated!")
-                setUpdateResult(null);
-                close()
+            if (result.paymentIntent) {
+                setPaymentIntent(result.paymentIntent)
             } else {
-                setUpdateResult(result);
+                toast.success("Your subscription was successfully updated!")
+                close()
             }
 
         } catch (err) {
@@ -50,10 +49,7 @@ export function useSubscription() {
     return {
         plans,
         isLoading,
-        clientSecret: updateResult?.clientSecret,
-        intentType: updateResult?.intentType,
-        amount: updateResult?.amount,
-        currency: updateResult?.currency,
+        paymentIntent,
         fetchPlans,
         updateSubscriptionPlan,
 
