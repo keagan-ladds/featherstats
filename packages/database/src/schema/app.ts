@@ -10,7 +10,7 @@ import { PlanUsageLimit as PlanUsageLimits } from "../types";
 export const workspacesTable = pgTable("workspaces", {
     id: text("id").primaryKey().$default(() => generateUniqueString()),
     name: text("name").notNull().$default(() => "Default Workspace"),
-    userId: text("user_id").references(() => usersTable.id, {onDelete: "cascade"}),
+    userId: text("user_id").notNull().references(() => usersTable.id, {onDelete: "cascade"}),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at"),
 });

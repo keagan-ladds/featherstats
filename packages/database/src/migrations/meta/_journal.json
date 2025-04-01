@@ -43,6 +43,13 @@
       "when": 1743520257506,
       "tag": "0005_tiny_blizzard",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1743520875942,
+      "tag": "0006_fair_shotgun",
+      "breakpoints": true
     }
   ]
 }
