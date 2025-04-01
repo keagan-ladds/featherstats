@@ -16,10 +16,10 @@ export function POST(request: NextRequest) {
 
         const requestBody = await request.json()
         const onboardingData = OnboardingDataSchema.parse(requestBody);
-        
+
         await userService.updateUserById(userId, { name: onboardingData.name });
         const workspace = await workspaceService.createDefaultUserWorkspace(userId, { name: onboardingData.workspaceName });
-        const domain = await workspaceService.createWorkspaceDomain(workspace.id, { name: onboardingData.domainName });
+        const domain = await workspaceService.createWorkspaceDomain(workspace.id, { name: onboardingData.domainName, enforce_origin_match: true, normalize_www: true });
 
         return NextResponse.json<WorkspaceWithDomains>({
             ...workspace,

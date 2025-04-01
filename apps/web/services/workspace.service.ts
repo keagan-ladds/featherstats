@@ -1,8 +1,8 @@
 import { db } from "@featherstats/database";
-import { domainsTable, workspaceUsersTable, workspacesTable } from "@featherstats/database/schema/app";
+import { domainsTable, workspacesTable } from "@featherstats/database/schema/app";
 import { Domain, Workspace } from "@featherstats/database/types";
 import { DomainCreateOptions, WorkspaceCreateOptions, WorkspaceWithDomains } from "types/workspace";
-import { eq, getTableColumns } from "drizzle-orm"
+import { eq, and, getTableColumns } from "drizzle-orm"
 
 class WorkspaceService {
     async createDefaultUserWorkspace(userId: string, opts: WorkspaceCreateOptions): Promise<Workspace> {
@@ -14,22 +14,19 @@ class WorkspaceService {
 
     async createWorkspace(userId: string, { name }: WorkspaceCreateOptions): Promise<Workspace> {
         return await db.transaction(async (transaction) => {
-            const [workspace] = await transaction.insert(workspacesTable).values({ name }).returning();
-            await transaction.insert(workspaceUsersTable).values({ userId: userId, workspaceId: workspace!.id });
+            const [workspace] = await transaction.insert(workspacesTable).values({ name, userId }).returning();
             return workspace!;
         });
     }
 
     async findWorkspaceByUserId(userId: string): Promise<Workspace[]> {
         return await db.select({ ...getTableColumns(workspacesTable) }).from(workspacesTable)
-            .innerJoin(workspaceUsersTable, eq(workspacesTable.id, workspaceUsersTable.workspaceId))
-            .where(eq(workspaceUsersTable.userId, userId))
+            .where(eq(workspacesTable.userId, userId))
     }
 
     async getDefaultWorkspaceByUserId(userId: string): Promise<WorkspaceWithDomains | null> {
         const [workspace] = await db.select({ ...getTableColumns(workspacesTable) }).from(workspacesTable)
-            .innerJoin(workspaceUsersTable, eq(workspacesTable.id, workspaceUsersTable.workspaceId))
-            .where(eq(workspaceUsersTable.userId, userId));
+            .where(eq(workspacesTable.userId, userId));
 
         if (!workspace) return null;
 
@@ -45,8 +42,7 @@ class WorkspaceService {
     async getWorkspaceDomainByName(domainName: string, userId: string): Promise<Domain | null> {
         const [domain] = await db.select({ ...getTableColumns(domainsTable) }).from(domainsTable)
             .innerJoin(workspacesTable, eq(domainsTable.workspaceId, workspacesTable.id))
-            .innerJoin(workspaceUsersTable, eq(workspaceUsersTable.userId, userId))
-            .where(eq(domainsTable.name, this.normalizeDomainName(domainName)))
+            .where(and(eq(domainsTable.name, this.normalizeDomainName(domainName)), eq(workspacesTable.userId, userId)))
 
         return domain || null
     }
