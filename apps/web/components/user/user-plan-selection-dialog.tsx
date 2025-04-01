@@ -7,21 +7,39 @@ import { StripeElementsOptions, loadStripe } from "@stripe/stripe-js";
 import { useSubscription } from "hooks/use-subscription";
 import SubscriptionBillingForm from "components/subscription/subscription-billing-form";
 import { useUser } from "hooks/use-user";
-import { useCallback } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { stripePromise } from "lib/stripe/client";
 
 
 export default function UserPlanSelectionDialog() {
     const { close, isOpen } = useDialog("upgrade")
 
-    const { plans, isLoading, updateSubscriptionPlan, clientSecret, intentType } = useSubscription();
+    const { plans, isLoading, updateSubscriptionPlan, clientSecret, intentType, amount, currency } = useSubscription();
+
     const { profile } = useUser()
     const subscription = profile.subscription
     const currentPlanId = subscription.planId;
 
-    const options = {
-        clientSecret: clientSecret,
-    } satisfies StripeElementsOptions
+    const options: StripeElementsOptions = useMemo(() => (
+        {
+            clientSecret: clientSecret,
+            appearance: {
+                theme: "night",
+                variables: {
+                    colorPrimary: "#006dbc",
+                    colorBackground: "#090d11"
+                }
+            }
+            
+        }), [clientSecret])
+
+    const currentMode = useMemo(() => {
+        if (intentType === "payment_intent" || intentType === "setup_intent")
+            return "payment"
+
+        return "plans"
+
+    }, [intentType])
 
     const onPlanSelected = useCallback((planId: string, priceId: string) => {
         updateSubscriptionPlan({ planId, priceId })
@@ -36,11 +54,10 @@ export default function UserPlanSelectionDialog() {
                         Select the plan that best fits your needs.
                     </DialogDescription>
                 </DialogHeader>
-
-                {!clientSecret && (<SubscriptionPlanSelection onPlanSelected={onPlanSelected} subscriptionPlans={plans} isLoading={isLoading} currentPlanId={currentPlanId} currentBillingPeriod={subscription.billingPeriod} />)}
-                {clientSecret && (
+                {currentMode === "plans" && (<SubscriptionPlanSelection onPlanSelected={onPlanSelected} subscriptionPlans={plans} isLoading={isLoading} currentPlanId={currentPlanId} currentBillingPeriod={subscription.billingPeriod} />)}
+                {currentMode === "payment" && (
                     <Elements stripe={stripePromise} options={options}>
-                        <SubscriptionBillingForm clientSecret={clientSecret} intentType={intentType} />
+                        <SubscriptionBillingForm clientSecret={clientSecret!} intentType={intentType} amount={amount} currency={currency} />
                     </Elements>
                 )}
             </DialogContent>

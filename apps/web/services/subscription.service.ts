@@ -104,12 +104,15 @@ export class SubscriptionService {
         const [price] = await db.select({ amount: planPricesTable.amount, stripePriceId: planPricesTable.stripePriceId, stripeProductId: plansTable.stripeProductId }).from(planPricesTable)
             .innerJoin(plansTable, eq(plansTable.id, planPricesTable.planId))
             .where(eq(planPricesTable.id, opts.priceId))
+
         if (!price) throw new Error(`The could not find the stripe price id associated with the given price '${opts.priceId}'.`);
 
         const customerId = await this.findOrCreateStripeCustomerId(userId);
         const existingSubscription = await this.getActiveUserSubscription(userId);
+        let stripeSubscription: Stripe.Subscription;
+
         if (!existingSubscription) {
-            await stripe.subscriptions.create({
+            stripeSubscription = await stripe.subscriptions.create({
                 payment_behavior: "default_incomplete",
                 customer: customerId,
                 items: [
@@ -117,15 +120,59 @@ export class SubscriptionService {
                         price: price.stripePriceId,
                     }
                 ],
+                payment_settings: {
+                    save_default_payment_method: 'on_subscription',
+                },
                 expand: ['latest_invoice.payment_intent', 'pending_setup_intent']
             })
-            return {}
+        } else {
+            const subscriptionId = existingSubscription.id;
+            const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+            const prorationDate = Math.floor(Date.now() / 1000)
+
+            stripeSubscription = await stripe.subscriptions.update(subscriptionId, {
+                payment_behavior: "default_incomplete",
+                proration_behavior: "always_invoice",
+                proration_date: prorationDate,
+                items: [
+                    {
+                        id: subscription.items.data[0]!.id,
+                        price: price.stripePriceId
+                    }
+                ],
+                payment_settings: {
+                    save_default_payment_method: 'on_subscription',
+                },
+                expand: ['latest_invoice.payment_intent', 'pending_setup_intent']
+            });
         }
 
-        const subscriptionId = existingSubscription.id;
-        const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-        const prorationDate = Math.floor(Date.now() / 1000)
+        if ((stripeSubscription.latest_invoice as Stripe.Invoice).paid === true) {
+            return { complete: true }
+        }
 
+        if ((stripeSubscription.latest_invoice as Stripe.Invoice).payment_intent !== null) {
+            const latestInvoice = stripeSubscription.latest_invoice as Stripe.Invoice
+            let paymentIntent = latestInvoice.payment_intent as Stripe.PaymentIntent
+
+            if (stripeSubscription.default_payment_method !== null) {
+                // Attempt to collect payment using the default payment method (if possible)
+                paymentIntent = await stripe.paymentIntents.confirm(paymentIntent.id);
+            }
+
+            if (paymentIntent.status == "succeeded" || paymentIntent.status === "processing") {
+                return { complete: true }
+            }
+
+            return { complete: false, intentType: "payment_intent", clientSecret: paymentIntent.client_secret!, amount: paymentIntent.amount, currency: paymentIntent.currency }
+        }
+
+        if (stripeSubscription.pending_setup_intent !== null) {
+            const setupIntent = stripeSubscription.pending_setup_intent as Stripe.SetupIntent;
+            return { complete: false, intentType: "setup_intent", clientSecret: setupIntent.client_secret! }
+        }
+
+        return { complete: true }
 
         // // See what the next invoice would look like with a price switch
         // // and proration set:
@@ -142,27 +189,6 @@ export class SubscriptionService {
         //         proration_date: prorationDate
         //     },
         // });
-
-        const updatedSubscription = await stripe.subscriptions.update(subscriptionId, {
-            payment_behavior: "default_incomplete",
-            items: [
-                {
-                    id: subscription.items.data[0]!.id,
-                    price: price.stripePriceId
-                }
-            ],
-            expand: ['latest_invoice.payment_intent', 'pending_setup_intent']
-        });
-
-        if (updatedSubscription.pending_setup_intent !== null) {
-            const setupIntent = updatedSubscription.pending_setup_intent as Stripe.SetupIntent;
-            
-            return { intentType: "setup_intent", clientSecret: setupIntent.client_secret! }
-        } else {
-            const latestInvoice = updatedSubscription.latest_invoice as Stripe.Invoice
-            const paymentIntent = latestInvoice.payment_intent as Stripe.PaymentIntent
-            return { intentType: "payment_intent", clientSecret: paymentIntent.client_secret! }
-        }
     }
 
     private async findOrCreateStripeCustomerId(userId: string): Promise<string> {

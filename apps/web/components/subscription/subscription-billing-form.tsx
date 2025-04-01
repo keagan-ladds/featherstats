@@ -5,14 +5,17 @@ import { StripeError } from '@stripe/stripe-js';
 import { Button } from '@repo/ui/components/ui/button';
 import { UpdateSubscriptionPlanResult } from 'types/subscription';
 import { getURL } from 'lib/utils';
+import { formatCurrency } from 'lib/format-utils';
 
 
 interface Props {
     clientSecret: string;
-    intentType:  UpdateSubscriptionPlanResult["intentType"]
+    intentType:  UpdateSubscriptionPlanResult["intentType"];
+    amount?: number;
+    currency?: string
 }
 
-export default function SubscriptionBillingForm({clientSecret, intentType}: Props) {
+export default function SubscriptionBillingForm({clientSecret, intentType, amount, currency}: Props) {
     const stripe = useStripe();
     const elements = useElements();
 
@@ -70,7 +73,7 @@ export default function SubscriptionBillingForm({clientSecret, intentType}: Prop
         <form onSubmit={handleSubmit}>
             <PaymentElement />
             <Button className='mt-5 w-full' type="submit" disabled={!stripe || loading}>
-                Submit Payment
+                {amount && currency ? `Pay ${formatCurrency(amount, currency)}` : "Save Details" }
             </Button>
             {errorMessage && <div>{errorMessage}</div>}
         </form>

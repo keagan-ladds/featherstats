@@ -31,8 +31,15 @@ export function useSubscription() {
     const updateSubscriptionPlan = useCallback(async (opts: UpdateSubscriptionPlanOptions) => {
         setIsLoading(true);
         try {
-            const data = await updateSubscriptionPlanApi(opts);
-            setUpdateResult(data);
+            const result = await updateSubscriptionPlanApi(opts);
+            if (result.complete) {
+                toast.success("Your subscription was successfully updated!")
+                setUpdateResult(null);
+                close()
+            } else {
+                setUpdateResult(result);
+            }
+
         } catch (err) {
             toast.error("Something went wrong while processing subscription plan update, please refresh the page and try again.")
         } finally {
@@ -45,6 +52,8 @@ export function useSubscription() {
         isLoading,
         clientSecret: updateResult?.clientSecret,
         intentType: updateResult?.intentType,
+        amount: updateResult?.amount,
+        currency: updateResult?.currency,
         fetchPlans,
         updateSubscriptionPlan,
 

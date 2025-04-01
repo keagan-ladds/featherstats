@@ -9,9 +9,9 @@ export type PlanWithPrices = Plan & {
 export type UpdateSubscriptionPlanOptions = z.infer<typeof UpdateUserSubscriptionSchema>
 
 export type UpdateSubscriptionPlanResult = {
-    url?: string;
-    invoice?: any
-    subscription?: any
+    complete: boolean;
     intentType?: 'payment_intent' | 'setup_intent'
     clientSecret?: string;
+    amount?: number;
+    currency?: string;
 }
