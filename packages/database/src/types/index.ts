@@ -1,4 +1,4 @@
-import { billingPeriod, domainVerificationStatus, domainsTable, planPricesTable, plansTable, subscriptionStatus, subscriptionsTable, workspaceUsageTable, workspaceUsersTable, workspacesTable } from "../schema/app";
+import { billingPeriod, domainVerificationStatus, domainsTable, planPricesTable, plansTable, subscriptionStatus, subscriptionsTable, workspacesTable } from "../schema/app";
 import { usersTable } from "../schema/auth";
 
 export type User = typeof usersTable.$inferSelect
@@ -22,12 +22,9 @@ export type PlanUsageLimit = {
     dataRetentionDays: number
 }
 
-
-export type WorkspaceUsers = typeof workspaceUsersTable.$inferSelect;
 export type Domain = typeof domainsTable.$inferSelect
 export type DomainVerificationStatus = typeof domainVerificationStatus.enumValues[number]
 export type Workspace = typeof workspacesTable.$inferSelect
-export type WorspaceUsage = typeof workspaceUsageTable.$inferInsert
 
 export type Plan = typeof plansTable.$inferSelect;
 export type PlanPrice = typeof planPricesTable.$inferSelect;

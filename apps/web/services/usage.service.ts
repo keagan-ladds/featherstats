@@ -1,6 +1,5 @@
 import { db } from "@featherstats/database/index";
 import { workspacesTable } from "@featherstats/database/schema/app";
-import { WorspaceUsage } from "@featherstats/database/types";
 import { formatISO, subDays } from "date-fns";
 import { tinybirdClient } from "lib/tinybird/server";
 import { sql, eq } from 'drizzle-orm';
