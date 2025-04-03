@@ -4,15 +4,15 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@repo/ui/lib/utils"
 
 const alertVariants = cva(
-  "ui-relative ui-w-full ui-rounded-lg ui-border ui-px-4 ui-py-3 ui-text-sm [&>svg+div]:ui-translate-y-[-3px] [&>svg]:ui-absolute [&>svg]:ui-left-4 [&>svg]:ui-top-4 [&>svg]:ui-text-foreground [&>svg~*]:ui-pl-7",
+  "ui:relative ui:w-full ui:rounded-lg ui:border ui:px-4 ui:py-3 ui:text-sm ui:[&>svg+div]:translate-y-[-3px] ui:[&>svg]:absolute ui:[&>svg]:left-4 ui:[&>svg]:top-4 ui:[&>svg]:text-foreground ui:[&>svg~*]:pl-7",
   {
     variants: {
       variant: {
-        default: "ui-bg-background ui-text-foreground",
+        default: "ui:bg-background ui:text-foreground",
         destructive:
-          "ui-border-destructive/50 ui-text-destructive dark:ui-border-destructive [&>svg]:ui-text-destructive",
-        warning:"ui-border-amber-500/75 ui-bg-gradient-to-r ui-from-amber-500/50 ui-from-10% ui-to-background",
-        success:"ui-border-green-700/75 ui-bg-gradient-to-r ui-from-green-700/50 ui-from-10% ui-to-background"
+          "ui:border-destructive/50 ui:text-destructive ui:dark:border-destructive ui:[&>svg]:text-destructive",
+        warning:"ui:border-amber-500/75 ui:bg-linear-to-r ui:from-amber-500/50 ui:from-10% ui:to-background",
+        success:"ui:border-green-700/75 ui:bg-linear-to-r ui:from-green-700/50 ui:from-10% ui:to-background"
       },
     },
     defaultVariants: {
@@ -40,7 +40,7 @@ const AlertTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <h5
     ref={ref}
-    className={cn("ui-mb-1 ui-font-medium ui-leading-none ui-tracking-tight", className)}
+    className={cn("ui:mb-1 ui:font-medium ui:leading-none ui:tracking-tight", className)}
     {...props}
   />
 ))
@@ -52,7 +52,7 @@ const AlertDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("ui-text-sm [&_p]:ui-leading-relaxed", className)}
+    className={cn("ui:text-sm ui:[&_p]:leading-relaxed", className)}
     {...props}
   />
 ))

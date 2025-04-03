@@ -19,7 +19,7 @@ const DialogOverlay = React.forwardRef<
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
-      "ui-fixed ui-inset-0 ui-z-50 ui-bg-black/80 ui- data-[state=open]:ui-animate-in data-[state=closed]:ui-animate-out data-[state=closed]:ui-fade-out-0 data-[state=open]:ui-fade-in-0",
+      "ui:fixed ui:inset-0 ui:z-50 ui:bg-black/80 ui- ui:data-[state=open]:animate-in ui:data-[state=closed]:animate-out data-[state=closed]:ui-fade-out-0 data-[state=open]:ui-fade-in-0",
       className
     )}
     {...props}
@@ -36,15 +36,15 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        "ui-fixed ui-left-[50%] ui-top-[50%] ui-z-50 ui-grid ui-w-full ui-max-w-lg ui-translate-x-[-50%] ui-translate-y-[-50%] ui-gap-4 ui-border ui-bg-background ui-p-6 ui-shadow-lg ui-duration-200 data-[state=open]:ui-animate-in data-[state=closed]:ui-animate-out data-[state=closed]:ui-fade-out-0 data-[state=open]:ui-fade-in-0 data-[state=closed]:ui-zoom-out-95 data-[state=open]:ui-zoom-in-95 data-[state=closed]:ui-slide-out-to-left-1/2 data-[state=closed]:ui-slide-out-to-top-[48%] data-[state=open]:ui-slide-in-from-left-1/2 data-[state=open]:ui-slide-in-from-top-[48%] sm:ui-rounded-lg",
+        "ui:fixed ui:left-[50%] ui:top-[50%] ui:z-50 ui:grid ui:w-full ui:max-w-lg ui:translate-x-[-50%] ui:translate-y-[-50%] ui:gap-4 ui:border ui:bg-background ui:p-6 ui:shadow-lg ui:duration-200 ui:data-[state=open]:animate-in ui:data-[state=closed]:animate-out data-[state=closed]:ui-fade-out-0 data-[state=open]:ui-fade-in-0 data-[state=closed]:ui-zoom-out-95 data-[state=open]:ui-zoom-in-95 data-[state=closed]:ui-slide-out-to-left-1/2 data-[state=closed]:ui-slide-out-to-top-[48%] data-[state=open]:ui-slide-in-from-left-1/2 data-[state=open]:ui-slide-in-from-top-[48%] ui:sm:rounded-lg",
         className
       )}
       {...props}
     >
       {children}
-      <DialogPrimitive.Close className="ui-absolute ui-right-4 ui-top-4 ui-rounded-sm ui-opacity-70 ui-ring-offset-background ui-transition-opacity hover:ui-opacity-100 focus:ui-outline-none focus:ui-ring-2 focus:ui-ring-ring focus:ui-ring-offset-2 disabled:ui-pointer-events-none data-[state=open]:ui-bg-accent data-[state=open]:ui-text-muted-foreground">
-        <X className="ui-h-4 ui-w-4" />
-        <span className="ui-sr-only">Close</span>
+      <DialogPrimitive.Close className="ui:absolute ui:right-4 ui:top-4 ui:rounded-sm ui:opacity-70 ui:ring-offset-background ui:transition-opacity ui:hover:opacity-100 ui:focus:outline-hidden ui:focus:ring-2 ui:focus:ring-ring ui:focus:ring-offset-2 ui:disabled:pointer-events-none ui:data-[state=open]:bg-accent ui:data-[state=open]:text-muted-foreground">
+        <X className="ui:h-4 ui:w-4" />
+        <span className="ui:sr-only">Close</span>
       </DialogPrimitive.Close>
     </DialogPrimitive.Content>
   </DialogPortal>
@@ -57,7 +57,7 @@ const DialogHeader = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      "ui-flex ui-flex-col ui-space-y-1.5 ui-text-center sm:ui-text-left",
+      "ui:flex ui:flex-col ui:space-y-1.5 ui:text-center ui:sm:text-left",
       className
     )}
     {...props}
@@ -71,7 +71,7 @@ const DialogFooter = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      "ui-flex ui-flex-col-reverse sm:ui-flex-row sm:ui-justify-end sm:ui-space-x-2",
+      "ui:flex ui:flex-col-reverse ui:sm:flex-row ui:sm:justify-end ui:sm:space-x-2",
       className
     )}
     {...props}
@@ -86,7 +86,7 @@ const DialogTitle = React.forwardRef<
   <DialogPrimitive.Title
     ref={ref}
     className={cn(
-      "ui-text-lg ui-font-semibold ui-leading-none ui-tracking-tight",
+      "ui:text-lg ui:font-semibold ui:leading-none ui:tracking-tight",
       className
     )}
     {...props}
@@ -100,7 +100,7 @@ const DialogDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Description
     ref={ref}
-    className={cn("ui-text-sm ui-text-muted-foreground", className)}
+    className={cn("ui:text-sm ui:text-muted-foreground", className)}
     {...props}
   />
 ))

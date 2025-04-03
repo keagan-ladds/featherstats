@@ -11,10 +11,10 @@ const InputOTP = React.forwardRef<
   <OTPInput
     ref={ref}
     containerClassName={cn(
-      "flex items-center gap-2 has-[:disabled]:opacity-50",
+      "flex items-center gap-2 has-disabled:opacity-50",
       containerClassName
     )}
-    className={cn("disabled:ui-cursor-not-allowed", className)}
+    className={cn("ui:disabled:cursor-not-allowed", className)}
     {...props}
   />
 ))
@@ -24,7 +24,7 @@ const InputOTPGroup = React.forwardRef<
   React.ElementRef<"div">,
   React.ComponentPropsWithoutRef<"div">
 >(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("ui-flex ui-items-center", className)} {...props} />
+  <div ref={ref} className={cn("ui:flex ui:items-center", className)} {...props} />
 ))
 InputOTPGroup.displayName = "InputOTPGroup"
 
@@ -39,16 +39,16 @@ const InputOTPSlot = React.forwardRef<
     <div
       ref={ref}
       className={cn(
-        "ui-relative ui-flex ui-h-9 ui-w-9 ui-items-center ui-justify-center ui-border-y ui-border-r ui-border-input ui-text-sm ui-shadow-sm ui-transition-all first:ui-rounded-l-md first:ui-border-l last:ui-rounded-r-md",
-        isActive && "ui-z-10 ui-ring-1 ui-ring-ring",
+        "ui:relative ui:flex ui:h-9 ui:w-9 ui:items-center ui:justify-center ui:border-y ui:border-r ui:border-input ui:text-sm ui:shadow-sm ui:transition-all ui:first:rounded-l-md ui:first:border-l ui:last:rounded-r-md",
+        isActive && "ui:z-10 ui:ring-1 ui:ring-ring",
         className
       )}
       {...props}
     >
       {char}
       {hasFakeCaret && (
-        <div className="ui-pointer-events-none ui-absolute ui-inset-0 ui-flex ui-items-center ui-justify-center">
-          <div className="ui-h-4 ui-w-px ui-animate-caret-blink ui-bg-foreground ui-duration-1000" />
+        <div className="ui:pointer-events-none ui:absolute ui:inset-0 ui:flex ui:items-center ui:justify-center">
+          <div className="ui:h-4 ui:w-px ui:animate-caret-blink ui:bg-foreground ui:duration-1000" />
         </div>
       )}
     </div>

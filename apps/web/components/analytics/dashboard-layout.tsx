@@ -29,7 +29,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
     const headerContent = useMemo<React.ReactElement>(() => {
         return <>
-            <div className="ml-auto flex flex-grow items-center justify-end space-y-2 px-4">
+            <div className="ml-auto flex grow items-center justify-end space-y-2 px-4">
 
                 <div className="ml-auto flex items-center space-x-2">
 

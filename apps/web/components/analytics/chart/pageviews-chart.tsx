@@ -41,14 +41,14 @@ export default function PageViewsChart<T extends any[]>({ data, loading, groupKe
 
     return <>
         <Card className="flex flex-col">
-            <CardHeader className="items-center !pb-0">
+            <CardHeader className="items-center pb-0!">
                 <CardTitle className="flex items-center gap-2">Page Views <LearningTooltip description="Shows the total number of pageviews, helping you understand how different traffic sources contribute to overall engagement."/></CardTitle>
                 <CardDescription>Total pages viewed by users</CardDescription>
             </CardHeader>
-            <CardContent className="flex-1 !p-0">
+            <CardContent className="flex-1 p-0!">
                 <ChartContainer
                     config={chartConfig}
-                    className="mx-auto !aspect-square max-h-[250px]"
+                    className="mx-auto aspect-square! max-h-[250px]"
                 >
                     <PieChart>
                         <ChartTooltip
@@ -99,9 +99,9 @@ export default function PageViewsChart<T extends any[]>({ data, loading, groupKe
                     </PieChart>
                 </ChartContainer>
             </CardContent>
-            <CardFooter className="flex-col gap-2 !text-sm">
+            <CardFooter className="flex-col gap-2 text-sm!">
                 <div className="flex items-center gap-2 font-medium leading-none">
-                    <Lightbulb className="h-4 w-4 flex-shrink-0" /> {insightText}
+                    <Lightbulb className="h-4 w-4 shrink-0" /> {insightText}
                 </div>
             </CardFooter>
         </Card>

@@ -81,7 +81,7 @@ export function DomainSwitcher() {
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="w-[--radix-dropdown-menu-trigger-width] !min-w-96 rounded-lg"
+            className="w-(--radix-dropdown-menu-trigger-width) min-w-96! rounded-lg"
             align="start"
             side={isMobile ? "bottom" : "right"}
             sideOffset={4}

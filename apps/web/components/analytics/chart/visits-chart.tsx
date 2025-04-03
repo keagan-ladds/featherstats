@@ -39,14 +39,14 @@ export default function VisitsChart<T extends any[]>({ data, loading, groupKey, 
 
     return <>
         <Card className="flex flex-col">
-            <CardHeader className="items-center !pb-0">
+            <CardHeader className="items-center pb-0!">
                 <CardTitle className="flex items-center gap-2">Visits <LearningTooltip description="This chart displays the distribution of total visits across different traffic segments, providing insights into where your users are coming from." /></CardTitle>
                 <CardDescription>Total number of site visits</CardDescription>
             </CardHeader>
-            <CardContent className="flex-1 !p-0">
+            <CardContent className="flex-1 p-0!">
                 <ChartContainer
                     config={chartConfig}
-                    className="mx-auto !aspect-square max-h-[250px]"
+                    className="mx-auto aspect-square! max-h-[250px]"
                 >
                     <PieChart>
                         <ChartTooltip
@@ -96,9 +96,9 @@ export default function VisitsChart<T extends any[]>({ data, loading, groupKey, 
                     </PieChart>
                 </ChartContainer>
             </CardContent>
-            <CardFooter className="flex-col gap-2 !text-sm">
+            <CardFooter className="flex-col gap-2 text-sm!">
                 <div className="flex items-center gap-2 font-medium leading-none">
-                    <Lightbulb className="h-4 w-4 flex-shrink-0" /> {insightText}
+                    <Lightbulb className="h-4 w-4 shrink-0" /> {insightText}
                 </div>
             </CardFooter>
         </Card>

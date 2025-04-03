@@ -19,7 +19,7 @@ const BreadcrumbList = React.forwardRef<
   <ol
     ref={ref}
     className={cn(
-      "ui-flex ui-flex-wrap ui-items-center ui-gap-1.5 ui-break-words ui-text-sm ui-text-muted-foreground sm:ui-gap-2.5",
+      "ui:flex ui:flex-wrap ui:items-center ui:gap-1.5 ui:break-words ui:text-sm ui:text-muted-foreground ui:sm:gap-2.5",
       className
     )}
     {...props}
@@ -33,7 +33,7 @@ const BreadcrumbItem = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <li
     ref={ref}
-    className={cn("ui-inline-flex ui-items-center ui-gap-1.5", className)}
+    className={cn("ui:inline-flex ui:items-center ui:gap-1.5", className)}
     {...props}
   />
 ))
@@ -50,7 +50,7 @@ const BreadcrumbLink = React.forwardRef<
   return (
     <Comp
       ref={ref}
-      className={cn("ui-transition-colors hover:ui-text-foreground", className)}
+      className={cn("ui:transition-colors ui:hover:text-foreground", className)}
       {...props}
     />
   )
@@ -66,7 +66,7 @@ const BreadcrumbPage = React.forwardRef<
     role="link"
     aria-disabled="true"
     aria-current="page"
-    className={cn("ui-font-normal ui-text-foreground", className)}
+    className={cn("ui:font-normal ui:text-foreground", className)}
     {...props}
   />
 ))
@@ -80,7 +80,7 @@ const BreadcrumbSeparator = ({
   <li
     role="presentation"
     aria-hidden="true"
-    className={cn("[&>svg]:ui-w-3.5 [&>svg]:ui-h-3.5", className)}
+    className={cn("ui:[&>svg]:w-3.5 ui:[&>svg]:h-3.5", className)}
     {...props}
   >
     {children ?? <ChevronRight />}
@@ -95,11 +95,11 @@ const BreadcrumbEllipsis = ({
   <span
     role="presentation"
     aria-hidden="true"
-    className={cn("ui-flex ui-h-9 ui-w-9 ui-items-center ui-justify-center", className)}
+    className={cn("ui:flex ui:h-9 ui:w-9 ui:items-center ui:justify-center", className)}
     {...props}
   >
-    <MoreHorizontal className="ui-h-4 ui-w-4" />
-    <span className="ui-sr-only">More</span>
+    <MoreHorizontal className="ui:h-4 ui:w-4" />
+    <span className="ui:sr-only">More</span>
   </span>
 )
 BreadcrumbEllipsis.displayName = "BreadcrumbElipssis"
