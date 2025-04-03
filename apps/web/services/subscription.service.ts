@@ -2,12 +2,19 @@ import { db } from "@featherstats/database/index";
 import { sql, eq, and, notInArray, getTableColumns } from 'drizzle-orm';
 import { planPricesTable, plansTable, subscriptionsTable } from "@featherstats/database/schema/app";
 import Stripe from "stripe";
-import { PlanPrice, Subscription, User } from "@featherstats/database/types";
+import { PlanPrice, PlanUsageLimit, Subscription, User } from "@featherstats/database/types";
 import { fromUnixTime } from "date-fns";
 import { stripe } from "lib/stripe/server";
 import { usersTable } from "@featherstats/database/schema/auth";
 import { PlanWithPrices, UpdateSubscriptionPlanOptions, UpdateSubscriptionPlanResult } from "types/subscription";
 import { getURL } from "lib/utils";
+
+export const DEFAULT_USAGE_LIMITS: PlanUsageLimit = {
+    dataRetentionDays: 90,
+    maxDomains: 1,
+    maxMonthlyPageviews: 10000,
+    maxWorkspaces: 1
+} satisfies PlanUsageLimit
 
 export class SubscriptionService {
     async handleSubscriptionCreated(subscription: Stripe.Subscription) {

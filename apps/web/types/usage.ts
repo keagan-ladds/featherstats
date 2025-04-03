@@ -4,3 +4,9 @@ export type UsageSummaryData = {
     visits: number;
     pageviews: number;
 }[]
+
+export type UsageTrackResult = {
+    shouldRateLimit: boolean
+    message?: string
+    error?: any
+}

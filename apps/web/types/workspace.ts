@@ -1,4 +1,4 @@
-import { Domain, DomainVerificationStatus, Workspace } from "@featherstats/database/types";
+import { Domain, DomainVerificationStatus, PlanUsageLimit, Workspace } from "@featherstats/database/types";
 
 export type WorkspaceCreateOptions = {
     name: string
@@ -13,4 +13,9 @@ export type DomainCreateOptions = {
 
 export type WorkspaceWithDomains = Workspace & {
     domains?: Domain[]
+}
+
+export type DomainWithSubscriptionDetails = Domain & {
+    subscriptionId: string;
+    usageLimits: PlanUsageLimit
 }

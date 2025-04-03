@@ -1,8 +1,10 @@
 import { db } from "@featherstats/database";
-import { domainsTable, workspacesTable } from "@featherstats/database/schema/app";
+import { domainsTable, planPricesTable, plansTable, subscriptionsTable, workspacesTable } from "@featherstats/database/schema/app";
 import { Domain, Workspace } from "@featherstats/database/types";
-import { DomainCreateOptions, WorkspaceCreateOptions, WorkspaceWithDomains } from "types/workspace";
+import { DomainCreateOptions, DomainWithSubscriptionDetails, WorkspaceCreateOptions, WorkspaceWithDomains } from "types/workspace";
 import { eq, and, getTableColumns } from "drizzle-orm"
+import { usersTable } from "@featherstats/database/schema/auth";
+import { DEFAULT_USAGE_LIMITS } from "./subscription.service";
 
 class WorkspaceService {
     async createDefaultUserWorkspace(userId: string, opts: WorkspaceCreateOptions): Promise<Workspace> {
@@ -54,11 +56,24 @@ class WorkspaceService {
         return domain!
     }
 
-    async getWorkspaceDomainByKey(key: string): Promise<Domain | null> {
-        const [domain] = await db.select().from(domainsTable)
+    async getWorkspaceDomainByKey(key: string): Promise<DomainWithSubscriptionDetails | null> {
+        const [domainWithUsageLimits] = await db.select({ ...getTableColumns(domainsTable), usageLimits: plansTable.usageLimits, subscriptionId: subscriptionsTable.id, userId: workspacesTable.userId }).from(domainsTable)
+            .innerJoin(workspacesTable, eq(workspacesTable.id, domainsTable.workspaceId))
+            .innerJoin(usersTable, eq(usersTable.id, workspacesTable.userId))
+            .leftJoin(subscriptionsTable, eq(subscriptionsTable.userId, usersTable.id))
+            .leftJoin(planPricesTable, eq(planPricesTable.id, subscriptionsTable.priceId))
+            .leftJoin(plansTable, eq(plansTable.id, planPricesTable.planId))
             .where(eq(domainsTable.key, key));
 
-        return domain || null;
+        if (domainWithUsageLimits) {
+            return {
+                ...domainWithUsageLimits,
+                subscriptionId: domainWithUsageLimits.subscriptionId || domainWithUsageLimits.userId,
+                usageLimits: { ...DEFAULT_USAGE_LIMITS, ...domainWithUsageLimits.usageLimits }
+            }
+        }
+
+        return null;
     }
 
     private normalizeDomainName(domainName: string): string {

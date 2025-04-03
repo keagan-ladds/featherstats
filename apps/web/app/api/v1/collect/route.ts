@@ -5,6 +5,7 @@ import { getClientIP, parseUserAgent } from 'lib/analytics-utils';
 import tinybirdClient from 'lib/client/tinybird-client';
 import { geolocation } from '@vercel/functions';
 import { workspaceService } from 'services/workspace.service';
+import { usageService } from 'services/usage.service';
 
 export async function POST(request: NextRequest) {
     try {
@@ -13,8 +14,10 @@ export async function POST(request: NextRequest) {
 
         if (!apiKey) return new NextResponse(null, { status: 401 });
         const domain = await workspaceService.getWorkspaceDomainByKey(apiKey);
-
         if (!domain) return new NextResponse(null, { status: 401 });
+
+        const { shouldRateLimit, message } = await usageService.trackUsage(domain.subscriptionId, domain.usageLimits);
+        if (shouldRateLimit) return new NextResponse(message, { status: 429 });
 
         const { events } = await request.json() as { events: AnalyticsEvent[] };
 
@@ -29,7 +32,7 @@ export async function POST(request: NextRequest) {
         const location = geolocation(request);
         const userAgent = headersList.get('user-agent');
         const origin = headersList.get('origin');
-    
+
         const payload = {
             ip: anonymizedIp,
             userAgent: userAgent,
