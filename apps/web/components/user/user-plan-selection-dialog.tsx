@@ -33,7 +33,7 @@ export default function UserPlanSelectionDialog() {
 
     return <>
         <Dialog open={isOpen} onOpenChange={close}>
-            <DialogContent className="md:!max-w-[825px]">
+            <DialogContent className="md:max-w-[825px]!">
                 <DialogHeader className="items-center">
                     <DialogTitle>Choose Your Plan</DialogTitle>
                     <DialogDescription>

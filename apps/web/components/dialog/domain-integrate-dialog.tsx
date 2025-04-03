@@ -59,19 +59,19 @@ add_action('wp_head', 'add_analytics_tracking_code');
                     <ScrollArea className={cn("flex flex-col flex-1 overflow-y-auto pr-1 max-h-[65vh]")}>
                         <Tabs defaultValue="javascript" className="flex flex-col mt-4">
                             <TabsList className="grid grid-cols-4">
-                                <TabsTrigger value="javascript" className="flex items-center gap-1.5 !w-full">
+                                <TabsTrigger value="javascript" className="flex items-center gap-1.5 w-full!">
                                     <Code className="h-4 w-4" />
                                     <span>JavaScript</span>
                                 </TabsTrigger>
-                                <TabsTrigger value="wordpress" className="flex items-center gap-1.5 !w-full">
+                                <TabsTrigger value="wordpress" className="flex items-center gap-1.5 w-full!">
                                     <FileCode className="h-4 w-4" />
                                     <span>WordPress</span>
                                 </TabsTrigger>
-                                <TabsTrigger value="shopify" className="flex items-center gap-1.5 !w-full">
+                                <TabsTrigger value="shopify" className="flex items-center gap-1.5 w-full!">
                                     <ShoppingBag className="h-4 w-4" />
                                     <span>Shopify</span>
                                 </TabsTrigger>
-                                <TabsTrigger value="other" className="flex items-center gap-1.5 !w-full">
+                                <TabsTrigger value="other" className="flex items-center gap-1.5 w-full!">
                                     <Globe className="h-4 w-4" />
                                     <span>Other</span>
                                 </TabsTrigger>

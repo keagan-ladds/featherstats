@@ -51,7 +51,7 @@ const ChartContainer = React.forwardRef<
         data-chart={chartId}
         ref={ref}
         className={cn(
-          "ui-flex ui-aspect-video ui-justify-center ui-text-xs [&_.recharts-cartesian-axis-tick_text]:ui-fill-muted-foreground [&_.recharts-cartesian-grid_line[stroke='#ccc']]:ui-stroke-border/50 [&_.recharts-curve.recharts-tooltip-cursor]:ui-stroke-border [&_.recharts-dot[stroke='#fff']]:ui-stroke-transparent [&_.recharts-layer]:ui-outline-none [&_.recharts-polar-grid_[stroke='#ccc']]:ui-stroke-border [&_.recharts-radial-bar-background-sector]:ui-fill-muted [&_.recharts-rectangle.recharts-tooltip-cursor]:ui-fill-muted [&_.recharts-reference-line_[stroke='#ccc']]:ui-stroke-border [&_.recharts-sector[stroke='#fff']]:ui-stroke-transparent [&_.recharts-sector]:ui-outline-none [&_.recharts-surface]:ui-outline-none",
+          "ui:flex ui:aspect-video ui:justify-center ui:text-xs ui:[&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground ui:[&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-border/50 ui:[&_.recharts-curve.recharts-tooltip-cursor]:stroke-border ui:[&_.recharts-dot[stroke='#fff']]:stroke-transparent ui:[&_.recharts-layer]:outline-hidden ui:[&_.recharts-polar-grid_[stroke='#ccc']]:stroke-border ui:[&_.recharts-radial-bar-background-sector]:fill-muted ui:[&_.recharts-rectangle.recharts-tooltip-cursor]:fill-muted ui:[&_.recharts-reference-line_[stroke='#ccc']]:stroke-border ui:[&_.recharts-sector[stroke='#fff']]:stroke-transparent ui:[&_.recharts-sector]:outline-hidden ui:[&_.recharts-surface]:outline-hidden",
           className
         )}
         {...props}
@@ -151,7 +151,7 @@ const ChartTooltipContent = React.forwardRef<
 
       if (labelFormatter) {
         return (
-          <div className={cn("ui-font-medium", labelClassName)}>
+          <div className={cn("ui:font-medium", labelClassName)}>
             {labelFormatter(value, payload)}
           </div>
         )
@@ -161,7 +161,7 @@ const ChartTooltipContent = React.forwardRef<
         return null
       }
 
-      return <div className={cn("ui-font-medium", labelClassName)}>{value}</div>
+      return <div className={cn("ui:font-medium", labelClassName)}>{value}</div>
     }, [
       label,
       labelFormatter,
@@ -184,12 +184,12 @@ const ChartTooltipContent = React.forwardRef<
       <div
         ref={ref}
         className={cn(
-          "ui-grid ui-min-w-[8rem] ui-items-start ui-gap-1.5 ui-rounded-lg ui-border ui-border-border/50 ui-bg-background ui-px-2.5 ui-py-1.5 ui-text-xs ui-shadow-xl",
+          "ui:grid ui:min-w-[8rem] ui:items-start ui:gap-1.5 ui:rounded-lg ui:border ui:border-border/50 ui:bg-background ui:px-2.5 ui:py-1.5 ui:text-xs ui:shadow-xl",
           className
         )}
       >
         {!nestLabel ? tooltipLabel : null}
-        <div className="ui-grid ui-gap-1.5">
+        <div className="ui:grid ui:gap-1.5">
           {payload.map((item, index) => {
             const key = `${nameKey || item.name || item.dataKey || "value"}`
             const itemConfig = getPayloadConfigFromPayload(config, item, key)
@@ -199,8 +199,8 @@ const ChartTooltipContent = React.forwardRef<
               <div
                 key={item.dataKey}
                 className={cn(
-                  "ui-flex ui-w-full ui-flex-wrap ui-items-stretch ui-gap-2 [&>svg]:ui-h-2.5 [&>svg]:ui-w-2.5 [&>svg]:ui-text-muted-foreground",
-                  indicator === "dot" && "ui-items-center"
+                  "ui:flex ui:w-full ui:flex-wrap ui:items-stretch ui:gap-2 ui:[&>svg]:h-2.5 ui:[&>svg]:w-2.5 ui:[&>svg]:text-muted-foreground",
+                  indicator === "dot" && "ui:items-center"
                 )}
               >
                 {formatter && item?.value !== undefined && item.name ? (
@@ -213,7 +213,7 @@ const ChartTooltipContent = React.forwardRef<
                       !hideIndicator && (
                         <div
                           className={cn(
-                            "ui-shrink-0 ui-rounded-[2px] ui-border-[--color-border] ui-bg-[--color-bg]",
+                            "ui:shrink-0 ui:rounded-[2px] ui:border-(--color-border) ui:bg-(--color-bg)",
                             {
                               "h-2.5 w-2.5": indicator === "dot",
                               "w-1": indicator === "line",
@@ -233,13 +233,13 @@ const ChartTooltipContent = React.forwardRef<
                     )}
                     <div
                       className={cn(
-                        "ui-flex ui-flex-1 ui-justify-between ui-leading-none",
-                        nestLabel ? "ui-items-end" : "ui-items-center"
+                        "ui:flex ui:flex-1 ui:justify-between ui:leading-none",
+                        nestLabel ? "ui:items-end" : "ui:items-center"
                       )}
                     >
-                      <div className="ui-grid ui-gap-1.5">
+                      <div className="ui:grid ui:gap-1.5">
                         {nestLabel ? tooltipLabel : null}
-                        <span className="ui-text-muted-foreground">
+                        <span className="ui:text-muted-foreground">
                           {itemConfig?.label || (nameFormatter ? (nameFormatter?.(item.name) || item.name) : item.name)}
                         </span>
                       </div>
@@ -285,8 +285,8 @@ const ChartLegendContent = React.forwardRef<
       <div
         ref={ref}
         className={cn(
-          "ui-flex ui-items-center ui-justify-center ui-gap-4",
-          verticalAlign === "top" ? "ui-pb-3" : "ui-pt-3",
+          "ui:flex ui:items-center ui:justify-center ui:gap-4",
+          verticalAlign === "top" ? "ui:pb-3" : "ui:pt-3",
           className
         )}
       >
@@ -298,14 +298,14 @@ const ChartLegendContent = React.forwardRef<
             <div
               key={item.value}
               className={cn(
-                "ui-flex ui-items-center ui-gap-1.5 [&>svg]:ui-h-3 [&>svg]:ui-w-3 [&>svg]:ui-text-muted-foreground"
+                "ui:flex ui:items-center ui:gap-1.5 ui:[&>svg]:h-3 ui:[&>svg]:w-3 ui:[&>svg]:text-muted-foreground"
               )}
             >
               {itemConfig?.icon && !hideIcon ? (
                 <itemConfig.icon />
               ) : (
                 <div
-                  className="ui-h-2 ui-w-2 ui-shrink-0 ui-rounded-[2px]"
+                  className="ui:h-2 ui:w-2 ui:shrink-0 ui:rounded-[2px]"
                   style={{
                     backgroundColor: item.color,
                   }}

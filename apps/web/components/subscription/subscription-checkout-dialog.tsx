@@ -26,7 +26,7 @@ export default function SubscriptionCheckoutDialog() {
 
     return <>
         <Dialog open={isOpen} onOpenChange={close} >
-            <DialogContent className="md:!max-w-[825px]" onInteractOutside={(e) => { e.preventDefault(); }}>
+            <DialogContent className="md:max-w-[825px]!" onInteractOutside={(e) => { e.preventDefault(); }}>
                 <DialogHeader>
                     <DialogTitle>Checkout</DialogTitle>
                     <DialogDescription>

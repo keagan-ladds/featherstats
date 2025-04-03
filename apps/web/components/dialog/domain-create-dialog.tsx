@@ -72,7 +72,7 @@ export default function DomainCreateDialog() {
                             control={form.control}
                             name="enforce_origin_match"
                             render={({ field }) => (
-                                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-xs">
                                     <div className="space-y-0.5">
                                         <FormLabel>Restrict Data to This Domain</FormLabel>
                                         <FormDescription>
@@ -93,7 +93,7 @@ export default function DomainCreateDialog() {
                             control={form.control}
                             name="normalize_www"
                             render={({ field }) => (
-                                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-xs">
                                     <div className="space-y-0.5">
                                         <FormLabel>Combine www and non-www</FormLabel>
                                         <FormDescription>

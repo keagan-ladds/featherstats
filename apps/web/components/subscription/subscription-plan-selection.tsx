@@ -123,23 +123,23 @@ export default function SubscriptionPlanSelection({ subscriptionPlans, isLoading
                             <CardContent className="flex-1">
                                 <ul className="space-y-1.5 mt-2 text-sm">
                                     <li className="flex items-start">
-                                        <Check className="h-4 w-4 text-primary mr-1.5 mt-0.5 flex-shrink-0" />
+                                        <Check className="h-4 w-4 text-primary mr-1.5 mt-0.5 shrink-0" />
                                         <span>{formatNumber(plan.usageLimits.maxMonthlyPageviews)} monthly pageviews</span>
                                     </li>
                                     <li className="flex items-start">
-                                        <Check className="h-4 w-4 text-primary mr-1.5 mt-0.5 flex-shrink-0" />
+                                        <Check className="h-4 w-4 text-primary mr-1.5 mt-0.5 shrink-0" />
                                         <span>
                                             Up to {plan.usageLimits.maxDomains} domain{plan.usageLimits.maxDomains > 1 ? "s" : ""}
                                         </span>
                                     </li>
                                     {/* <li className="flex items-start">
-                                            <Check className="h-4 w-4 text-primary mr-1.5 mt-0.5 flex-shrink-0" />
+                                            <Check className="h-4 w-4 text-primary mr-1.5 mt-0.5 shrink-0" />
                                             <span>
                                                 {plan.usageLimits.maxWorkspaces} workspace{plan.usageLimits.maxWorkspaces > 1 ? "s" : ""}
                                             </span>
                                         </li> */}
                                     <li className="flex items-start">
-                                        <Check className="h-4 w-4 text-primary mr-1.5 mt-0.5 flex-shrink-0" />
+                                        <Check className="h-4 w-4 text-primary mr-1.5 mt-0.5 shrink-0" />
                                         <span>{plan.usageLimits.dataRetentionDays} days data retention</span>
                                     </li>
                                 </ul>

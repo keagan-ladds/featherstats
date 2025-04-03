@@ -44,16 +44,16 @@ export default function BounceRateChart<T extends any[]>({ data, loading, groupK
 
     return <>
         <Card className="flex flex-col">
-            <CardHeader className="items-center !pb-0">
+            <CardHeader className="items-center pb-0!">
                 <CardTitle className="flex items-center gap-2">Bounce Rate
                     <LearningTooltip description="Represents the percentage of single-page visits where users left without further interaction. A high bounce rate may indicate poor engagement or mismatched content." />
                 </CardTitle>
                 <CardDescription>Percentage of single-page visits</CardDescription>
             </CardHeader>
-            <CardContent className="flex-1 !p-0">
+            <CardContent className="flex-1 p-0!">
                 <ChartContainer
                     config={chartConfig}
-                    className="mx-auto !aspect-square max-h-[250px]"
+                    className="mx-auto aspect-square! max-h-[250px]"
                 >
                     <BarChart accessibilityLayer data={chartData} dataKey={"bounce_rate"}>
                         <CartesianGrid vertical={false} />
@@ -81,9 +81,9 @@ export default function BounceRateChart<T extends any[]>({ data, loading, groupK
                     </BarChart>
                 </ChartContainer>
             </CardContent>
-            <CardFooter className="flex-col gap-2 !text-sm">
+            <CardFooter className="flex-col gap-2 text-sm!">
                 <div className="flex items-center gap-2 font-medium leading-none">
-                    <Lightbulb className="h-4 w-4 flex-shrink-0" /> {insightText}
+                    <Lightbulb className="h-4 w-4 shrink-0" /> {insightText}
                 </div>
             </CardFooter>
         </Card>
