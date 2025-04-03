@@ -65,21 +65,21 @@ const Pricing = () => {
   const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>('monthly');
 
   return (
-    <section className="py-20 bg-gray-50">
+    <section className="py-20 bg-primary/10">
       <div className="container mx-auto px-4">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-3xl font-bold mb-4">Simple, transparent pricing</h2>
-          <p className="text-xl text-gray-600 mb-8">
+          <h2 className="text-3xl text-foreground font-bold mb-4">Simple, transparent pricing</h2>
+          <p className="text-xl text-foreground-muted mb-8">
             Choose a plan that grows with your website.
           </p>
           
-          <div className="inline-flex items-center p-1 bg-gray-100 rounded-lg">
+          <div className="inline-flex items-center p-1 bg-card rounded-lg">
             <button
               onClick={() => setBillingPeriod('monthly')}
               className={`px-4 py-2 text-sm font-medium rounded-md ${
                 billingPeriod === 'monthly'
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-500 hover:text-gray-900'
+                  ? 'bg-primary/10 text-foreground shadow-sm'
+                  : 'text-foreground-muted hover:text-foreground'
               }`}
             >
               Monthly billing
@@ -88,12 +88,12 @@ const Pricing = () => {
               onClick={() => setBillingPeriod('yearly')}
               className={`px-4 py-2 text-sm font-medium rounded-md ${
                 billingPeriod === 'yearly'
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-500 hover:text-gray-900'
+                ? 'bg-primary/10 text-foreground shadow-sm'
+                  : 'text-foreground-muted hover:text-foreground'
               }`}
             >
               Yearly billing
-              <span className="ml-1.5 text-blue-600">Save 15%</span>
+              <span className="ml-1.5 text-primary">Save 15%</span>
             </button>
           </div>
         </div>
@@ -109,9 +109,9 @@ const Pricing = () => {
         </div>
 
         <div className="mt-16 text-center">
-          <p className="text-gray-600">
+          <p className="text-foreground-muted">
             Need more pageviews or custom features?{' '}
-            <a href="/contact" className="text-blue-600 hover:text-blue-700 font-medium">
+            <a href="/contact" className="text-primary hover:text-primary-dark font-medium">
               Contact us
             </a>{' '}
             for enterprise pricing.

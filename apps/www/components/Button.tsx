@@ -13,7 +13,7 @@ const Button = ({ children, variant = 'primary', href, className = '', ...props 
   const variants = {
     primary: 'bg-blue-600 text-white hover:bg-blue-700',
     secondary: 'bg-blue-50 text-blue-700 hover:bg-blue-100',
-    outline: 'border border-gray-300 text-gray-700 hover:border-gray-400 hover:bg-gray-50'
+    outline: 'border border-gray-300 text-white hover:border-gray-400 hover:bg-gray-50 hover:text-background'
   };
 
   const buttonClass = `${baseStyles} ${variants[variant]} ${className}`;

@@ -51,51 +51,51 @@ const PricingCard = ({
   }).format(monthlyPageviews);
 
   return (
-    <div className={`relative flex flex-col p-8 bg-white rounded-2xl shadow-sm ${popular ? 'ring-2 ring-blue-600' : 'ring-1 ring-gray-200'}`}>
+    <div className={`relative flex flex-col p-8 bg-card rounded-2xl shadow-sm ${popular ? 'ring-2 ring-primary-dark' : 'ring-1 ring-card-border'}`}>
       {popular && (
         <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-          <span className="inline-flex items-center px-4 py-1 rounded-full text-sm font-medium bg-blue-50 text-blue-700">
+          <span className="inline-flex items-center px-4 py-1 rounded-full text-sm font-medium bg-primary-dark">
             Most popular
           </span>
         </div>
       )}
 
       <div className="mb-6">
-        <h3 className="text-2xl font-bold text-gray-900">{name}</h3>
-        <p className="mt-2 text-gray-600">{description}</p>
+        <h3 className="text-2xl font-bold text-foreground">{name}</h3>
+        <p className="mt-2 text-foreground-muted">{description}</p>
       </div>
 
       <div className="mb-6">
         <p className="flex items-baseline">
-          <span className="text-4xl font-bold tracking-tight text-gray-900">{formattedPrice}</span>
-          <span className="ml-1 text-sm font-semibold text-gray-600">/{selectedBillingPeriod === 'yearly' ? 'year' : 'month'}</span>
+          <span className="text-4xl font-bold tracking-tight text-foreground">{formattedPrice}</span>
+          <span className="ml-1 text-sm font-semibold text-foreground-muted">/{selectedBillingPeriod === 'yearly' ? 'year' : 'month'}</span>
         </p>
-        <p className="mt-1 text-sm text-gray-500">Excl. VAT</p>
+        <p className="mt-1 text-sm text-foreground-muted/80">Excl. VAT</p>
       </div>
 
       <div className="space-y-4 mb-8">
         <div className="flex items-center">
-          <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          <span className="ml-3 text-gray-600">{formattedPageviews} pageviews/month</span>
+          <span className="ml-3 text-foreground-muted">{formattedPageviews} pageviews/month</span>
         </div>
         <div className="flex items-center">
-          <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          <span className="ml-3 text-gray-600">Up to {maxDomains} domain{maxDomains > 1 ? 's' : ''}</span>
+          <span className="ml-3 text-foreground-muted">Up to {maxDomains} domain{maxDomains > 1 ? 's' : ''}</span>
         </div>
         <div className="flex items-center">
-          <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          <span className="ml-3 text-gray-600">{dataRetentionDays} days data retention</span>
+          <span className="ml-3 text-foreground-muted">{dataRetentionDays} days data retention</span>
         </div>
         {features.map((feature, index) => (
           <div key={index} className="flex items-center">
             <svg
-              className={`w-5 h-5 ${feature.included ? 'text-blue-600' : 'text-gray-400'}`}
+              className={`w-5 h-5 ${feature.included ? 'text-primary' : 'text-foreground-muted'}`}
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"

@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-50 border-t border-gray-100">
+    <footer className="bg-background border-t border-card-border">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="space-y-4">
@@ -11,26 +11,26 @@ const Footer = () => {
                 Featherstats
               </span>
             </Link>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-foreground">
               Simple, privacy-friendly web analytics that help you understand your audience.
             </p>
           </div>
 
           <div>
-            <h3 className="font-semibold mb-4">Product</h3>
+            <h3 className="font-semibold mb-4 text-foreground">Product</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/features" className="text-gray-600 hover:text-gray-900 text-sm">
+                <Link href="/features" className="text-foreground hover:text-foreground/80 text-sm">
                   Features
                 </Link>
               </li>
               <li>
-                <Link href="/pricing" className="text-gray-600 hover:text-gray-900 text-sm">
+                <Link href="/pricing" className="text-foreground hover:text-foreground/80 text-sm">
                   Pricing
                 </Link>
               </li>
               <li>
-                <Link href="/docs" className="text-gray-600 hover:text-gray-900 text-sm">
+                <Link href="/docs" className="text-foreground hover:text-foreground/80 text-sm">
                   Documentation
                 </Link>
               </li>
@@ -38,20 +38,20 @@ const Footer = () => {
           </div>
 
           <div>
-            <h3 className="font-semibold mb-4">Company</h3>
+            <h3 className="font-semibold mb-4 text-foreground">Company</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/blog" className="text-gray-600 hover:text-gray-900 text-sm">
+                <Link href="/blog" className="text-foreground hover:text-foreground/80 text-sm">
                   Blog
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="text-gray-600 hover:text-gray-900 text-sm">
+                <Link href="/about" className="text-foreground hover:text-foreground/80 text-sm">
                   About
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="text-gray-600 hover:text-gray-900 text-sm">
+                <Link href="/contact" className="text-foreground hover:text-foreground/80 text-sm">
                   Contact
                 </Link>
               </li>
@@ -59,20 +59,20 @@ const Footer = () => {
           </div>
 
           <div>
-            <h3 className="font-semibold mb-4">Legal</h3>
+            <h3 className="font-semibold mb-4 text-foreground">Legal</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/privacy" className="text-gray-600 hover:text-gray-900 text-sm">
+                <Link href="/privacy" className="text-foreground hover:text-foreground/80 text-sm">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="text-gray-600 hover:text-gray-900 text-sm">
+                <Link href="/terms" className="text-foreground hover:text-foreground/80 text-sm">
                   Terms of Service
                 </Link>
               </li>
               <li>
-                <Link href="/gdpr" className="text-gray-600 hover:text-gray-900 text-sm">
+                <Link href="/gdpr" className="text-foreground hover:text-foreground/80 text-sm">
                   GDPR Compliance
                 </Link>
               </li>
@@ -80,8 +80,8 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="mt-8 pt-8 border-t border-gray-200">
-          <p className="text-center text-sm text-gray-600">
+        <div className="mt-8 pt-8 border-t border-card-border">
+          <p className="text-center text-sm text-foreground-muted">
             © {new Date().getFullYear()} Featherstats. Privacy-first analytics for the modern web.
           </p>
         </div>
