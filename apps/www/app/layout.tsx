@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Featherstats - Simple & Privacy-Friendly Web Analytics",
+  title: "Featherstats - Simple, Lightweight & Privacy-Friendly Web Analytics",
   description: "Understand your website traffic with clear, actionable insights. No complexity, no cookies, just smart analytics that respect privacy.",
 };
 

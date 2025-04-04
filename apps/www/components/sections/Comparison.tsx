@@ -43,11 +43,11 @@ const ComparisonTable = () => {
               <thead>
                 <tr className="bg-black/20">
                   <th className="py-4 px-6 text-left text-sm font-semibold text-foreground">Feature</th>
-                  <th className="py-4 px-6 text-left text-sm font-semibold text-blue-600">Featherstats</th>
+                  <th className="py-4 px-6 text-left text-sm font-semibold text-primary">Featherstats</th>
                   <th className="py-4 px-6 text-left text-sm font-semibold text-foreground-muted">Google Analytics</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody className="divide-y divide-card-border">
                 {features.map((feature, index) => (
                   <tr key={index}>
                     <td className="py-4 px-6 text-sm font-medium text-foreground">{feature.name}</td>

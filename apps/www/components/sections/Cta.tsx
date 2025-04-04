@@ -2,7 +2,7 @@ import Button from '../Button';
 
 const Cta = () => {
   return (
-    <section className="py-20 bg-gradient-to-br from-blue-600 to-indigo-700">
+    <section className="py-20 bg-gradient-to-br from-primary to-primary-dark">
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-3xl font-bold text-white mb-6">

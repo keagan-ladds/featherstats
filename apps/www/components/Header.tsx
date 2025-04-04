@@ -1,11 +1,13 @@
 import Link from 'next/link';
+import Image from 'next/image'
 
 const Header = () => {
   return (
-    <header className="fixed w-full bg-background/80 backdrop-blur-sm z-50 border-b border-foreground/10">
+    <header className="fixed w-full bg-card/80 backdrop-blur-sm z-50 border-b border-card-border">
       <nav className="container mx-auto px-4 py-4 flex items-center justify-between">
         <Link href="/" className="flex items-center space-x-2">
-          <span className="text-2xl font-bold bg-gradient-to-r from-primary to-primary-dark bg-clip-text text-transparent">
+          <Image className='size-10 rounded' src="/featherstats.png" width={64} height={64} alt="Featherstats logo"/>
+          <span className="text-2xl font-bold bg-foreground bg-clip-text text-transparent">
             Featherstats
           </span>
         </Link>
