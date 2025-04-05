@@ -65,7 +65,7 @@ const features: Feature[] = [
 
 const Features = () => {
   return (
-    <section className="py-20 bg-background">
+    <section className="py-20 bg-background" id="features">
       <div className="container mx-auto px-4">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="text-3xl text-foreground font-bold mb-4">Why Choose Featherstats?</h2>

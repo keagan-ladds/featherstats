@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Button from '../Button';
+import { getWebAppURL } from '@/lib/utils';
 
 const Hero = () => {
   return (
@@ -18,10 +19,10 @@ const Hero = () => {
               the complexity of Google Analytics.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button href="/signup" variant="primary">
+              <Button href={getWebAppURL("signup")} variant="primary">
                 Get Started Free
               </Button>
-              <Button href="/features" variant="outline">
+              <Button href="/#features" variant="outline">
                 See How It Works
               </Button>
             </div>

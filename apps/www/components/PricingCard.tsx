@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import Button from './Button';
+import { getWebAppURL } from '@/lib/utils';
 
 interface PricingFeature {
   text: string;
@@ -118,7 +119,7 @@ const PricingCard = ({
       </div>
 
       <Button
-        href="/signup"
+        href={getWebAppURL(`signup?plan=${name}&period=${selectedBillingPeriod}&currency=${selectedPrice!.currency}`)}
         variant={popular ? 'primary' : 'outline'}
         className="w-full mt-8"
       >

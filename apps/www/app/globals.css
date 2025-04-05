@@ -1,5 +1,6 @@
 /*@import "@repo/ui/styles.css";*/
 @import "tailwindcss";
+@plugin '@tailwindcss/typography';
 
 
 @theme inline {
