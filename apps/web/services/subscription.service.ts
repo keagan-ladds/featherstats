@@ -65,7 +65,7 @@ export class SubscriptionService {
         await this.updateSubscription(subscription);
     }
 
-    async createUserSubscription(userId: string, priceId: string) {
+    async createUserSubscription(userId: string, priceId: string, includeTrialPeriod?: boolean) {
         const existingSubscription = await this.getActiveUserSubscription(userId);
         if (existingSubscription) throw new Error(`The user already has an active subscription, can't create a new one.`);
 
@@ -73,13 +73,24 @@ export class SubscriptionService {
         const [price] = await db.select().from(planPricesTable).where(eq(planPricesTable.id, priceId))
         if (!price) throw new Error(`Could not find plan price with id '${priceId}'.`);
 
+        const trialPeriodDays = includeTrialPeriod && price.amount > 0 ? 7 : undefined
+
         await stripe.subscriptions.create({
             customer: customerId,
             items: [
                 {
                     price: price.stripePriceId
                 }
-            ]
+            ],
+            trial_period_days: trialPeriodDays,
+            payment_settings: {
+                save_default_payment_method: 'on_subscription',
+            },
+            trial_settings: {
+                end_behavior: {
+                    missing_payment_method: 'cancel',
+                },
+            },
         })
     }
 

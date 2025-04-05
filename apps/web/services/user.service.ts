@@ -18,7 +18,8 @@ class UserService {
 
         const [subscription] = await db.select().from(subscriptionsTable)
             .innerJoin(planPricesTable, eq(planPricesTable.id, subscriptionsTable.priceId))
-            .innerJoin(plansTable, eq(planPricesTable.planId, plansTable.id));
+            .innerJoin(plansTable, eq(planPricesTable.planId, plansTable.id))
+            .where(eq(subscriptionsTable.userId, user.id));
 
         return {
             ...user,

@@ -46,7 +46,7 @@ export default function SignupForm({flowParams} : Props) {
         if (flowParams) {
             setFlowCookies(flowParams)
         }
-    }, [flowParams])
+    }, [])
 
     if (isRedirecting) {
         return <>

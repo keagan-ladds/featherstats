@@ -22,7 +22,7 @@ export function POST(request: NextRequest) {
         const user = await userService.updateUserById(userId, { name: onboardingData.name });
         const workspace = await workspaceService.createDefaultUserWorkspace(userId, { name: onboardingData.workspaceName });
         const domain = await workspaceService.createWorkspaceDomain(workspace.id, { name: onboardingData.domainName, enforce_origin_match: true, normalize_www: true });
-        const subscription = await subscriptionService.createUserSubscription(userId, onboardingData.priceId);
+        const subscription = await subscriptionService.createUserSubscription(userId, onboardingData.priceId, true);
 
         await emailService.sendWelcomeEmail(user.email!, user.name!);
         return NextResponse.json<WorkspaceWithDomains>({
