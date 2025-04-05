@@ -11,7 +11,7 @@ export function useOnboarding() {
 
     if (!context) throw new Error("The hook 'useOnboarding' can only be used within an OnboardingProvider.")
 
-    const { onboardingStep, onboardingData, loading } = context;
+    const { onboardingStep, onboardingData, loading, flowParams } = context;
     const { setOnboardingStep, setOnboardingData, setLoading } = context;
 
     const onContinue = useCallback((nextStep: OnboardingStep, data?: Partial<OnboardingData>) => {
@@ -39,6 +39,7 @@ export function useOnboarding() {
     return {
         loading,
         onboardingStep,
+        flowParams,
         onContinue,
         onboardWorkspace
     }

@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 
 export default function OnboardingStepDone() {
     const onContinue = useCallback(() => {
-        redirect("/app")
+        redirect("/")
     }, [])
 
     return (

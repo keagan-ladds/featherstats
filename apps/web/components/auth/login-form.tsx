@@ -1,7 +1,4 @@
 import { cn } from "lib/utils";
-import { Button } from '@repo/ui/components/ui/button'
-import { Label } from '@repo/ui/components/ui/label'
-import { Input } from "@repo/ui/components/ui/input"
 import Image from 'next/image'
 import SocialLoginGoogle from "./login-social-google";
 import SocialLoginGithub from "./login-social-github";
@@ -30,7 +27,7 @@ export function LoginForm({
                     <h1 className="text-xl font-bold">Welcome to Featherstats</h1>
                     <div className="text-center text-sm">
                         Don&apos;t have an account?{" "}
-                        <a href="#" className="underline underline-offset-4">
+                        <a href="/signup" className="underline underline-offset-4">
                             Sign up
                         </a>
                     </div>
@@ -50,10 +47,16 @@ export function LoginForm({
                     </Link>
                 </div>
             </div>
-            <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary  ">
-                By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
-                and <a href="#">Privacy Policy</a>.
-            </div>
+            <LoginTerms />
         </div>
     )
+}
+
+export function LoginTerms() {
+    return <>
+        <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary  ">
+            By clicking continue, you agree to our <a href="https://featherstats.com/terms">Terms of Service</a>{" "}
+            and <a href="https://featherstats.com/privacy">Privacy Policy</a>.
+        </div>
+    </>
 }

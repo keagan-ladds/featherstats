@@ -1,17 +1,17 @@
 'use client'
 import { Button } from "@repo/ui/components/ui/button";
 import { Input } from "@repo/ui/components/ui/input";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@repo/ui/components/ui/input-otp";
 import { cn } from "lib/utils";
 import { Loader } from "lucide-react";
-import { useCallback, useState } from "react";
-import { signIn } from "next-auth/react"
 import { z } from "zod"
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@repo/ui/components/ui/form";
-import { REGEXP_ONLY_DIGITS } from "input-otp"
+
 import React from "react";
+import VerificationInput from "./verification-input";
+import { useLogin } from "hooks/use-login";
+import { LoginTerms } from "./login-form";
 
 interface Props {
     className?: string;
@@ -19,11 +19,7 @@ interface Props {
 
 export default function EmailLoginForm({ className, ...props }: Props) {
 
-    const [isLoading, setIsLoading] = useState<boolean>(false)
-    const [isVerify, setIsVerify] = useState<boolean>(false)
-    const [isRedirecting, setIsRedirecting] = useState<boolean>(false)
-    const [token, setToken] = useState<string>()
-    const [error, setError] = useState<string>();
+    const { onVerify, signIn, error, isLoading, isRedirecting, isVerify } = useLogin()
 
     const emailFormSchema = z.object({
         email: z.string().email()
@@ -37,27 +33,9 @@ export default function EmailLoginForm({ className, ...props }: Props) {
     })
 
     const onSubmit = async (data: z.infer<typeof emailFormSchema>) => {
-        const email = data.email;
-        setIsLoading(true);
-        try {
-            await signIn("resend", { redirect: false, email })
-            setIsVerify(true)
-        } catch (err) { }
-        setIsLoading(false);
+        signIn(data.email)
     }
 
-    const onVerify = useCallback(async (token: string) => {
-        const email = emailForm.getValues().email.toLocaleLowerCase();
-        setIsLoading(true);
-        const res = await fetch(`/api/auth/callback/resend?token=${token}&email=${encodeURIComponent(email)}`)
-        if (res.ok) {
-            setIsRedirecting(true);
-            window.location.href = '/'
-        } else {
-            setError("The OTP you entered is invalid or has expired. Please request a new code and try again.")
-        }
-        setIsLoading(false);
-    }, [token])
 
     if (isRedirecting) {
         return <>
@@ -72,49 +50,7 @@ export default function EmailLoginForm({ className, ...props }: Props) {
 
     if (isVerify) {
         return <>
-            <div className={cn("grid gap-6", className)} {...props}>
-                <div className="flex flex-col items-center gap-2">
-                    <h1 className={cn("text-3xl font-bold", error && "animate-shake")}>Verification</h1>
-                    <div className="text-center text-sm">
-                        If you have an account, we have sent a code to {emailForm.getValues().email}. Enter it below.
-                    </div>
-                </div>
-                <div className="flex flex-col items-center gap-2">
-                    <InputOTP disabled={isLoading} maxLength={6} pattern={REGEXP_ONLY_DIGITS} value={token} onChange={setToken} onComplete={onVerify}>
-                        <InputOTPGroup>
-                            <InputOTPSlot index={0} className="h-16 w-12" />
-                        </InputOTPGroup>
-                        <InputOTPGroup>
-                            <InputOTPSlot index={1} className="h-16 w-12" />
-                        </InputOTPGroup>
-                        <InputOTPGroup>
-                            <InputOTPSlot index={2} className="h-16 w-12" />
-                        </InputOTPGroup>
-                        <InputOTPGroup>
-                            <InputOTPSlot index={3} className="h-16 w-12" />
-                        </InputOTPGroup>
-                        <InputOTPGroup>
-                            <InputOTPSlot index={4} className="h-16 w-12" />
-                        </InputOTPGroup>
-                        <InputOTPGroup>
-                            <InputOTPSlot index={5} className="h-16 w-12" />
-                        </InputOTPGroup>
-                    </InputOTP>
-
-                </div>
-                {isLoading && (<div className="flex flex-col items-center">
-                    <div className="flex items-center gap-2 text-muted-foreground text-sm">
-                        <Loader className="mr-2 h-4 w-4 animate-spin" />
-                        Verifying...
-                    </div>
-                </div>)}
-
-                {error && (<div className="flex flex-col items-center text-sm">
-                    <div className="flex items-center text-destructive text-center">
-                        {error}
-                    </div>
-                </div>)}
-            </div></>
+            <VerificationInput loading={isLoading} error={error} infoText={`If you have an account, we have sent a code to ${emailForm.getValues().email}. Enter it below.`} onComplete={onVerify} /></>
     }
 
     return <>
@@ -146,10 +82,7 @@ export default function EmailLoginForm({ className, ...props }: Props) {
                     </Button>
                 </form>
             </Form>
-            <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary  ">
-                By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
-                and <a href="#">Privacy Policy</a>.
-            </div>
+            <LoginTerms />
         </div>
     </>
 }

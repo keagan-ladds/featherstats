@@ -70,11 +70,14 @@ export class SubscriptionService {
         if (existingSubscription) throw new Error(`The user already has an active subscription, can't create a new one.`);
 
         const customerId = await this.findOrCreateStripeCustomerId(userId);
+        const [price] = await db.select().from(planPricesTable).where(eq(planPricesTable.id, priceId))
+        if (!price) throw new Error(`Could not find plan price with id '${priceId}'.`);
+
         await stripe.subscriptions.create({
             customer: customerId,
             items: [
                 {
-                    price: priceId
+                    price: price.stripePriceId
                 }
             ]
         })

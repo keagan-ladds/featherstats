@@ -3,13 +3,11 @@ import { getSubscriptionPlans, updateSubscriptionPlan as updateSubscriptionPlanA
 import { useCallback, useEffect, useState } from "react";
 import { PlanWithPrices, SubscriptionPaymentIntent, UpdateSubscriptionPlanOptions, UpdateSubscriptionPlanResult } from "types/subscription";
 import { toast } from "sonner"
-import useDialog from "./use-dialog";
 
 export function useSubscription() {
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [plans, setPlans] = useState<PlanWithPrices[]>([])
     const [paymentIntent, setPaymentIntent] = useState<SubscriptionPaymentIntent | null>()
-    const { close } = useDialog("upgrade")
 
 
     const fetchPlans = useCallback(async () => {
@@ -36,7 +34,6 @@ export function useSubscription() {
                 setPaymentIntent(result.paymentIntent)
             } else {
                 toast.success("Your subscription was successfully updated!")
-                close()
             }
 
         } catch (err) {
