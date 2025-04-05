@@ -65,12 +65,12 @@ const features: Feature[] = [
 
 const Features = () => {
   return (
-    <section className="py-20 bg-gray-50">
+    <section className="py-20 bg-background" id="features">
       <div className="container mx-auto px-4">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-3xl font-bold mb-4">Why Choose Featherstats?</h2>
-          <p className="text-xl text-gray-600">
-            Get powerful insights without the complexity. Featherstats makes analytics simple and actionable.
+          <h2 className="text-3xl text-foreground font-bold mb-4">Why Choose Featherstats?</h2>
+          <p className="text-xl text-foreground-muted">
+            Get powerful insights without the complexity. Featherstats makes analytics simple and actionable. 
           </p>
         </div>
 
@@ -78,13 +78,13 @@ const Features = () => {
           {features.map((feature, index) => (
             <div
               key={index}
-              className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow"
+              className="bg-black/20 p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow"
             >
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 mb-4">
+              <div className="w-12 h-12 bg-background rounded-lg flex items-center justify-center text-blue-600 mb-4">
                 {feature.icon}
               </div>
-              <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-              <p className="text-gray-600">{feature.description}</p>
+              <h3 className="text-xl text-foreground font-semibold mb-2">{feature.title}</h3>
+              <p className="text-foreground-muted">{feature.description}</p>
             </div>
           ))}
         </div>

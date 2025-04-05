@@ -1,47 +1,41 @@
 import Image from 'next/image';
 import Button from '../Button';
+import { getWebAppURL } from '@/lib/utils';
 
 const Hero = () => {
   return (
-    <section className="pt-32 pb-16 px-4">
-      <div className="container mx-auto max-w-7xl">
+    <section className="pt-32 pb-16 px-4 ">
+      <div className="container mx-auto max-w-7xl items-center">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-8">
-            <h1 className="text-4xl md:text-5xl font-bold leading-tight">
+            <h1 className="text-4xl md:text-5xl font-bold leading-tight text-foreground">
               Web Analytics Made{' '}
-              <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-primary to-primary-dark bg-clip-text text-transparent">
                 Simple & Insightful
               </span>
             </h1>
-            <p className="text-xl text-gray-600">
+            <p className="text-xl text-foreground">
               Featherstats helps you understand your website's traffic with clear, actionable insights—without
               the complexity of Google Analytics.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button href="/signup" variant="primary">
+              <Button href={getWebAppURL("signup")} variant="primary">
                 Get Started Free
               </Button>
-              <Button href="/features" variant="outline">
+              <Button href="/#features" variant="outline">
                 See How It Works
               </Button>
             </div>
           </div>
           <div className="relative">
-            <div className="relative aspect-[4/3] rounded-xl overflow-hidden shadow-2xl">
+            <div className="relative aspect-[4/3] rounded-xl overflow-hidden z-10">
               <Image
-                src="/dashboard-preview.png"
+                src="/images/featherstats-hero-3.png"
                 alt="Featherstats Dashboard with Clarity Mode"
                 fill
                 className="object-cover"
                 priority
               />
-              {/* Tooltip Example */}
-              <div className="absolute top-1/4 right-1/4 bg-white rounded-lg shadow-lg p-4 max-w-xs">
-                <p className="text-sm font-medium text-gray-900">✨ Clarity Mode</p>
-                <p className="text-sm text-gray-600">
-                  "67% of your visitors come from South Africa - consider localizing your content!"
-                </p>
-              </div>
             </div>
           </div>
         </div>

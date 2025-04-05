@@ -65,53 +65,52 @@ const Pricing = () => {
   const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>('monthly');
 
   return (
-    <section className="py-20 bg-gray-50">
-      <div className="container mx-auto px-4">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-3xl font-bold mb-4">Simple, transparent pricing</h2>
-          <p className="text-xl text-gray-600 mb-8">
+    <section className="py-20 bg-primary/5" id="pricing">
+      <div className="container relative mx-auto px-4">
+        <div className="absolute size-1/3 bg-primary-dark/50 left-[35%] top-[35%] blur-3xl" ></div>
+        <div className="text-center max-w-3xl mx-auto mb-12">
+          <h2 className="text-3xl text-foreground font-bold mb-4">Simple, transparent pricing</h2>
+          <p className="text-xl text-foreground-muted mb-8">
             Choose a plan that grows with your website.
           </p>
-          
-          <div className="inline-flex items-center p-1 bg-gray-100 rounded-lg">
+
+          <div className="inline-flex items-center p-1 bg-card rounded-lg mt-4">
             <button
               onClick={() => setBillingPeriod('monthly')}
-              className={`px-4 py-2 text-sm font-medium rounded-md ${
-                billingPeriod === 'monthly'
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-500 hover:text-gray-900'
-              }`}
+              className={`px-4 py-2 text-sm font-medium rounded-md ${billingPeriod === 'monthly'
+                  ? 'bg-primary/10 text-foreground shadow-sm'
+                  : 'text-foreground-muted hover:text-foreground'
+                }`}
             >
               Monthly billing
             </button>
             <button
               onClick={() => setBillingPeriod('yearly')}
-              className={`px-4 py-2 text-sm font-medium rounded-md ${
-                billingPeriod === 'yearly'
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-500 hover:text-gray-900'
-              }`}
+              className={`px-4 py-2 text-sm font-medium rounded-md relative ${billingPeriod === 'yearly'
+                  ? 'bg-primary/10 text-foreground shadow-sm'
+                  : ' text-foreground-muted hover:text-foreground'
+                }`}
             >
               Yearly billing
-              <span className="ml-1.5 text-blue-600">Save 15%</span>
+              <span className="absolute block px-2 top-[-20px] text-foreground bg-gradient-to-r from-primary to-primary-dark rounded-md">Save 15%</span> 
             </button>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
           {pricingPlans.map((plan, index) => (
-            <PricingCard 
-              key={index} 
-              {...plan} 
+            <PricingCard
+              key={index}
+              {...plan}
               selectedBillingPeriod={billingPeriod}
             />
           ))}
         </div>
 
         <div className="mt-16 text-center">
-          <p className="text-gray-600">
+          <p className="text-foreground-muted">
             Need more pageviews or custom features?{' '}
-            <a href="/contact" className="text-blue-600 hover:text-blue-700 font-medium">
+            <a href="/contact" className="text-primary hover:text-primary-dark font-medium">
               Contact us
             </a>{' '}
             for enterprise pricing.

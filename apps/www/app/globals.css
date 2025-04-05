@@ -1,20 +1,24 @@
 /*@import "@repo/ui/styles.css";*/
 @import "tailwindcss";
+@plugin '@tailwindcss/typography';
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --color-background: #1d1d1d; 
+  --color-foreground: #ffffff;
+  --color-foreground-muted: var(--color-gray-300);
+  --color-primary: #3b82f6;
+  --color-primary-dark: #1d4ed8;
+  --color-card: #1a1a1a;
+  --color-card-border: #2a2a2a;
+  --color-text-secondary: #9ca3af;
 }
 
 
 body {
-  
+  background-color: var(--color-background);
+  color: var(--color-foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
