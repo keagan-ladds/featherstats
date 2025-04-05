@@ -6,6 +6,7 @@ import OnboardingStepDomain from "./onboarding-domain"
 import { Button } from '@repo/ui/components/ui/button'
 import { ArrowRight, LoaderCircle } from 'lucide-react'
 import OnboardingStepDone from './onboarding-done'
+import OnboardingStepSubscription from './onboarding-subscription'
 
 export default function OnboardingForm() {
     const { onboardingStep } = useOnboarding();
@@ -13,6 +14,7 @@ export default function OnboardingForm() {
     return (
         <div className="flex flex-col min-h-[500px]">
             {onboardingStep == 'welcome' && <OnboardingStepWelcome />}
+            {onboardingStep == 'subscription' && <OnboardingStepSubscription/>}
             {onboardingStep == 'workspace' && <OnboardingStepWorkspace />}
             {onboardingStep == 'domain' && <OnboardingStepDomain />}
             {onboardingStep == 'done' && <OnboardingStepDone />}
@@ -22,14 +24,15 @@ export default function OnboardingForm() {
 
 interface OnboardingContinueButtonProps {
     onClick?: () => void;
+    disabled?: boolean;
 }
 
-export function OnboardingContinueButton({onClick}: OnboardingContinueButtonProps) {
+export function OnboardingContinueButton({onClick, disabled}: OnboardingContinueButtonProps) {
     const { loading } = useOnboarding()
 
     return (
         <div className='flex flex-col items-center w-full  mt-auto gap-2'>
-            <Button className='group w-full' disabled={loading} onClick={() => onClick?.()}>
+            <Button className='group w-full' disabled={loading || disabled} onClick={() => onClick?.()}>
                 {loading ? (<>
                     <LoaderCircle className='animate-spin' />
                 </>) :

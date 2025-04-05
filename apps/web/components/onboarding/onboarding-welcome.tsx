@@ -30,7 +30,7 @@ export default function OnboardingStepWelcome() {
     }, [session])
 
     const handleSubmit = (data: OnboardingDataWelcome) => {
-        onContinue("workspace", data);
+        onContinue("subscription", data);
     }
 
     return (
@@ -39,9 +39,9 @@ export default function OnboardingStepWelcome() {
                 <div className="flex h-10 w-10 justify-center mb-2">
                     <Image src="/featherstats.png" width={64} height={64} alt="featherstats" className="rounded-xs"></Image>
                 </div>
-                <h1 className="text-xl font-bold">Hey There! Let's Get You Set Up</h1>
+                <h1 className="text-xl font-bold">Hey There! Start with the Basics</h1>
                 <div className="text-muted-foreground text-sm">
-                    We're stoked to have you on board!
+                    Share a few details so we can tailor things to you
                 </div>
             </div>
 
@@ -54,7 +54,7 @@ export default function OnboardingStepWelcome() {
                             <FormItem>
                                 <FormLabel>Name</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="Enter your name" {...field} />
+                                    <Input placeholder="Namey McNameface" {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>

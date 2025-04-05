@@ -7,19 +7,28 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form";
 import { Button } from "@repo/ui/components/ui/button";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { useLogin } from "hooks/use-login";
 import { Loader } from "lucide-react";
 import { cn } from "lib/utils";
 import VerificationInput from "./verification-input";
 import { LoginTerms } from "./login-form";
+import { setFlowCookies } from "lib/onboarding-utils";
 
+interface Props {
+    flowParams?: {
+        plan?: string;
+        period?: string;
+        currency?: string;
+        promo?: string;
+    }
+}
 
-export default function SignupForm() {
+export default function SignupForm({flowParams} : Props) {
 
     const { onVerify, signIn, error, isLoading, isRedirecting, isVerify } = useLogin()
     const signupFormSchema = z.object({
-        email: z.string().email()
+        email: z.string().email("Please provide a valid email address.")
     })
 
     const form = useForm<z.infer<typeof signupFormSchema>>({
@@ -32,6 +41,12 @@ export default function SignupForm() {
     const onSubmit = useCallback(async (data: z.infer<typeof signupFormSchema>) => {
         signIn(data.email)
     }, [])
+
+    useEffect(() => {
+        if (flowParams) {
+            setFlowCookies(flowParams)
+        }
+    }, [flowParams])
 
     if (isRedirecting) {
         return <>
@@ -58,7 +73,7 @@ export default function SignupForm() {
                     </div>
                 </div>
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
                         <FormField
                             control={form.control}
                             name="email"

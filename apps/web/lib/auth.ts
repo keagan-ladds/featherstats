@@ -32,11 +32,7 @@ const authOptions = {
     })],
     session: { strategy: "jwt" },
     events: {
-        createUser: async ({ user }) => {
-            if (user.email) {
-                await emailService.sendWelcomeEmail(user.email, user.name!);
-            }
-        }
+
     }
 
 } satisfies NextAuthConfig
