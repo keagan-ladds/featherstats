@@ -36,11 +36,12 @@ export class TinybirdClient {
             });
     }
 
-    public async getUsageSummary(workspaceId: string, from: Date, to: Date): Promise<UsageSummaryData> {
+    public async getUsageSummary(workspaceIds: string[], from: Date, to: Date): Promise<UsageSummaryData> {
         const fromQueryParam = `${encodeURIComponent(formatISO(from, { representation: "date" }))}`;
         const toQueryParam = `${encodeURIComponent(formatISO(to, { representation: "date" }))}`;
-        const dateRangeQuery = `from=${fromQueryParam}&to=${toQueryParam}`;
-        const token = this.generateUsageToken(workspaceId);
+        const workspaceIdsQueryParam = `${encodeURIComponent(workspaceIds.join(","))}`
+        const dateRangeQuery = `usage_from=${fromQueryParam}&usage_to=${toQueryParam}&worspace_ids=${workspaceIdsQueryParam}`;
+        const token = this.generateUsageToken();
 
         const response = await fetch(`${this.baseUrl}/v0/pipes/usage_summary.json?${dateRangeQuery}`, {
             headers: {
@@ -50,14 +51,18 @@ export class TinybirdClient {
 
         if (!response.ok) throw new Error("Could not get usage summary data from Tinybird.");
 
+        console.log(dateRangeQuery)
+
         const responseData = await response.json() as {
             data: UsageSummaryData
         };
 
+        
+
         return responseData.data;
     }
 
-    private generateUsageToken(workspaceId: string) {
+    private generateUsageToken() {
         const next10minutes = new Date();
         next10minutes.setTime(next10minutes.getTime() + 1000 * 60 * 10);
 
@@ -72,10 +77,7 @@ export class TinybirdClient {
             scopes: [
                 ...pipes.map(pipe => ({
                     type: "PIPES:READ",
-                    resource: pipe,
-                    fixed_params: {
-                        "workspace_id": workspaceId
-                    }
+                    resource: pipe
                 }))
             ],
         };
