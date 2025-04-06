@@ -54,7 +54,7 @@ export default function SubscriptionCheckoutForm({clientSecret, intentType, amou
             elements,
             clientSecret,
             confirmParams: {
-                return_url: getURL(),
+                return_url: getURL("/manage/subscription/checkout"),
             },
         });
 

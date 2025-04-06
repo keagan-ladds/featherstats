@@ -34,8 +34,7 @@ import {
 import { signOut } from "next-auth/react"
 import { useCallback } from "react"
 import { UserProfile } from "types/user"
-import { useUser } from "hooks/use-user"
-import useDialog from "hooks/use-dialog"
+import Link from "next/link"
 
 interface Props {
   user: UserProfile
@@ -45,9 +44,6 @@ export function NavUser({
   user,
 }: Props) {
   const { isMobile } = useSidebar()
-  const { openPreferences } = useUser();
-  const { open: openSubscriptionDialog } = useDialog("subscription")
-  const { open: openUsageDialog } = useDialog("usage")
   const onSignOut = useCallback(() => {
     signOut({ redirectTo: '/login' })
   }, [])
@@ -91,25 +87,35 @@ export function NavUser({
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            {/* <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <Sparkles />
-                Upgrade to Pro
-              </DropdownMenuItem>
+            {/*<DropdownMenuGroup>
+               <DropdownMenuItem asChild>
+                <Link href="/manage/subscription/upgrade">
+                  <Sparkles />
+                  Upgrade to Pro
+                </Link>
+
+              </DropdownMenuItem> 
             </DropdownMenuGroup>
-            <DropdownMenuSeparator /> */}
+            <DropdownMenuSeparator />*/}
             <DropdownMenuGroup>
-              <DropdownMenuItem onClick={() => openPreferences()}>
-                <Cog />
-                Preferences
+              <DropdownMenuItem asChild>
+                <Link href="/manage/preferences">
+                  <Cog />
+                  Preferences
+                </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => openSubscriptionDialog()}>
-                <CreditCard />
-                Subscription
+              <DropdownMenuItem asChild>
+                <Link href="/manage/subscription">
+                  <CreditCard />
+                  Subscription
+                </Link>
+
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => openUsageDialog()}>
-                <ChartLine />
-                Usage
+              <DropdownMenuItem asChild>
+                <Link href="/manage/usage">
+                  <ChartLine />
+                  Usage
+                </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
