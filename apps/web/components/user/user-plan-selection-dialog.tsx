@@ -10,11 +10,11 @@ export default function UserPlanSelectionDialog() {
     const { close, isOpen } = useDialog("upgrade")
     const { open: openCheckout } = useDialog("checkout")
 
-    const { plans, isLoading, updateSubscriptionPlan, paymentIntent } = useSubscription();
+    const { plans, isLoading, updateSubscriptionPlan, fetchPlans, paymentIntent } = useSubscription();
 
     const { profile } = useUser()
     const subscription = profile.subscription
-    const currentPlanId = subscription.planId;
+    const currentPlanId = subscription?.planId;
 
 
     const currentMode = useMemo(() => {
@@ -31,6 +31,10 @@ export default function UserPlanSelectionDialog() {
         }
     }, [paymentIntent])
 
+    useEffect(() => {
+        fetchPlans();
+    }, [])
+
     return <>
         <Dialog open={isOpen} onOpenChange={close}>
             <DialogContent className="md:max-w-[825px]!">
@@ -40,7 +44,7 @@ export default function UserPlanSelectionDialog() {
                         Select the plan that best fits your needs.
                     </DialogDescription>
                 </DialogHeader>
-                <SubscriptionPlanSelection onPlanSelected={onPlanSelected} subscriptionPlans={plans} isLoading={isLoading} currentPlanId={currentPlanId} currentBillingPeriod={subscription.billingPeriod} />
+                <SubscriptionPlanSelection onPlanSelected={onPlanSelected} subscriptionPlans={plans} isLoading={isLoading} currentPlanId={currentPlanId} currentBillingPeriod={subscription?.billingPeriod} />
             </DialogContent>
         </Dialog>
     </>

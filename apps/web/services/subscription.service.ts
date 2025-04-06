@@ -118,7 +118,7 @@ export class SubscriptionService {
         }, [])
     }
 
-    private async getActiveUserSubscription(userId: string): Promise<Subscription | null> {
+    async getActiveUserSubscription(userId: string): Promise<Subscription | null> {
         const [subscription] = await this.database.select({ ...getTableColumns(subscriptionsTable) })
             .from(subscriptionsTable)
             .where(and(notInArray(subscriptionsTable.status, ["canceled"]), eq(subscriptionsTable.userId, userId)))

@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { ChevronsUpDown, Globe, Plus, Sparkles } from "lucide-react"
+import { ChevronsUpDown, Plus, Sparkles } from "lucide-react"
 
 import {
   DropdownMenu,
@@ -39,11 +39,11 @@ export function DomainSwitcher() {
   }
 
   // Hide the switcher if the user can only have one domain anyway
-  if (profile.subscription.usageLimits.maxDomains == 1) {
+  if (profile.subscription?.usageLimits.maxDomains == 1) {
     return null;
   }
 
-  const domainLimitReached = domains.length >= profile.subscription.usageLimits.maxDomains
+  const domainLimitReached = domains.length >= (profile.subscription?.usageLimits?.maxDomains || 0)
 
   const onDomainSelected = React.useCallback((domain: Domain) => {
     setActiveDomain(domain)

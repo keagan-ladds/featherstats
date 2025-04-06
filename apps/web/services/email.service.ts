@@ -1,6 +1,7 @@
 import { Resend } from 'resend';
 import { WelcomeEmail } from "@featherstats/email/emails/transactional/user-welcome"
 import { OtpEmail } from "@featherstats/email/emails/transactional/otp-email"
+import { DailyLimitWarningEmail } from "@featherstats/email/emails/transactional/daily-limit-warning"
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -23,6 +24,15 @@ class EmailService {
             to: [email],
             subject: `${token} - Featherstats Signin Verification`,
             react: OtpEmail({ userName: userName, oneTimePasscode: token }),
+        });
+    }
+
+    async sendDailyUsageWarningEmail(email: string, userName: string) {
+        const { data, error } = await resend.emails.send({
+            from: this.defaultFrom,
+            to: [email],
+            subject: `[Featherstats Usage] You've Reached 80% of Your Daily Soft Limit`,
+            react: DailyLimitWarningEmail({ userName: userName }),
         });
     }
 

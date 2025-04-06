@@ -1,5 +1,5 @@
 import { addMonths, endOfDay, getUnixTime, isBefore, isSameDay, startOfDay } from "date-fns";
-import { UsageTrackResult } from "types/usage";
+import { SubscriptionUsage, UsageTrackResult } from "types/usage";
 import { redis } from "lib/redis/server";
 import { DrizzleClient, PlanUsageLimit } from "@featherstats/database/types";
 import { db } from "@featherstats/database";
@@ -19,7 +19,7 @@ class UsageService {
         this.tinybird = tinybirdClient;
     }
 
-    async getSubscriptionUsage(subscriptionId: string) {
+    async getSubscriptionUsage(subscriptionId: string) : Promise<SubscriptionUsage | undefined> {
         const workspaces = await this.database.select({ workspaceId: workspacesTable.id, currentPeriodStart: subscriptionsTable.currentPeriodStart }).from(subscriptionsTable)
             .innerJoin(usersTable, eq(usersTable.id, subscriptionsTable.userId))
             .innerJoin(workspacesTable, eq(workspacesTable.userId, usersTable.id))
@@ -54,7 +54,8 @@ class UsageService {
             from: usagePeriodStart,
             to: usagePeriodEnd,
             periodUsage: periodUsage,
-            dailyUsage: dailyUsage
+            dailyUsage: dailyUsage,
+            workspaces: workspaces.length
         };
     }
 

@@ -11,3 +11,7 @@ export const formatCurrency = (amount: number, currency: string) => {
         minimumFractionDigits: 0,
     }).format(amount / 100)
 }
+
+export const formatNumber = (num: number) => {
+    return new Intl.NumberFormat("en-US").format(num)
+}

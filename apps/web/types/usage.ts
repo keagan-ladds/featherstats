@@ -10,3 +10,17 @@ export type UsageTrackResult = {
     message?: string
     error?: any
 }
+
+export type SubscriptionUsage = {
+    from: Date,
+    to: Date,
+    periodUsage: {
+        pageviews: number
+        visits: number
+    },
+    dailyUsage: {
+        pageviews: number
+        visits: number
+    },
+    workspaces: number
+}

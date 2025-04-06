@@ -14,7 +14,7 @@ export type UserSubscription = {
 }
 
 export type UserProfile = Omit<User, "metadata" | "stripeCustomerId"> & {
-    subscription: UserSubscription
+    subscription?: UserSubscription
 }
 
 export type UpdateUserPreferencesOptions = z.infer<typeof UpdateUserPreferencesSchema>

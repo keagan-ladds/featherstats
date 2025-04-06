@@ -6,10 +6,32 @@ import { Separator } from "@repo/ui/components/ui/separator";
 import { Progress } from "@repo/ui/components/ui/progress";
 import useDialog from "hooks/use-dialog";
 import { Package, PlusCircle, Settings } from "lucide-react";
+import { useSubscription } from "hooks/use-subscription";
+import { useEffect, useMemo } from "react";
+import { useUser } from "hooks/use-user";
+import { formatNumber } from "lib/format-utils";
 
 export default function UserUsageDialog() {
     const { close, isOpen } = useDialog("usage")
     const { open: openUpgrade } = useDialog("upgrade")
+    const { subscriptionUsage, fetchUsage } = useSubscription();
+    const { profile } = useUser()
+
+    useEffect(() => {
+        if (isOpen) {
+            fetchUsage();
+        }
+
+    }, [isOpen])
+
+    const pageviewPercentage = useMemo(() => {
+        const limit = profile.subscription?.usageLimits?.maxMonthlyPageviews || 0
+        const usage = subscriptionUsage?.periodUsage.pageviews || 0
+        if (limit == 0) return 0;
+
+        return Math.ceil(usage / limit * 100);
+        
+    }, [subscriptionUsage, profile.subscription])
     return <>
         <Dialog open={isOpen} onOpenChange={close}>
             <DialogContent className="sm:max-w-[425px]">
@@ -31,26 +53,26 @@ export default function UserUsageDialog() {
                         <div className="space-y-2">
                             <div className="flex items-center justify-between text-sm">
                                 <div className="font-medium">Pageviews</div>
-                                <div className="text-muted-foreground">1,000 / 5,000</div>
+                                <div className="text-muted-foreground">{formatNumber(subscriptionUsage?.periodUsage?.pageviews || 0)} / {formatNumber(profile.subscription?.usageLimits?.maxMonthlyPageviews || 0)}</div>
                             </div>
-                            <Progress value={20} className="h-2" />
+                            <Progress value={pageviewPercentage} className="h-2" />
                         </div>
 
                         <div className="space-y-2">
                             <div className="flex items-center justify-between text-sm">
                                 <div className="font-medium">Domains</div>
-                                <div className="text-muted-foreground">1 / 5</div>
+                                <div className="text-muted-foreground">1 / {formatNumber(profile.subscription?.usageLimits?.maxDomains || 0)}</div>
                             </div>
                             <Progress value={20} className="h-2" />
                         </div>
 
-                        <div className="space-y-2">
+                        {/* <div className="space-y-2">
                             <div className="flex items-center justify-between text-sm">
                                 <div className="font-medium">Workspaces</div>
-                                <div className="text-muted-foreground">1 / 1</div>
+                                <div className="text-muted-foreground">1 / {formatNumber(profile.subscription?.usageLimits?.maxWorkspaces || 0)}</div>
                             </div>
                             <Progress value={100} className="h-2" />
-                        </div>
+                        </div> */}
 
                         <Separator />
 

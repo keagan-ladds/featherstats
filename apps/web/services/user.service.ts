@@ -11,7 +11,7 @@ export class UserService {
     constructor(database: DrizzleClient = db) {
         this.database = database;
     }
-    
+
     async getUserById(id: string): Promise<User | undefined> {
         const [user] = await this.database.select().from(usersTable).where(eq(usersTable.id, id));
         return user;
@@ -27,23 +27,21 @@ export class UserService {
             .innerJoin(plansTable, eq(planPricesTable.planId, plansTable.id))
             .where(eq(subscriptionsTable.userId, user.id));
 
+        const userSubscription = subscription ? {
+            planId: subscription.plans.id,
+            status: subscription.subscriptions.status!,
+            name: subscription.plans.name,
+            amount: subscription.plan_prices.amount,
+            billingPeriod: subscription.plan_prices.billingPeriod,
+            currency: subscription.plan_prices.currency,
+            currentPeriodEnd: subscription.subscriptions.currentPeriodEnd,
+            usageLimits: subscription.plans.usageLimits
+        } : undefined;
+
+
         return {
             ...user,
-            subscription: {
-                planId: subscription?.plans.id || "",
-                status: subscription?.subscriptions.status || "active",
-                name: subscription?.plans.name || "Free",
-                amount: subscription?.plan_prices.amount || 0,
-                billingPeriod: subscription?.plan_prices.billingPeriod || "monthly",
-                currency: subscription?.plan_prices.currency || "usd",
-                currentPeriodEnd: subscription?.subscriptions.currentPeriodEnd,
-                usageLimits: subscription?.plans.usageLimits || {
-                    maxDomains: 1,
-                    dataRetentionDays: 90,
-                    maxMonthlyPageviews: 10000,
-                    maxWorkspaces: 1
-                }
-            }
+            subscription: userSubscription
         }
     }
 

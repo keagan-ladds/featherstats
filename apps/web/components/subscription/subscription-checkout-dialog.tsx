@@ -6,7 +6,6 @@ import SubscriptionCheckoutForm from "./subscription-checkout-form";
 import { StripeElementsOptions } from "@stripe/stripe-js";
 import { useMemo } from "react";
 import useDialog from "hooks/use-dialog";
-import { useSubscription } from "hooks/use-subscription";
 
 export default function SubscriptionCheckoutDialog() {
     const { close, isOpen, data: paymentIntent } = useDialog("checkout")

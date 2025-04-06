@@ -20,8 +20,12 @@ import { cn } from "lib/utils";
 export default function OnboardingStepSubscription() {
 
     const { onContinue, flowParams } = useOnboarding();
-    const { plans } = useSubscription();
+    const { plans, fetchPlans } = useSubscription();
     const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>("monthly")
+
+    useEffect(() => {
+        fetchPlans();
+    }, [])
 
     const form = useForm<OnboardingDataSubscription>({
         resolver: zodResolver(OnboardingDataSubscriptionSchema),
