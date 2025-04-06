@@ -1,13 +1,19 @@
 import { db } from "@featherstats/database"
 import { usersTable } from "@featherstats/database/schema/auth"
-import { User, UserMetadata } from "@featherstats/database/types"
+import { DrizzleClient, User, UserMetadata } from "@featherstats/database/types"
 import { eq } from "drizzle-orm";
 import { UpdateUserPreferencesOptions, UserProfile } from "types/user";
 import { planPricesTable, plansTable, subscriptionsTable } from "@featherstats/database/schema/app";
 
-class UserService {
+export class UserService {
+    private database: DrizzleClient;
+
+    constructor(database: DrizzleClient = db) {
+        this.database = database;
+    }
+    
     async getUserById(id: string): Promise<User | undefined> {
-        const [user] = await db.select().from(usersTable).where(eq(usersTable.id, id));
+        const [user] = await this.database.select().from(usersTable).where(eq(usersTable.id, id));
         return user;
     }
 
@@ -16,7 +22,7 @@ class UserService {
 
         if (!user) throw new Error('User not found');
 
-        const [subscription] = await db.select().from(subscriptionsTable)
+        const [subscription] = await this.database.select().from(subscriptionsTable)
             .innerJoin(planPricesTable, eq(planPricesTable.id, subscriptionsTable.priceId))
             .innerJoin(plansTable, eq(planPricesTable.planId, plansTable.id))
             .where(eq(subscriptionsTable.userId, user.id));
@@ -57,11 +63,11 @@ class UserService {
     }
 
     async updateUserMetadataById(id: string, metadata: Partial<UserMetadata>) {
-        await db.update(usersTable).set({ metadata: metadata }).where(eq(usersTable.id, id));
+        await this.database.update(usersTable).set({ metadata: metadata }).where(eq(usersTable.id, id));
     }
 
     async updateUserById(id: string, data: Partial<Omit<User, 'id'>>): Promise<User> {
-        const [user] = await db.update(usersTable)
+        const [user] = await this.database.update(usersTable)
             .set({ ...data })
             .where(eq(usersTable.id, id)).returning();
 

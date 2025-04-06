@@ -2,12 +2,11 @@ import { db } from "@featherstats/database/index";
 import { sql, eq, and, notInArray, getTableColumns } from 'drizzle-orm';
 import { planPricesTable, plansTable, subscriptionsTable } from "@featherstats/database/schema/app";
 import Stripe from "stripe";
-import { PlanPrice, PlanUsageLimit, Subscription, User } from "@featherstats/database/types";
+import { DrizzleClient, PlanPrice, PlanUsageLimit, Subscription, User } from "@featherstats/database/types";
 import { fromUnixTime } from "date-fns";
 import { stripe } from "lib/stripe/server";
 import { usersTable } from "@featherstats/database/schema/auth";
 import { PlanWithPrices, UpdateSubscriptionPlanOptions, UpdateSubscriptionPlanResult } from "types/subscription";
-import { getURL } from "lib/utils";
 
 export const DEFAULT_USAGE_LIMITS: PlanUsageLimit = {
     dataRetentionDays: 90,
@@ -17,6 +16,12 @@ export const DEFAULT_USAGE_LIMITS: PlanUsageLimit = {
 } satisfies PlanUsageLimit
 
 export class SubscriptionService {
+    private database: DrizzleClient;
+
+    constructor(database: DrizzleClient = db) {
+        this.database = database;
+    }
+
     async handleSubscriptionCreated(subscription: Stripe.Subscription) {
         const user = await this.getUserByStripeCustomerId(subscription.customer as string);
         if (!user) {
@@ -31,7 +36,7 @@ export class SubscriptionService {
             return;
         }
 
-        const [sub] = await db.insert(subscriptionsTable).values({
+        const [sub] = await this.database.insert(subscriptionsTable).values({
             id: subscription.id,
             userId: user.id,
             status: subscription.status,
@@ -70,7 +75,7 @@ export class SubscriptionService {
         if (existingSubscription) throw new Error(`The user already has an active subscription, can't create a new one.`);
 
         const customerId = await this.findOrCreateStripeCustomerId(userId);
-        const [price] = await db.select().from(planPricesTable).where(eq(planPricesTable.id, priceId))
+        const [price] = await this.database.select().from(planPricesTable).where(eq(planPricesTable.id, priceId))
         if (!price) throw new Error(`Could not find plan price with id '${priceId}'.`);
 
         const trialPeriodDays = includeTrialPeriod && price.amount > 0 ? 7 : undefined
@@ -95,7 +100,7 @@ export class SubscriptionService {
     }
 
     async getPlans(): Promise<PlanWithPrices[]> {
-        const plans = await db.select().from(plansTable)
+        const plans = await this.database.select().from(plansTable)
             .innerJoin(planPricesTable, eq(plansTable.id, planPricesTable.planId))
             .where(and(eq(planPricesTable.active, true), eq(plansTable.active, true)));
 
@@ -114,7 +119,7 @@ export class SubscriptionService {
     }
 
     private async getActiveUserSubscription(userId: string): Promise<Subscription | null> {
-        const [subscription] = await db.select({ ...getTableColumns(subscriptionsTable) })
+        const [subscription] = await this.database.select({ ...getTableColumns(subscriptionsTable) })
             .from(subscriptionsTable)
             .where(and(notInArray(subscriptionsTable.status, ["canceled"]), eq(subscriptionsTable.userId, userId)))
 
@@ -122,7 +127,7 @@ export class SubscriptionService {
     }
 
     async updateSubscriptionPlan(userId: string, opts: UpdateSubscriptionPlanOptions): Promise<UpdateSubscriptionPlanResult> {
-        const [price] = await db.select({ amount: planPricesTable.amount, stripePriceId: planPricesTable.stripePriceId, stripeProductId: plansTable.stripeProductId }).from(planPricesTable)
+        const [price] = await this.database.select({ amount: planPricesTable.amount, stripePriceId: planPricesTable.stripePriceId, stripeProductId: plansTable.stripeProductId }).from(planPricesTable)
             .innerJoin(plansTable, eq(plansTable.id, planPricesTable.planId))
             .where(eq(planPricesTable.id, opts.priceId))
 
@@ -213,7 +218,7 @@ export class SubscriptionService {
     }
 
     private async findOrCreateStripeCustomerId(userId: string): Promise<string> {
-        const [user] = await db.select().from(usersTable).where(eq(usersTable.id, userId));
+        const [user] = await this.database.select().from(usersTable).where(eq(usersTable.id, userId));
         if (!user) throw new Error(`The user with id '${userId}' could not be found.`);
 
         if (user.stripeCustomerId) return user.stripeCustomerId;
@@ -223,17 +228,17 @@ export class SubscriptionService {
             email: user.email || undefined
         });
 
-        await db.update(usersTable).set({ stripeCustomerId }).where(eq(usersTable.id, userId));
+        await this.database.update(usersTable).set({ stripeCustomerId }).where(eq(usersTable.id, userId));
         return stripeCustomerId;
     }
 
     private async getUserByStripeCustomerId(customerId: string): Promise<User | null> {
-        const [user] = await db.select().from(usersTable).where(eq(usersTable.stripeCustomerId, customerId));
+        const [user] = await this.database.select().from(usersTable).where(eq(usersTable.stripeCustomerId, customerId));
         return user || null
     }
 
     private async getPlanPriceByStripePriceId(priceId: string): Promise<PlanPrice | null> {
-        const [price] = await db.select().from(planPricesTable).where(eq(planPricesTable.stripePriceId, priceId));
+        const [price] = await this.database.select().from(planPricesTable).where(eq(planPricesTable.stripePriceId, priceId));
         return price || null
     }
 
@@ -242,7 +247,7 @@ export class SubscriptionService {
         const stripePriceId = subscription.items.data[0]?.price.id || "";
         const price = await this.getPlanPriceByStripePriceId(stripePriceId);
 
-        await db.update(subscriptionsTable).set({
+        await this.database.update(subscriptionsTable).set({
             status: subscription.status,
             priceId: price && price.id || undefined,
             currentPeriodStart: fromUnixTime(subscription.current_period_start),

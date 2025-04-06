@@ -1,5 +1,8 @@
 import { billingPeriod, domainVerificationStatus, domainsTable, planPricesTable, plansTable, subscriptionStatus, subscriptionsTable, workspacesTable } from "../schema/app";
 import { usersTable } from "../schema/auth";
+import { db } from '../index'
+
+export type DrizzleClient = typeof db;
 
 export type User = typeof usersTable.$inferSelect
 export type UserMetadata = {

@@ -1,9 +1,15 @@
 import { endOfDay, getUnixTime } from "date-fns";
 import { UsageTrackResult } from "types/usage";
 import { redis } from "lib/redis/server";
-import { PlanUsageLimit } from "@featherstats/database/types";
+import { DrizzleClient, PlanUsageLimit } from "@featherstats/database/types";
+import { db } from "@featherstats/database";
 
 class UsageService {
+    private database: DrizzleClient;
+
+    constructor(database: DrizzleClient = db) {
+        this.database = database;
+    }
     async syncWorkspaceUsage(workspaceId: string) {
 
     }

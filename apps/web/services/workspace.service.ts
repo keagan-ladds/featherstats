@@ -1,12 +1,18 @@
 import { db } from "@featherstats/database";
 import { domainsTable, planPricesTable, plansTable, subscriptionsTable, workspacesTable } from "@featherstats/database/schema/app";
-import { Domain, Workspace } from "@featherstats/database/types";
+import { Domain, DrizzleClient, Workspace } from "@featherstats/database/types";
 import { DomainCreateOptions, DomainWithSubscriptionDetails, WorkspaceCreateOptions, WorkspaceWithDomains } from "types/workspace";
 import { eq, and, getTableColumns } from "drizzle-orm"
 import { usersTable } from "@featherstats/database/schema/auth";
 import { DEFAULT_USAGE_LIMITS } from "./subscription.service";
 
-class WorkspaceService {
+export class WorkspaceService {
+    private database: DrizzleClient;
+
+    constructor(database: DrizzleClient = db) {
+        this.database = database;
+    }
+
     async createDefaultUserWorkspace(userId: string, opts: WorkspaceCreateOptions): Promise<Workspace> {
         const userWorkspaces = await this.findWorkspaceByUserId(userId);
         if (userWorkspaces && userWorkspaces.length > 0) return userWorkspaces[0]!;
@@ -15,24 +21,22 @@ class WorkspaceService {
     }
 
     async createWorkspace(userId: string, { name }: WorkspaceCreateOptions): Promise<Workspace> {
-        return await db.transaction(async (transaction) => {
-            const [workspace] = await transaction.insert(workspacesTable).values({ name, userId }).returning();
-            return workspace!;
-        });
+        const [workspace] = await this.database.insert(workspacesTable).values({ name, userId }).returning();
+        return workspace!;
     }
 
     async findWorkspaceByUserId(userId: string): Promise<Workspace[]> {
-        return await db.select({ ...getTableColumns(workspacesTable) }).from(workspacesTable)
+        return await this.database.select({ ...getTableColumns(workspacesTable) }).from(workspacesTable)
             .where(eq(workspacesTable.userId, userId))
     }
 
     async getDefaultWorkspaceByUserId(userId: string): Promise<WorkspaceWithDomains | null> {
-        const [workspace] = await db.select({ ...getTableColumns(workspacesTable) }).from(workspacesTable)
+        const [workspace] = await this.database.select({ ...getTableColumns(workspacesTable) }).from(workspacesTable)
             .where(eq(workspacesTable.userId, userId));
 
         if (!workspace) return null;
 
-        const domains = await db.select().from(domainsTable)
+        const domains = await this.database.select().from(domainsTable)
             .where(eq(domainsTable.workspaceId, workspace.id))
 
         return {
@@ -42,7 +46,7 @@ class WorkspaceService {
     }
 
     async getWorkspaceDomainByName(domainName: string, userId: string): Promise<Domain | null> {
-        const [domain] = await db.select({ ...getTableColumns(domainsTable) }).from(domainsTable)
+        const [domain] = await this.database.select({ ...getTableColumns(domainsTable) }).from(domainsTable)
             .innerJoin(workspacesTable, eq(domainsTable.workspaceId, workspacesTable.id))
             .where(and(eq(domainsTable.name, this.normalizeDomainName(domainName)), eq(workspacesTable.userId, userId)))
 
@@ -52,12 +56,12 @@ class WorkspaceService {
     async createWorkspaceDomain(workspaceId: string, opts: DomainCreateOptions): Promise<Domain> {
         const verifiedAt = opts.verficationStatus == "verified" ? new Date() : undefined;
         const name = this.normalizeDomainName(opts.name)
-        const [domain] = await db.insert(domainsTable).values({ ...opts, verifiedAt, workspaceId, name }).returning();
+        const [domain] = await this.database.insert(domainsTable).values({ ...opts, verifiedAt, workspaceId, name }).returning();
         return domain!
     }
 
     async getWorkspaceDomainByKey(key: string): Promise<DomainWithSubscriptionDetails | null> {
-        const [domainWithUsageLimits] = await db.select({ ...getTableColumns(domainsTable), usageLimits: plansTable.usageLimits, subscriptionId: subscriptionsTable.id, userId: workspacesTable.userId }).from(domainsTable)
+        const [domainWithUsageLimits] = await this.database.select({ ...getTableColumns(domainsTable), usageLimits: plansTable.usageLimits, subscriptionId: subscriptionsTable.id, userId: workspacesTable.userId }).from(domainsTable)
             .innerJoin(workspacesTable, eq(workspacesTable.id, domainsTable.workspaceId))
             .innerJoin(usersTable, eq(usersTable.id, workspacesTable.userId))
             .leftJoin(subscriptionsTable, eq(subscriptionsTable.userId, usersTable.id))

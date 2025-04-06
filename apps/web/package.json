@@ -12,7 +12,8 @@
     "check-types": "tsc --noEmit",
     "build:tracker": "node scripts/build-tracker.mjs",
     "db:migrate": "npx drizzle-kit migrate",
-    "db:seed": "npx tsx scripts/seed-database.ts"
+    "db:seed": "npx tsx scripts/seed-database.ts",
+    "stripe:listne": "stripe listen --forward-to http://localhost:3000/api/v1/stripe/webhook"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.8.0",
