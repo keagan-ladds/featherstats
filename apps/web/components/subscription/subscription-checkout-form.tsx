@@ -6,16 +6,18 @@ import { Button } from '@repo/ui/components/ui/button';
 import { SubscriptionPaymentIntent, UpdateSubscriptionPlanResult } from 'types/subscription';
 import { getURL } from 'lib/utils';
 import { formatCurrency } from 'lib/format-utils';
+import { Alert, AlertDescription, AlertTitle } from '@repo/ui/components/ui/alert';
+import { CircleX } from 'lucide-react';
 
 
 interface Props {
     clientSecret: string;
-    intentType:  SubscriptionPaymentIntent["intentType"];
+    intentType: SubscriptionPaymentIntent["intentType"];
     amount?: number;
     currency?: string
 }
 
-export default function SubscriptionCheckoutForm({clientSecret, intentType, amount, currency}: Props) {
+export default function SubscriptionCheckoutForm({ clientSecret, intentType, amount, currency }: Props) {
     const stripe = useStripe();
     const elements = useElements();
 
@@ -71,11 +73,20 @@ export default function SubscriptionCheckoutForm({clientSecret, intentType, amou
 
     return (
         <form onSubmit={handleSubmit}>
+            {errorMessage && (
+                <Alert className='mb-5 animate-shake'>
+                    <CircleX className="h-4 w-4" />
+                    <AlertTitle>We Couldn't Process Your Payment</AlertTitle>
+                    <AlertDescription>
+                        {errorMessage}
+                    </AlertDescription>
+                </Alert>
+            )}
             <PaymentElement />
             <Button className='mt-5 w-full' type="submit" disabled={!stripe || loading}>
-                {amount && currency ? `Pay ${formatCurrency(amount, currency)}` : "Save Details" }
+                {amount && currency ? `Pay ${formatCurrency(amount, currency)}` : "Save Details"}
             </Button>
-            {errorMessage && <div>{errorMessage}</div>}
+            
         </form>
     );
 }
