@@ -17,5 +17,5 @@ export type WorkspaceWithDomains = Workspace & {
 
 export type DomainWithSubscriptionDetails = Domain & {
     subscriptionId: string;
-    usageLimits: PlanUsageLimit
+    userId: string
 }

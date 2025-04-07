@@ -6,6 +6,7 @@ import tinybirdClient from 'lib/client/tinybird-client';
 import { geolocation } from '@vercel/functions';
 import { workspaceService } from 'services/workspace.service';
 import { usageService } from 'services/usage.service';
+import logger from 'lib/logger';
 
 export async function POST(request: NextRequest) {
     try {
@@ -16,8 +17,8 @@ export async function POST(request: NextRequest) {
         const domain = await workspaceService.getWorkspaceDomainByKey(apiKey);
         if (!domain) return new NextResponse(null, { status: 401 });
 
-        //const { shouldRateLimit, message } = await usageService.trackUsage(domain.subscriptionId, domain.usageLimits);
-        //if (shouldRateLimit) return new NextResponse(message, { status: 429 });
+        const { shouldRateLimit, message } = await usageService.trackUsage(domain.subscriptionId);
+        if (shouldRateLimit) return new NextResponse(message, { status: 429 });
 
         const { events } = await request.json() as { events: AnalyticsEvent[] };
 
@@ -59,7 +60,7 @@ export async function POST(request: NextRequest) {
         await tinybirdClient.publishEvents('analytics_events', eventsWithClientInfo);
 
     } catch (error) {
-        console.error('Error processing telemetry:', error);
+        logger.error(error, 'Error processing telemetry');
     }
 
     return NextResponse.json({});

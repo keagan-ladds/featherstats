@@ -1,13 +1,15 @@
-import { addMonths, endOfDay, getUnixTime, isBefore, isSameDay, startOfDay } from "date-fns";
+import { addDays, addMonths, endOfDay, getUnixTime, isBefore, isSameDay, startOfDay } from "date-fns";
 import { SubscriptionUsage, UsageTrackResult } from "types/usage";
 import { redis } from "lib/redis/server";
-import { DrizzleClient, PlanUsageLimit } from "@featherstats/database/types";
+import { DrizzleClient } from "@featherstats/database/types";
 import { db } from "@featherstats/database";
 import { eq } from "drizzle-orm";
 import { TinybirdClient, tinybirdClient } from "lib/tinybird/server";
-import { subscriptionsTable, workspacesTable } from "@featherstats/database/schema/app";
+import { planPricesTable, plansTable, subscriptionsTable, workspacesTable } from "@featherstats/database/schema/app";
 import { usersTable } from "@featherstats/database/schema/auth";
 import { UTCDate } from "@date-fns/utc";
+import logger from "lib/logger";
+import { emailService } from "./email.service";
 
 
 class UsageService {
@@ -19,10 +21,24 @@ class UsageService {
         this.tinybird = tinybirdClient;
     }
 
-    async getSubscriptionUsage(subscriptionId: string) : Promise<SubscriptionUsage | undefined> {
-        const workspaces = await this.database.select({ workspaceId: workspacesTable.id, currentPeriodStart: subscriptionsTable.currentPeriodStart }).from(subscriptionsTable)
+    async getSubscriptionUsage(subscriptionId: string): Promise<SubscriptionUsage | undefined> {
+        const [subscription] = await this.database.select({
+            currentPeriodStart: subscriptionsTable.currentPeriodStart,
+            usageLimits: plansTable.usageLimits
+        }).from(subscriptionsTable)
+            .innerJoin(planPricesTable, eq(planPricesTable.id, subscriptionsTable.priceId))
+            .innerJoin(plansTable, eq(plansTable.id, planPricesTable.planId))
+            .where(eq(subscriptionsTable.id, subscriptionId))
+
+        if (!subscription) return;
+
+        const workspaces = await this.database.select({
+            workspaceId: workspacesTable.id,
+        }).from(subscriptionsTable)
             .innerJoin(usersTable, eq(usersTable.id, subscriptionsTable.userId))
             .innerJoin(workspacesTable, eq(workspacesTable.userId, usersTable.id))
+            .innerJoin(planPricesTable, eq(planPricesTable.id, subscriptionsTable.priceId))
+            .innerJoin(plansTable, eq(plansTable.id, planPricesTable.planId))
             .where(eq(subscriptionsTable.id, subscriptionId))
 
         if (!workspaces || workspaces.length == 0) {
@@ -30,7 +46,7 @@ class UsageService {
         }
 
         const workspaceIds = workspaces.map((workspace) => workspace.workspaceId)
-        const usagePeriodAnchor = workspaces[0]?.currentPeriodStart
+        const usagePeriodAnchor = subscription.currentPeriodStart
         const { start: usagePeriodStart, end: usagePeriodEnd } = this.getUsagePeriod(usagePeriodAnchor || undefined);
         var usage = await this.tinybird.getUsageSummary(workspaceIds, usagePeriodStart, usagePeriodEnd)
 
@@ -55,6 +71,8 @@ class UsageService {
             to: usagePeriodEnd,
             periodUsage: periodUsage,
             dailyUsage: dailyUsage,
+            usageLimits: subscription.usageLimits,
+            dailyPageviewSoftlimit: this.getDailySoftlimit(subscription.usageLimits.maxMonthlyPageviews),
             workspaces: workspaces.length
         };
     }
@@ -70,17 +88,43 @@ class UsageService {
 
         // Sync the daily and period limits to Redis
         await redis.set(this.getDailyUsageKey(subscriptionId), dailyUsage.pageviews, { exat: getUnixTime(endOfDay(UTCDate.now())) })
-        await redis.set(this.getPeriodUsageCacheKey(subscriptionId), periodUsage.pageviews, { exat: getUnixTime(endOfDay(usagePeriodEnd)) })
+        await redis.set(this.getPeriodUsageKey(subscriptionId), periodUsage.pageviews, { exat: getUnixTime(endOfDay(usagePeriodEnd)) })
+
+        if (usage.periodUsage.pageviews > usage.usageLimits.maxMonthlyPageviews && !await redis.get<boolean>(this.getMonthlyUsageExceedNotificationKey(subscriptionId))) {            
+            await redis.set(this.getMonthlyUsageExceedNotificationKey(subscriptionId), true, { exat: getUnixTime(endOfDay(usagePeriodEnd)) });
+            emailService.sendMonthlyLimitExceedNotification(subscriptionId)
+        }
+
+        if (usage.dailyUsage.pageviews > usage.dailyPageviewSoftlimit && !await redis.get<boolean>(this.getDailyUsageExceedNotificationKey(subscriptionId))) {
+            await redis.set(this.getDailyUsageExceedNotificationKey(subscriptionId), true, { exat: getUnixTime(endOfDay(UTCDate.now())) });
+            emailService.sendSoftlimitExceedNotification(subscriptionId);
+        }
 
         return usage;
     }
 
-    async trackUsage(subscriptionId: string, usagePeriodAnchor: Date, usageLimits: PlanUsageLimit): Promise<UsageTrackResult> {
+    async trackUsage(subscriptionId: string): Promise<UsageTrackResult> {
         try {
-            const {end: usagePeriodEnd} = this.getUsagePeriod(usagePeriodAnchor);
-            const periodUsageKey = this.getPeriodUsageCacheKey(subscriptionId);
+
+            const [subscription] = await this.database.select({
+                usagePeriodAnchor: subscriptionsTable.currentPeriodStart,
+                usageLimits: plansTable.usageLimits
+            }).from(subscriptionsTable)
+                .innerJoin(planPricesTable, eq(planPricesTable.id, subscriptionsTable.priceId))
+                .innerJoin(plansTable, eq(plansTable.id, planPricesTable.planId))
+                .where(eq(subscriptionsTable.id, subscriptionId));
+
+            if (!subscription) {
+                logger.warn(`Could not get subscription details for subscription id '${subscriptionId}', unable to track usage.`)
+                return { shouldRateLimit: false }
+            }
+
+            const { usagePeriodAnchor, usageLimits } = subscription;
+
+            const { end: usagePeriodEnd } = this.getUsagePeriod(usagePeriodAnchor || undefined);
+            const periodUsageKey = this.getPeriodUsageKey(subscriptionId);
             const dailyUsageKey = this.getDailyUsageKey(subscriptionId);
-            const dailyUsageSoftLimit = this.getDailySoftLimit(usageLimits.maxMonthlyPageviews);
+            const dailyUsageSoftLimit = this.getDailySoftlimit(usageLimits.maxMonthlyPageviews);
             const dailyExpire = getUnixTime(endOfDay(UTCDate.now()));
             const periodExpire = getUnixTime(usagePeriodEnd);
 
@@ -110,7 +154,6 @@ class UsageService {
             return { shouldRateLimit: false, error: err }
         }
     }
-
 
 
     private getUsagePeriod(anchor: Date = this.startOfMonthUTC(new UTCDate())): { start: Date, end: Date } {
@@ -143,9 +186,11 @@ class UsageService {
         };
     }
 
+    private getMonthlyUsageExceedNotificationKey = (subscriptionId: string) => `subscription_usage_${subscriptionId}_monthlimit_exceed_notification`;
+    private getDailyUsageExceedNotificationKey = (subscriptionId: string) => `subscription_usage_${subscriptionId}_softlimit_exceed_notification`;
     private getDailyUsageKey = (subscriptionId: string) => `subscription_usage_${subscriptionId}_softlimit`;
-    private getPeriodUsageCacheKey = (subscriptionId: string) => `subscription_usage_${subscriptionId}`;
-    private getDailySoftLimit = (monthlyLimit: number) => Math.ceil(1.25 * (monthlyLimit / 30))
+    private getPeriodUsageKey = (subscriptionId: string) => `subscription_usage_${subscriptionId}`;
+    private getDailySoftlimit = (monthlyLimit: number) => Math.ceil(1.25 * (monthlyLimit / 30))
 
     startOfMonthUTC(date: Date): Date {
         return new Date(Date.UTC(

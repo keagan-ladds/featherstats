@@ -1,3 +1,5 @@
+import { PlanUsageLimit } from "@featherstats/database/types";
+
 export type UsageSummaryData = {
     date: Date;
     workspace_id: string;
@@ -22,5 +24,7 @@ export type SubscriptionUsage = {
         pageviews: number
         visits: number
     },
+    usageLimits: PlanUsageLimit;
+    dailyPageviewSoftlimit: number;
     workspaces: number
 }
