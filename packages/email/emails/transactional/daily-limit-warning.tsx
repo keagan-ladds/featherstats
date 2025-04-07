@@ -9,11 +9,11 @@ export interface Props {
 export const DailyLimitWarningEmail = ({ userName }: Props) => {
     return (
         <TransactionalEmail
-            previewText="You've Reached 80% of Your Daily Soft Limit"
+            previewText="You've Reached 75% of Your Daily Soft Limit"
             title={`Hi ${userName}`}
-            message="We wanted to let you know that you've reached 80% of your daily soft limit for analytics events on your site. Once this limit is reached, analytics events across all your domains will not be processed until the following day."
+            message="We wanted to let you know that you've reached 75% of your daily soft limit for analytics events on your site. Once this limit is reached, analytics events across all your domains will not be processed until the following day."
             ctaText="Upgrade"
-            ctaUrl="https://app.featherstats.com/#upgrade">
+            ctaUrl="https://app.featherstats.com/manage/subscription/upgrade">
             <div>
                 <Section className="mb-6">
                     <Text className="text-gray-700"></Text>

@@ -11,6 +11,7 @@ import NavHeader from "components/nav-header"
 import DialogProvider from "providers/dialog-provier"
 import DomainCreateDialog from "components/dialog/domain-create-dialog"
 import { DomainSwitcher } from "components/domain-switcher"
+import SubscriptionUsageAlert from "components/subscription/subscription-usage-alert"
 
 interface AppLayoutProps {
     children: React.ReactNode,
@@ -43,6 +44,7 @@ export default async function AppLayout({ children, modal }: AppLayoutProps) {
                                     <NavHeader />
                                 </header>
                                 <div className="flex-1 space-y-4 p-4 pt-0">
+                                    <SubscriptionUsageAlert/>
                                     {children}
                                 </div>
                             </SidebarInset>
