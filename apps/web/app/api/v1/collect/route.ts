@@ -16,8 +16,8 @@ export async function POST(request: NextRequest) {
         const domain = await workspaceService.getWorkspaceDomainByKey(apiKey);
         if (!domain) return new NextResponse(null, { status: 401 });
 
-        const { shouldRateLimit, message } = await usageService.trackUsage(domain.subscriptionId, domain.usageLimits);
-        if (shouldRateLimit) return new NextResponse(message, { status: 429 });
+        //const { shouldRateLimit, message } = await usageService.trackUsage(domain.subscriptionId, domain.usageLimits);
+        //if (shouldRateLimit) return new NextResponse(message, { status: 429 });
 
         const { events } = await request.json() as { events: AnalyticsEvent[] };
 
