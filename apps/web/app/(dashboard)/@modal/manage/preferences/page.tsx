@@ -18,9 +18,11 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@repo/ui/components/ui/form"
 import { useCallback } from "react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@repo/ui/components/ui/select"
+import { useModalSafeClose } from "hooks/use-modal-close"
 
 
 export default function UserPreferencesDialog() {
+    const close = useModalSafeClose();
     const { loading, profile, preferencesOpen, openPreferences, updateUserPreferences } = useUser();
 
     const form = useForm<UpdateUserPreferencesOptions>({
@@ -39,7 +41,7 @@ export default function UserPreferencesDialog() {
     }, [])
 
     return <>
-        <Dialog open={preferencesOpen} onOpenChange={openPreferences}>
+        <Dialog open={true} onOpenChange={close}>
             <DialogContent className="sm:max-w-[425px]">
                 <form className='flex flex-col gap-4 w-full' onSubmit={form.handleSubmit(handleSubmit)}>
                     <DialogHeader>

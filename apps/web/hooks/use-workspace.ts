@@ -1,3 +1,4 @@
+'use client'
 import { WorkspaceContext } from "contexts/workspace-context";
 import { createDomain } from "lib/client/api-client";
 import { useCallback, useContext, useState } from "react";

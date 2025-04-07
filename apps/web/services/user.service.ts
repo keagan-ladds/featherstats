@@ -1,7 +1,7 @@
 import { db } from "@featherstats/database"
 import { usersTable } from "@featherstats/database/schema/auth"
 import { DrizzleClient, User, UserMetadata } from "@featherstats/database/types"
-import { eq } from "drizzle-orm";
+import { eq, notInArray, and } from "drizzle-orm";
 import { UpdateUserPreferencesOptions, UserProfile } from "types/user";
 import { planPricesTable, plansTable, subscriptionsTable } from "@featherstats/database/schema/app";
 
@@ -25,7 +25,7 @@ export class UserService {
         const [subscription] = await this.database.select().from(subscriptionsTable)
             .innerJoin(planPricesTable, eq(planPricesTable.id, subscriptionsTable.priceId))
             .innerJoin(plansTable, eq(planPricesTable.planId, plansTable.id))
-            .where(eq(subscriptionsTable.userId, user.id));
+            .where(and(eq(subscriptionsTable.userId, user.id), notInArray(subscriptionsTable.status, ["canceled"])));
 
         const userSubscription = subscription ? {
             planId: subscription.plans.id,

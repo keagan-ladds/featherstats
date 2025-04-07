@@ -1,29 +1,23 @@
-import { Separator } from "@repo/ui/components/ui/separator"
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@repo/ui/components/ui/sidebar"
 import { AppSidebar } from "components/app-sidebar"
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@repo/ui/components/ui/breadcrumb"
 import { workspaceService } from "services/workspace.service"
 import { auth } from "lib/auth"
 import { redirect } from "next/navigation"
 import WorkspaceProvider from "providers/workspace-provider"
 import UserProvider from "providers/user-provider"
 import { userService } from "services/user.service"
-import UserPreferencesDialog from "components/user/user-preferences-dialog"
 import AppShellProvider from "providers/app-shell-provider"
 import NavHeader from "components/nav-header"
-import UserSubscriptionDialog from "components/user/user-subscription-dialog"
 import DialogProvider from "providers/dialog-provier"
-import UserPlanSelectionDialog from "components/user/user-plan-selection-dialog"
-import UserUsageDialog from "components/user/user-usage-dialog"
 import DomainCreateDialog from "components/dialog/domain-create-dialog"
 import { DomainSwitcher } from "components/domain-switcher"
-import SubscriptionCheckoutDialog from "components/subscription/subscription-checkout-dialog"
 
 interface AppLayoutProps {
-    children: React.ReactNode
+    children: React.ReactNode,
+    modal: React.ReactNode
 }
 
-export default async function AppLayout({ children }: AppLayoutProps) {
+export default async function AppLayout({ children, modal }: AppLayoutProps) {
 
     const session = await auth();
     if (!session?.user?.id) return redirect('/login');
@@ -44,17 +38,7 @@ export default async function AppLayout({ children }: AppLayoutProps) {
                                 <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
                                     <div className="flex items-center gap-2 px-4">
                                         <SidebarTrigger className="-ml-1" />
-                                        <DomainSwitcher/>
-                                        <Separator orientation="vertical" className="mr-2 h-4" />
-                                        <Breadcrumb>
-                                            <BreadcrumbList>
-                                                <BreadcrumbItem className="hidden md:block">
-                                                    <BreadcrumbLink>
-                                                        {workspace.name}
-                                                    </BreadcrumbLink>
-                                                </BreadcrumbItem>
-                                            </BreadcrumbList>
-                                        </Breadcrumb>
+                                        <DomainSwitcher />
                                     </div>
                                     <NavHeader />
                                 </header>
@@ -63,12 +47,8 @@ export default async function AppLayout({ children }: AppLayoutProps) {
                                 </div>
                             </SidebarInset>
                         </SidebarProvider>
-                        <UserPlanSelectionDialog/>
-                        <UserPreferencesDialog />
-                        <UserSubscriptionDialog />
-                        <SubscriptionCheckoutDialog/>
-                        <UserUsageDialog/>
-                        <DomainCreateDialog/>
+                        {modal}
+                        <DomainCreateDialog />
                     </WorkspaceProvider>
                 </DialogProvider>
             </AppShellProvider>
