@@ -1,3 +1,3 @@
 export default function ModalSlot(): React.ReactNode {
-    return <></>
+    return null
 }
