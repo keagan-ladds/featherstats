@@ -1,0 +1,31 @@
+TAGS "Internal"
+
+NODE analytics_sessions_filtered
+SQL >
+
+    %
+    SELECT
+        toDate(period, {{ String(timezone, 'Europe/London') }}) as date,
+        session_id,
+        source, 
+        channel,
+        referrer,
+        device,
+        browser,
+        os,
+        country,
+        city,
+        region,
+        first_hit,
+        latest_hit,
+        hits
+    FROM analytics_sessions_mv
+    where
+    date
+        >= {{ Date(date_from, description="Starting day for filtering a date range", required=True) }}
+        and date
+        <= {{ Date(date_to, description="Finishing day for filtering a date range", required=True) }}
+        and workspace_id = {{ String(workspace_id, required=True) }}
+        and domain_name = {{ String(domain_name, required=True) }}
+
+

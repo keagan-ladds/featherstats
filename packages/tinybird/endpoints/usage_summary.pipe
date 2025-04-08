@@ -1,0 +1,31 @@
+NODE usage_summary_0
+SQL >
+
+    %
+    SELECT toDate(period) as date,
+    workspace_id,
+    uniq(session_id) as visits,
+    countMerge(hits) as pageviews
+    FROM analytics_sessions_mv
+    WHERE workspace_id IN {{Array(worspace_ids, 'String', required=True)}}
+    AND date >= {{Date(usage_from, required=True)}}
+    AND date <= {{Date(usage_to, required=True)}}
+    GROUP BY date, workspace_id
+
+
+
+NODE usage_summary_1
+SQL >
+
+    %
+    SELECT * FROM usage_summary_0
+    ORDER BY date
+
+
+
+NODE usage_summary_2
+SQL >
+
+    SELECT * FROM usage_summary_1
+
+

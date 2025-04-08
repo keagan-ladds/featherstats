@@ -1,0 +1,33 @@
+NODE analytics_usage_0
+SQL >
+
+    SELECT
+        period,
+        workspace_id,
+        domain_name,
+        uniq(session_id) as visits,
+        countMerge(hits) AS pageviews
+    FROM analytics_sessions_mv
+    GROUP BY
+        period,
+        workspace_id,
+        domain_name
+
+
+
+NODE analytics_usage_1
+SQL >
+
+    SELECT
+        toDate(period) as date,
+        workspace_id,
+        domain_name,
+        sumState(visits) as visits,
+        sumState(pageviews) AS pageviews
+    FROM analytics_usage_0
+    GROUP BY
+        date,
+        workspace_id,
+        domain_name
+
+
