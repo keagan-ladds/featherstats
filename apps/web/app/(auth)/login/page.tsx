@@ -1,15 +1,20 @@
 import { LoginForm } from "components/auth/login-form";
 import { auth } from "lib/auth";
+import { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 interface LoginPageProps {
     searchParams: Promise<{ callbackUrl?: string }>
 }
 
+export const metadata: Metadata = {
+    title: "Login",
+};
+
 export default async function LoginPage({ searchParams }: LoginPageProps) {
     const { callbackUrl } = await searchParams;
     const session = await auth();
-    
+
     if (session) return redirect(callbackUrl ?? '/');
 
     return (

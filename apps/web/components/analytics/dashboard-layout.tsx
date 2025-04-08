@@ -2,10 +2,11 @@
 
 import { CalendarDateRangePicker } from "@repo/ui/components/dashboard/date-range-picker"
 import { Button } from "@repo/ui/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@repo/ui/components/ui/tooltip";
 import { useAnalytics } from "hooks/use-analytics";
 import useAppShell from "hooks/use-app-shell";
 import useDialog from "hooks/use-dialog";
-import {  Waypoints } from "lucide-react";
+import { Plug } from "lucide-react";
 import { useCallback, useEffect, useMemo } from "react";
 import { DateRange } from "react-day-picker";
 
@@ -32,10 +33,17 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             <div className="ml-auto flex grow items-center justify-end space-y-2 px-4">
 
                 <div className="ml-auto flex items-center space-x-2">
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button variant={"ghost"} onClick={() => openDomainIntegrate()}>
+                                    <Plug className="size-4" />
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Connect Your Domain</TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
 
-                    <Button variant={"ghost"} onClick={() => openDomainIntegrate()}>
-                        <Waypoints className="size-4" />
-                    </Button>
                     <CalendarDateRangePicker onDateSelect={setDate} />
                 </div>
             </div>
@@ -48,9 +56,10 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     }, [])
 
     return <>
-        <div className="flex items-center justify-between space-y-2">
-            <h2 className="text-3xl font-bold tracking-tight">{pageTitle}</h2>
-        </div>
+        {pageTitle && (
+            <div className="flex items-center justify-between">
+                <h2 className="text-3xl font-bold tracking-tight">{pageTitle}</h2>
+            </div>)}
         {children}
     </>
 }

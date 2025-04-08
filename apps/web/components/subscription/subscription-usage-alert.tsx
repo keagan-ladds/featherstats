@@ -30,7 +30,7 @@ export default function SubscriptionUsageAlert() {
     }
 
     return <>
-        <Alert className="mb-0">
+        <Alert variant={limitExceeded ? "danger" : "warning"}>
             <CircleAlert className="h-4 w-4" />
             <AlertTitle className="font-bold">{limitExceeded ? "You've hit your daily usage limit" : "You're nearing your daily usage limit"}</AlertTitle>
             <AlertDescription className="text-muted-foreground">{limitExceeded ? <>You've reached your daily pageview limit. <Link className=" underline text-foreground" href="/manage/subscription/upgrade">Upgrade</Link> your plan to resume normal service and prevent future interruptions.</> : <>You've used over 75% of your daily pageview quota. To ensure uninterrupted access, consider <Link className="underline text-foreground" href="/manage/subscription/upgrade">upgrading</Link> your plan.</>}</AlertDescription>

@@ -2,6 +2,7 @@ import DashboardLayout from "components/analytics/dashboard-layout";
 import AnalyticsIntegrationDialog from "components/dialog/domain-integrate-dialog";
 import { auth } from "lib/auth";
 import { tinybirdClient } from "lib/tinybird/server";
+import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { AnalyticsProvider } from "providers/analytics-provider";
 import DomainProvider from "providers/domain-provider";
@@ -11,6 +12,10 @@ interface AnalyticsLayoutProps {
     children: React.ReactNode,
     params: Promise<{ domain: string }>
 }
+
+export const metadata: Metadata = {
+    title: "Dashboard",
+};
 
 export default async function AnalyticsLayout({ children, params }: AnalyticsLayoutProps) {
     const domainName = (await params).domain;

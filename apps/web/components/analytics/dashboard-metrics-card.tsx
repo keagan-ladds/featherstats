@@ -118,7 +118,7 @@ export default function DashboardMetricsCard({ className }: DashboardMetricsCard
                 <span className="text-xs text-muted-foreground whitespace-nowrap">
                   {chartConfig[chart].label}
                 </span>
-                <span className="text-lg font-bold leading-none sm:text-3xl">
+                <span className="text-lg font-bold leading-none sm:text-3xl text-nowrap">
                   {keyMetrics.loading ? <Skeleton className="w-full h-6 sm:h-10" /> : aggregate[key as keyof typeof aggregate]}
                 </span>
               </button>

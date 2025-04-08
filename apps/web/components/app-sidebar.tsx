@@ -24,6 +24,7 @@ import { Skeleton } from "@repo/ui/components/ui/skeleton"
 import { useParams, usePathname } from "next/navigation"
 import { NavBrand } from "./nav-brand"
 import { useUser } from "hooks/use-user"
+import { DomainSwitcher } from "./domain-switcher"
 
 
 const navDomainItems = (appBaseUrl: string, domainName: string) => [
@@ -139,6 +140,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <Sidebar collapsible="icon" {...props}>
             <SidebarHeader>
                 <NavBrand />
+                <DomainSwitcher/>
             </SidebarHeader>
             <SidebarContent>
                 {paramsLoading ? <SidebarNavSkeleton /> : <>
@@ -147,7 +149,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 </>}
             </SidebarContent>
             <SidebarFooter>
-                
                 <NavUser user={profile} />
             </SidebarFooter>
             <SidebarRail />

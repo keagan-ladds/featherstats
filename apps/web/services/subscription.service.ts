@@ -7,13 +7,7 @@ import { fromUnixTime } from "date-fns";
 import { stripe } from "lib/stripe/server";
 import { usersTable } from "@featherstats/database/schema/auth";
 import { PlanWithPrices, UpdateSubscriptionPlanOptions, UpdateSubscriptionPlanResult } from "types/subscription";
-
-export const DEFAULT_USAGE_LIMITS: PlanUsageLimit = {
-    dataRetentionDays: 90,
-    maxDomains: 1,
-    maxMonthlyPageviews: 10000,
-    maxWorkspaces: 1
-} satisfies PlanUsageLimit
+import { fromUnixTimeOrUndefined } from "lib/utils";
 
 export class SubscriptionService {
     private database: DrizzleClient;
@@ -41,11 +35,11 @@ export class SubscriptionService {
             userId: user.id,
             status: stripeSubscription.status,
             currentPeriodStart: fromUnixTime(stripeSubscription.current_period_start),
-            currentPeriodEnd: stripeSubscription.current_period_end ? fromUnixTime(stripeSubscription.current_period_end) : null,
-            trialStart: stripeSubscription.trial_start ? fromUnixTime(stripeSubscription.trial_start) : null,
-            trialEnd: stripeSubscription.trial_end ? fromUnixTime(stripeSubscription.trial_end) : null,
-            cancelAt: stripeSubscription.cancel_at ? fromUnixTime(stripeSubscription.cancel_at) : null,
-            canceledAt: stripeSubscription.canceled_at ? fromUnixTime(stripeSubscription.canceled_at) : null,
+            currentPeriodEnd: fromUnixTimeOrUndefined(stripeSubscription.current_period_end),
+            trialStart: fromUnixTimeOrUndefined(stripeSubscription.trial_start),
+            trialEnd: fromUnixTimeOrUndefined(stripeSubscription.trial_end),
+            cancelAt: fromUnixTimeOrUndefined(stripeSubscription.cancel_at),
+            canceledAt: fromUnixTimeOrUndefined(stripeSubscription.canceled_at),
             priceId: price.id,
         }).onConflictDoUpdate({
             target: subscriptionsTable.id,
@@ -254,10 +248,10 @@ export class SubscriptionService {
             status: stripeSubscription.status,
             priceId: price && price.id || undefined,
             currentPeriodStart: fromUnixTime(stripeSubscription.current_period_start),
-            currentPeriodEnd: stripeSubscription.current_period_end ? fromUnixTime(stripeSubscription.current_period_end) : null,
-            trialStart: stripeSubscription.trial_start ? fromUnixTime(stripeSubscription.trial_start) : null,
-            trialEnd: stripeSubscription.trial_end ? fromUnixTime(stripeSubscription.trial_end) : null,
-            canceledAt: stripeSubscription.canceled_at ? fromUnixTime(stripeSubscription.canceled_at) : null,
+            currentPeriodEnd: fromUnixTimeOrUndefined(stripeSubscription.current_period_end),
+            trialStart: fromUnixTimeOrUndefined(stripeSubscription.trial_start),
+            trialEnd: fromUnixTimeOrUndefined(stripeSubscription.trial_end),
+            canceledAt: fromUnixTimeOrUndefined(stripeSubscription.canceled_at),
         }).where(eq(subscriptionsTable.stripeSubscriptionId, stripeSubscription.id));
     }
 }

@@ -24,9 +24,10 @@ import SourceIcon from "./icon/source-icon"
 import { Domain } from "@featherstats/database/types"
 import { redirect, useParams } from "next/navigation"
 import { useUser } from "hooks/use-user"
+import { cn } from "lib/utils"
 
 export function DomainSwitcher() {
-  const { isMobile } = useSidebar()
+  const { isMobile, open } = useSidebar()
   const { domains } = useWorkspace();
   const { profile } = useUser()
   const { open: openDomainCreateDialog } = useDialog("domain_create")
@@ -68,16 +69,16 @@ export function DomainSwitcher() {
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                <SourceIcon className="size-4" source={activeDomain.name} />
+              <div className={cn("flex aspect-square size-6 -ml-1 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground")}>
+                <SourceIcon className={cn("size-4")} source={activeDomain.name} />
               </div>
-              <div className="grid flex-1 text-left text-sm leading-tight">
+              <div className={cn("grid flex-1 text-left text-sm leading-tight", !open && "hidden")}>
                 <span className="truncate font-semibold">
                   {activeDomain.name}
                 </span>
                 {/* <span className="truncate text-xs">{activeDomain.plan}</span> */}
               </div>
-              <ChevronsUpDown className="ml-auto" />
+              <ChevronsUpDown className={cn("ml-auto", !open && "hidden")} />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent

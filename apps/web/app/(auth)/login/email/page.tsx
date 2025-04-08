@@ -1,6 +1,11 @@
 import EmailLoginForm from "components/auth/email-login-form";
 import { auth } from "lib/auth";
+import { Metadata } from "next";
 import { redirect } from "next/navigation";
+
+export const metadata: Metadata = {
+    title: "Login",
+};
 
 export default async function EmailLoginPage() {
     const session = await auth();

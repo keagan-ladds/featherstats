@@ -8,7 +8,11 @@ import Head from "next/head";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Featherstats | Lightweight Web Analytics",
+  title: {
+    template: '%s | Featherstats',
+    default: 'Featherstats | Lightweight Web Analytics',
+  },
+  robots: {index: false, follow: false}
 };
 
 export default function RootLayout({
