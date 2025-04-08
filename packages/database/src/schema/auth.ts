@@ -1,8 +1,9 @@
-import { boolean, timestamp, pgTable, text, primaryKey, integer } from "drizzle-orm/pg-core"
+import { boolean, timestamp, pgTable, text, primaryKey, integer, AnyPgColumn  } from "drizzle-orm/pg-core"
 import type { AdapterAccountType } from "next-auth/adapters"
 import { generateUniqueString } from "../util";
 import { json } from "drizzle-orm/pg-core";
 import { UserMetadata, UserPreferences } from "../types";
+import { subscriptionsTable } from "./app";
 
 export const usersTable = pgTable("users", {
   id: text("id").primaryKey().$defaultFn(() => generateUniqueString()),
@@ -13,6 +14,7 @@ export const usersTable = pgTable("users", {
   metadata: json("metadata").$type<UserMetadata>().default({}).notNull(),
   preferences: json("preferences").$type<UserPreferences>().default({}).notNull(),
   stripeCustomerId: text("stripe_customer_id").unique(),
+  subscriptionId: text("subscription_id").references((): AnyPgColumn  => subscriptionsTable.id),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at'),
 });

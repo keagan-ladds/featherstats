@@ -63,7 +63,7 @@ export class WorkspaceService {
         const [domainWithUsageLimits] = await this.database.select({ ...getTableColumns(domainsTable), subscriptionId: subscriptionsTable.id, userId: workspacesTable.userId }).from(domainsTable)
             .innerJoin(workspacesTable, eq(workspacesTable.id, domainsTable.workspaceId))
             .innerJoin(usersTable, eq(usersTable.id, workspacesTable.userId))
-            .leftJoin(subscriptionsTable, eq(subscriptionsTable.userId, usersTable.id))
+            .leftJoin(subscriptionsTable, eq(subscriptionsTable.id, usersTable.subscriptionId))
             .where(eq(domainsTable.key, key));
 
         if (domainWithUsageLimits) {

@@ -121,7 +121,7 @@ class UsageService {
 
             const { usagePeriodAnchor, usageLimits } = subscription;
 
-            const { end: usagePeriodEnd } = this.getUsagePeriod(usagePeriodAnchor || undefined);
+            const { end: usagePeriodEnd } = this.getUsagePeriod(usagePeriodAnchor);
             const periodUsageKey = this.getPeriodUsageKey(subscriptionId);
             const dailyUsageKey = this.getDailyUsageKey(subscriptionId);
             const dailyUsageSoftLimit = this.getDailySoftlimit(usageLimits.maxMonthlyPageviews);

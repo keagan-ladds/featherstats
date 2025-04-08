@@ -1,7 +1,7 @@
 import { db } from "@featherstats/database"
 import { usersTable } from "@featherstats/database/schema/auth"
 import { DrizzleClient, User, UserMetadata } from "@featherstats/database/types"
-import { eq, notInArray, and } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { UpdateUserPreferencesOptions, UserProfile } from "types/user";
 import { planPricesTable, plansTable, subscriptionsTable } from "@featherstats/database/schema/app";
 
@@ -17,15 +17,16 @@ export class UserService {
         return user;
     }
 
-    async getUserProfileById(id: string): Promise<UserProfile> {
-        const [user] = await db.select().from(usersTable).where(eq(usersTable.id, id));
+    async getUserProfileById(userId: string): Promise<UserProfile> {
+        const [user] = await db.select().from(usersTable).where(eq(usersTable.id, userId));
 
         if (!user) throw new Error('User not found');
 
         const [subscription] = await this.database.select().from(subscriptionsTable)
+            .innerJoin(usersTable, eq(usersTable.subscriptionId, subscriptionsTable.id))
             .innerJoin(planPricesTable, eq(planPricesTable.id, subscriptionsTable.priceId))
             .innerJoin(plansTable, eq(planPricesTable.planId, plansTable.id))
-            .where(and(eq(subscriptionsTable.userId, user.id), notInArray(subscriptionsTable.status, ["canceled"])));
+            .where(eq(usersTable.id, userId));
 
         const userSubscription = subscription ? {
             planId: subscription.plans.id,

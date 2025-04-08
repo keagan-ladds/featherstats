@@ -1,8 +1,7 @@
-import { pgTable, primaryKey, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 import { usersTable } from "./auth"
 import { pgEnum } from "drizzle-orm/pg-core";
 import { generateUniqueString } from "../util";
-import { date } from "drizzle-orm/pg-core";
 import { integer, boolean } from "drizzle-orm/pg-core";
 import { json } from "drizzle-orm/pg-core";
 import { PlanUsageLimit as PlanUsageLimits } from "../types";
@@ -56,11 +55,12 @@ export const planPricesTable = pgTable("plan_prices", {
 
 export const subscriptionStatus = pgEnum("subscription_status", ["trialing", "active", "canceled", "incomplete", "incomplete_expired", "past_due", "unpaid", "paused"])
 export const subscriptionsTable = pgTable("subscriptions", {
-    id: text("id").primaryKey().notNull(),
+    id: text("id").primaryKey().$default(() => generateUniqueString()),
+    stripeSubscriptionId: text("stripe_subscription_id").notNull().unique(),
     userId: text("user_id").notNull().references(() => usersTable.id, { onDelete: "cascade" }),
+    status: subscriptionStatus("status").notNull(),
     priceId: text("price_id").notNull().references(() => planPricesTable.id),
-    status: subscriptionStatus("status"),
-    currentPeriodStart: timestamp("current_period_start"),
+    currentPeriodStart: timestamp("current_period_start").notNull(),
     currentPeriodEnd: timestamp("current_period_end"),
     cancelAt: timestamp("cancel_at"),
     canceledAt: timestamp("canceled_at"),
