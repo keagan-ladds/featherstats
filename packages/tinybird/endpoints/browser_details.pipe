@@ -1,19 +1,19 @@
-TOKEN "os_details_endpoint_read_8206" READ
+INCLUDE "../includes/analytics_sessions_filtered.incl"
 
-NODE os_details_0
+NODE browser_details_0
 SQL >
 
     SELECT
-        os,
+        browser,
         session_id,
         uniq(session_id) as visits,
         countMerge(hits) as pageviews,
         case when min(first_hit) = max(latest_hit) then 1 else 0 end as is_bounce,
         max(latest_hit) as latest_hit_aux,
         min(first_hit) as first_hit_aux
-    FROM analytics_sessions_by_date_and_domain
-    WHERE notEmpty(os)
-    GROUP BY os, session_id
+    FROM analytics_sessions_filtered
+    WHERE notEmpty(browser)
+    GROUP BY browser, session_id
 
 
 
@@ -21,13 +21,13 @@ NODE browser_details_1
 SQL >
 
     SELECT
-        os,
+        browser,
         uniq(session_id) as visits,
         sum(pageviews) as pageviews,
         sum(case when latest_hit_aux = first_hit_aux then 1 end) / visits as bounce_rate,
         avg(latest_hit_aux - first_hit_aux) as avg_session_sec
-    FROM os_details_0
-    GROUP BY os
+    FROM browser_details_0
+    GROUP BY browser
     ORDER BY visits DESC
 
 

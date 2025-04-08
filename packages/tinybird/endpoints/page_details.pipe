@@ -1,0 +1,11 @@
+INCLUDE "../includes/analytics_pages_filtered.incl"
+
+NODE page_details_0
+SQL >
+
+    SELECT pathname, uniqMerge(visits) as visits, uniqMerge(unique_visits) as unique_visits, countMerge(hits) as pageviews 
+    FROM analytics_pages_filtered
+    GROUP BY pathname
+    ORDER BY visits DESC
+
+

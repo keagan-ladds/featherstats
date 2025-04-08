@@ -2,9 +2,12 @@
 
 SCHEMA >
     `period` DateTime,
-    `workspace_id` String,
-    `domain_name` String,
+    `workspace_id` LowCardinality(String),
+    `domain_name` LowCardinality(String),
     `session_id` String,
+    `user_id` SimpleAggregateFunction(any, String),
+    `source` SimpleAggregateFunction(any, String),
+    `channel` SimpleAggregateFunction(any, String),
     `referrer` SimpleAggregateFunction(any, String),
     `device` SimpleAggregateFunction(any, String),
     `browser` SimpleAggregateFunction(any, String),
@@ -12,6 +15,11 @@ SCHEMA >
     `country` SimpleAggregateFunction(any, String),
     `city` SimpleAggregateFunction(any, String),
     `region` SimpleAggregateFunction(any, String),
+    `utm_source` SimpleAggregateFunction(any, String),
+    `utm_medium` SimpleAggregateFunction(any, String),
+    `utm_campaign` SimpleAggregateFunction(any, String),
+    `utm_term` SimpleAggregateFunction(any, String),
+    `utm_content` SimpleAggregateFunction(any, String),
     `first_hit` SimpleAggregateFunction(min, DateTime),
     `latest_hit` SimpleAggregateFunction(max, DateTime),
     `hits` AggregateFunction(count)

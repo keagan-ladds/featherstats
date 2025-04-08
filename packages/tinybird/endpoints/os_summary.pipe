@@ -1,0 +1,13 @@
+INCLUDE "../includes/analytics_sources_filtered.incl"
+
+NODE os_summary_0
+SQL >
+
+    %
+        select os, uniqMerge(visits) as visits, countMerge(hits) as pageviews
+        from analytics_sources_filtered
+        group by os
+        order by visits desc
+        limit {{ Int32(skip, 0) }},{{ Int32(limit, 10) }}
+
+

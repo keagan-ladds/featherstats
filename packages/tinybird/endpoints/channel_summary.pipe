@@ -1,0 +1,14 @@
+
+INCLUDE "../includes/analytics_sources_filtered.incl"
+
+NODE channel_summary_0
+SQL >
+
+    %
+        select channel, uniqMerge(visits) as visits, countMerge(hits) as pageviews
+        from analytics_sources_filtered
+        group by channel
+        order by visits desc
+        limit {{ Int32(skip, 0) }},{{ Int32(limit, 10) }}
+
+

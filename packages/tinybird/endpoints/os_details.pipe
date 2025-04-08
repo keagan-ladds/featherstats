@@ -1,33 +1,33 @@
-TOKEN "country_details_endpoint_read_4839" READ
+INCLUDE "../includes/analytics_sessions_filtered.incl"
 
-NODE country_details_0
+NODE os_details_0
 SQL >
 
     SELECT
-        country,
+        os,
         session_id,
         uniq(session_id) as visits,
         countMerge(hits) as pageviews,
         case when min(first_hit) = max(latest_hit) then 1 else 0 end as is_bounce,
         max(latest_hit) as latest_hit_aux,
         min(first_hit) as first_hit_aux
-    FROM analytics_sessions_by_date_and_domain
-    WHERE notEmpty(country)
-    GROUP BY country, session_id
+    FROM analytics_sessions_filtered
+    WHERE notEmpty(os)
+    GROUP BY os, session_id
 
 
 
-NODE country_details_1
+NODE browser_details_1
 SQL >
 
     SELECT
-        country,
+        os,
         uniq(session_id) as visits,
         sum(pageviews) as pageviews,
         sum(case when latest_hit_aux = first_hit_aux then 1 end) / visits as bounce_rate,
         avg(latest_hit_aux - first_hit_aux) as avg_session_sec
-    FROM country_details_0
-    GROUP BY country
+    FROM os_details_0
+    GROUP BY os
     ORDER BY visits DESC
 
 

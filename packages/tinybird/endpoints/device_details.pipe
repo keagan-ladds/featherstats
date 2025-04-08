@@ -1,4 +1,4 @@
-TOKEN "device_details_endpoint_read_1935" READ
+INCLUDE "../includes/analytics_sessions_filtered.incl"
 
 NODE device_details_0
 SQL >
@@ -10,7 +10,7 @@ SQL >
         case when min(first_hit) = max(latest_hit) then 1 else 0 end as is_bounce,
         max(latest_hit) as latest_hit_aux,
         min(first_hit) as first_hit_aux
-    FROM analytics_sessions_by_date_and_domain
+    FROM analytics_sessions_filtered
     GROUP BY session_id, device
 
 

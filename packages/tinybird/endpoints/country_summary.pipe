@@ -1,0 +1,13 @@
+INCLUDE "../includes/analytics_pages_filtered.incl"
+
+NODE top_locations_0
+SQL >
+
+    %
+        select country, uniqMerge(visits) as visits, countMerge(hits) as pageviews
+        from analytics_pages_filtered
+        group by country
+        order by visits desc
+        limit {{ Int32(skip, 0) }},{{ Int32(limit, 10) }}
+
+

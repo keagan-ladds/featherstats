@@ -1,25 +1,27 @@
-TOKEN "analytics_pages_by_date_and_domain_endpoint_read_0486" READ
-
 TAGS "Internal"
 
-NODE analytics_pages_filtered_0
+NODE analytics_sessions_filtered
 SQL >
 
     %
-    select
+    SELECT
         toDate(period, {{ String(timezone, 'Europe/London') }}) as date,
-        pathname,
+        session_id,
+        source, 
+        channel,
+        referrer,
+        device,
         browser,
         os,
-        device,
-        city,
         country,
+        city,
         region,
-        visits,
+        first_hit,
+        latest_hit,
         hits
-    from analytics_pages_mv
+    FROM analytics_sessions_mv
     where
-        date
+    date
         >= {{ Date(date_from, description="Starting day for filtering a date range", required=True) }}
         and date
         <= {{ Date(date_to, description="Finishing day for filtering a date range", required=True) }}

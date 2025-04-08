@@ -1,0 +1,163 @@
+TAGS "Internal"
+
+NODE analytics_events_enriched_0
+SQL >
+
+    SELECT 
+    timestamp,
+    event_type, 
+    workspace_id,
+    domain_name,
+    session_id,
+    user_id,
+    JSONExtractString(payload, 'pathname') as pathname,
+    JSONExtractString(payload, 'referrer') as referrer,
+    JSONExtractString(payload, 'browser') as browser,
+    JSONExtractString(payload, 'deviceType') as device,
+    JSONExtractString(payload, 'os') as os,
+    JSONExtractString(payload, 'country') as country,
+    JSONExtractString(payload, 'city') as city,
+    JSONExtractString(payload, 'region') as region ,
+    JSONExtractString(payload, 'utm_source') as utm_source,
+    JSONExtractString(payload, 'utm_medium') as utm_medium,
+    JSONExtractString(payload, 'utm_campaign') as utm_campaign,
+    JSONExtractString(payload, 'utm_term') as utm_term,
+    JSONExtractString(payload, 'utm_content') as utm_content,
+    payload
+    FROM analytics_events
+    ORDER BY timestamp DESC
+
+
+
+NODE clean_referrer
+SQL >
+
+    SELECT 
+    timestamp, 
+    event_type, 
+    workspace_id,
+    domain_name,
+    user_id,
+    session_id,
+    pathname,
+    browser,
+    device,
+    os,
+    country,
+    city,
+    region,
+    case 
+    when domainWithoutWWW(referrer) = domainWithoutWWW(domain_name) then ''
+    else domainWithoutWWW(referrer)
+    end as referrer,
+    utm_source,
+    utm_medium,
+    utm_campaign,
+    utm_term,
+    utm_content,
+    payload
+    FROM analytics_events_enriched_0
+
+
+
+NODE clean_browser
+SQL >
+
+    SELECT 
+    timestamp, 
+    event_type, 
+    workspace_id,
+    domain_name,
+    user_id,
+    session_id,
+    pathname,
+    device,
+    os,
+    country,
+    city,
+    region,
+    referrer,
+    utm_source,
+    utm_medium,
+    utm_campaign,
+    utm_term,
+    utm_content,
+    payload,
+    CASE
+    when match(browser, 'Chrome')
+    then 'Chrome'
+    when match(browser, 'Safari')
+    then 'Safari'
+    when match(browser, 'Firefox')
+    then 'Firefox'
+    else browser
+    END as browser
+    FROM clean_referrer
+
+
+
+NODE analytics_events_with_source
+SQL >
+
+    SELECT *,
+    case 
+    when utm_source = 'facebook' then 'Facebook'
+    when utm_source = 'instagram' then 'Instagram'  
+    when utm_source = 'tiktok' then 'TikTok'
+    when utm_source = 'twitter' then 'Twitter/X' 
+    when utm_source = 'linkedin' then 'LinkedIn'
+    when utm_source = 'google' then 'Google'
+    when utm_source = 'taboola' then 'Taboola' 
+    when utm_source = 'outbrain' then 'Outbrain'
+    when referrer = '' OR referrer IS NULL then 'None'
+    when referrer LIKE '%google.%' then 'Google'
+    when referrer LIKE '%bing.%' then 'Bing'
+    when referrer LIKE '%yahoo.%' then 'Yahoo'
+    when referrer LIKE '%duckduckgo.%' then 'DuckDuckGo'
+    when referrer LIKE '%baidu.%' then 'Baidu'
+    when referrer LIKE '%yandex.%' then 'Yandex'
+    when referrer LIKE '%ask.%' then 'Ask.com'
+    when referrer LIKE '%ecosia.%' then 'Ecosia'
+    when referrer LIKE '%facebook.%' then 'Facebook'
+    when referrer LIKE '%twitter.%' then 'Twitter/X'
+    when referrer LIKE '%x.com%' then 'Twitter/X'
+    when referrer LIKE '%linkedin.%' then 'LinkedIn'
+    when referrer LIKE '%instagram.%' then 'Instagram'
+    when referrer LIKE '%tiktok.%' then 'TikTok'
+    when referrer LIKE '%pinterest.%' then 'Pinterest'
+    when referrer LIKE '%reddit.%' then 'Reddit'
+    when referrer LIKE '%snapchat.%' then 'Snapchat'
+    when referrer LIKE '%threads.net%' then 'Threads'
+    when referrer LIKE '%mastodon.%' then 'Mastodon'
+    when referrer LIKE '%mail.google.%' then 'Gmail'
+    when referrer LIKE '%outlook.%' then 'Outlook'
+    when referrer LIKE '%mail.yahoo.%' then 'Yahoo Mail'
+    when referrer LIKE '%zoho.%' then 'Zoho Mail'
+    else referrer
+    end as source
+    FROM clean_browser
+
+
+
+NODE analytics_events_with_channel
+SQL >
+
+    SELECT *,
+    case 
+    when match(utm_medium, 'cpc') then 'Paid Search'
+    when match(utm_medium, 'display') then 'Paid Ads'
+    when match(utm_medium, 'email') then 'Email'
+    when match(referrer, 'google.|bing.|yahoo.|duckduckgo.|baidu.|yandex.|ask.|ecosia.') then 'Organic Search'
+    when match(referrer, 'facebook.|twitter.|x.com|linkedin.|instagram.|tiktok.|pinterest.|reddit.|snapchat.|threads.net|mastodon.') then 'Organic Social'
+    when match(referrer, 'mail.google.|outlook.|mail.yahoo.|zoho.') then 'Email'
+    when notEmpty(referrer) then 'Referral'
+    else 'Direct'
+    end as channel
+    FROM analytics_events_with_source
+
+
+
+NODE analytics_events_enriched
+SQL >
+
+    SELECT * FROM analytics_events_with_channel

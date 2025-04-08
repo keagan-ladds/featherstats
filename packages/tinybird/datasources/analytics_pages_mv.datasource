@@ -2,19 +2,27 @@
 
 SCHEMA >
     `period` DateTime,
-    `workspace_id` String,
-    `domain_name` String,
+    `workspace_id` LowCardinality(String),
+    `domain_name` LowCardinality(String),
+    `pathname` String,
     `device` String,
     `browser` String,
     `os` String,
-    `pathname` String,
     `referrer` String,
+    `source` String,
+    `channel` String,
     `country` String,
     `city` String,
     `region` String,
+    `utm_source` String,
+    `utm_medium` String,
+    `utm_campaign` String,
+    `utm_term` String,
+    `utm_content` String,
     `visits` AggregateFunction(uniq, String),
+    `unique_visits` AggregateFunction(uniq, String),
     `hits` AggregateFunction(count)
 
 ENGINE "AggregatingMergeTree"
 ENGINE_PARTITION_KEY "toYYYYMM(period)"
-ENGINE_SORTING_KEY "workspace_id, domain_name, referrer, period, device, browser, os, pathname, country, city, region"
+ENGINE_SORTING_KEY "workspace_id, domain_name, period, pathname, source, channel, referrer, device, browser, os, country, city, region, utm_source, utm_medium, utm_campaign, utm_term, utm_content"

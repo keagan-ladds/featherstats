@@ -5,29 +5,44 @@ SQL >
         toStartOfFifteenMinutes(timestamp) AS period,
         workspace_id,
         domain_name,
+        pathname,
         device,
         browser,
         os,
-        pathname,
         referrer,
+        source,
+        channel,
         country,
         city,
         region,
+        utm_source,
+        utm_medium,
+        utm_campaign,
+        utm_term,
+        utm_content,
         uniqState(session_id) AS visits,
+        uniqState(user_id) AS unique_visits,
         countState() AS hits
     FROM analytics_hits
     GROUP BY
         workspace_id,
         domain_name,
-        referrer,
         period,
+        pathname,
+        referrer,
+        source,
+        channel,
         device,
         browser,
         os,
-        pathname,
         country,
         city,
-        region
+        region,
+        utm_source,
+        utm_medium,
+        utm_campaign,
+        utm_term,
+        utm_content
 
 TYPE materialized
 DATASOURCE analytics_pages_mv

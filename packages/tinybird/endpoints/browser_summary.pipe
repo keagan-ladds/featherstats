@@ -1,11 +1,11 @@
-TOKEN "top_browsers_endpoint_read_5592" READ
+INCLUDE "../includes/analytics_sources_filtered.incl"
 
 NODE top_browsers_0
 SQL >
 
     %
         select browser, uniqMerge(visits) as visits, countMerge(hits) as hits
-        from analytics_sources_by_date_and_domain
+        from analytics_sources_filtered
         where notEmpty(browser)
         group by browser
         order by visits desc

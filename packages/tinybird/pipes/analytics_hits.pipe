@@ -1,78 +1,37 @@
-TOKEN "analytics_hits_endpoint_read_3136" READ
+INCLUDE "../includes/analytics_events_enriched.incl"
 
 NODE analytics_hits_0
 SQL >
 
     SELECT 
     timestamp, 
-    app_id as workspace_id,
-    lower(host) as domain_name,
-    session_id,
-    JSONExtractString(payload, 'pathname') as pathname,
-    JSONExtractString(payload, 'referrer') as referrer,
-    JSONExtractString(payload, 'browser') as browser,
-    JSONExtractString(payload, 'deviceType') as device,
-    JSONExtractString(payload, 'os') as os,
-    JSONExtractString(payload, 'country') as country,
-    JSONExtractString(payload, 'city') as city,
-    JSONExtractString(payload, 'region') as region
-    FROM analytics_events
-    WHERE event_type = 'page_hit' AND domain_name IS NOT NULL
-    ORDER BY timestamp DESC
-
-
-
-NODE clean_referrer
-SQL >
-
-    SELECT 
-    timestamp, 
     workspace_id,
     domain_name,
     session_id,
+    user_id,
     pathname,
+    referrer,
     browser,
     device,
     os,
     country,
     city,
     region,
-    domainWithoutWWW(referrer) as referrer
-    FROM analytics_hits_0
-
-
-
-NODE clean_browser
-SQL >
-
-    SELECT 
-    timestamp, 
-    workspace_id,
-    domain_name,
-    session_id,
-    pathname,
-    device,
-    os,
-    country,
-    city,
-    region,
-    referrer,
-    CASE
-    when match(browser, 'Chrome')
-    then 'Chrome'
-    when match(browser, 'Safari')
-    then 'Safari'
-    when match(browser, 'Firefox')
-    then 'Firefox'
-    else browser
-    END as browser
-    FROM clean_referrer
-
+    source,
+    channel,
+    utm_source,
+    utm_medium,
+    utm_campaign,
+    utm_term,
+    utm_content
+    FROM analytics_events_enriched
+    WHERE event_type = 'page_hit'
+    ORDER BY timestamp DESC
 
 
 NODE endpoint
 SQL >
 
-    SELECT * FROM clean_browser
+    SELECT * FROM analytics_hits_0
 
 
