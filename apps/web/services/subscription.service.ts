@@ -63,6 +63,13 @@ export class SubscriptionService {
         await this.updateSubscription(stripeSubscription);
     }
 
+    async getActiveSubscriptionIds(): Promise<string[]> {
+        const subscriptions = await this.database.select({ subscriptionId: subscriptionsTable.id }).from(usersTable)
+            .innerJoin(subscriptionsTable, eq(subscriptionsTable.id, usersTable.subscriptionId));
+
+        return subscriptions.map(s => s.subscriptionId)
+    }
+
     async handleSubscriptionCancelled(stripeSubscription: Stripe.Subscription) {
         logger.debug(`Handling subscription cancelled event for subscription '${stripeSubscription?.id}'.`);
 
