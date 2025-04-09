@@ -37,7 +37,9 @@
         "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY",
         "KV_REST_API_URL",
         "KV_REST_API_TOKEN",
-        "NEXT_PUBLIC_WEBAPP_URL"
+        "NEXT_PUBLIC_WEBAPP_URL",
+        "INNGEST_SIGNING_KEY",
+        "INNGEST_EVENT_KEY"
       ]
     },
     "lint": {
