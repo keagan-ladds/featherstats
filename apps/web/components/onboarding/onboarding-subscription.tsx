@@ -9,8 +9,8 @@ import { OnboardingDataSubscription } from "types/onboarding";
 import { OnboardingDataSubscriptionSchema } from "lib/validation/onboarding";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useEffect, useState } from "react";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel } from "@repo/ui/components/ui/form";
+import { useEffect, useMemo, useState } from "react";
+import { Form, FormControl, FormField, FormItem, FormLabel } from "@repo/ui/components/ui/form";
 import { RadioGroup, RadioGroupItem } from "@repo/ui/components/ui/radio-group"
 import { formatCurrency } from "lib/format-utils";
 import { CardTitle } from "@repo/ui/components/ui/card";
@@ -34,15 +34,34 @@ export default function OnboardingStepSubscription() {
         }
     })
 
+    const selectedPrice = form.watch("priceId")
+
+    const selectedPlan = useMemo(() => {
+        return plans?.find(p => p.prices.find(price => price.id === selectedPrice))
+    }, [plans, selectedPrice])
+
+
     const getPlanPrice = (plan: PlanWithPrices, billingPeriod: BillingPeriod) => {
         const price = plan.prices.find((p) => p.billingPeriod === billingPeriod)
         return price ? price : plan.prices[0]!
     }
 
     const handleSubmit = (data: OnboardingDataSubscription) => {
-        console.log(data)
         onContinue("workspace", data)
     }
+
+    const continueButtonText = useMemo(() => {
+        if (selectedPrice) {
+            const plan = plans?.find(p => p.prices.find(price => price.id === selectedPrice))
+            if (plan?.trialPeriod) {
+                return "Start Trial"
+            } else {
+                return "Continue Free"
+            }
+        }
+
+        return undefined;
+    }, [selectedPrice, plans])
 
     useEffect(() => {
 
@@ -54,11 +73,9 @@ export default function OnboardingStepSubscription() {
         }
 
         if (flowParams.plan) {
-
             const plan = plans.find(p => p.name === flowParams.plan);
             if (plan) {
                 const price = getPlanPrice(plan, billingPeriod);
-                console.log("defaulting price to: ", price.id)
                 form.setValue("priceId", price.id, { shouldValidate: true, shouldDirty: true })
             }
         }
@@ -108,15 +125,29 @@ export default function OnboardingStepSubscription() {
                                                     </FormControl>
                                                     <FormLabel className="flex flex-col rounded-md border-2 border-muted bg-transparent p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
                                                         <div className="flex items-center justify-between flex-1">
-                                                            <CardTitle className="text-base flex-1">
+                                                            <CardTitle className="text-base flex-1 flex items-center gap-2">
                                                                 {plan.name}
+                                                                {plan.trialPeriod && (
+                                                                    <span className="text-xs bg-muted text-muted-foreground px-2 py-0.5 rounded-full">
+                                                                        {plan.trialPeriod}-day trial
+                                                                    </span>
+                                                                )}
                                                             </CardTitle>
-                                                            <div className="flex items-center">
-                                                                <span className="text-lg font-bold mr-1">{formatCurrency(price.amount, price.currency)}</span>
-                                                                <span className="text-xs text-muted-foreground">
-                                                                    /{billingPeriod === "monthly" ? "mo" : "yr"}
-                                                                </span>
+                                                            <div className="flex flex-col items-end">
+                                                                <div className="flex items-center">
+                                                                    <span className="text-lg font-bold mr-1">{formatCurrency(price.amount, price.currency)}</span>
+                                                                    <span className="text-xs text-muted-foreground">
+                                                                        /{billingPeriod === "monthly" ? "mo" : "yr"}
+                                                                    </span>
+                                                                </div>
+                                                                {price.amount > 0 && (
+                                                                    <div>
+                                                                        <span className="text-xs text-muted-foreground">Excl. Taxes</span>
+                                                                    </div>
+                                                                )}
                                                             </div>
+
+
                                                         </div>
                                                     </FormLabel>
                                                 </FormItem>)
@@ -126,9 +157,15 @@ export default function OnboardingStepSubscription() {
                             </FormItem>
                         )} />
 
-                    <OnboardingContinueButton disabled={!form.formState.isValid} />
+                    <OnboardingContinueButton disabled={!form.formState.isValid} text={continueButtonText} />
                 </Form>
             </form>
+            {selectedPlan?.trialPeriod && (
+                <div className="text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary  ">
+                    Enjoy a {selectedPlan.trialPeriod}-day free trial — no credit card required. After the trial ends, your account will automatically switch to the free plan. You can cancel or upgrade at any time.
+                </div>
+            )}
+
         </div >
     </>
 }

@@ -25,9 +25,10 @@ export default function OnboardingForm() {
 interface OnboardingContinueButtonProps {
     onClick?: () => void;
     disabled?: boolean;
+    text?: string
 }
 
-export function OnboardingContinueButton({onClick, disabled}: OnboardingContinueButtonProps) {
+export function OnboardingContinueButton({onClick, disabled, text}: OnboardingContinueButtonProps) {
     const { loading } = useOnboarding()
 
     return (
@@ -36,7 +37,7 @@ export function OnboardingContinueButton({onClick, disabled}: OnboardingContinue
                 {loading ? (<>
                     <LoaderCircle className='animate-spin' />
                 </>) :
-                    (<> Continue
+                    (<> {text || "Continue"}
                         <ArrowRight className='group-hover:translate-x-2 transition-transform' />
                     </>)}
             </Button>

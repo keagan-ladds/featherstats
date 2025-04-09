@@ -8,6 +8,7 @@ import { stripe } from "lib/stripe/server";
 import { usersTable } from "@featherstats/database/schema/auth";
 import { PlanWithPrices, UpdateSubscriptionPlanOptions, UpdateSubscriptionPlanResult } from "types/subscription";
 import { fromUnixTimeOrUndefined } from "lib/utils";
+import logger from "lib/logger";
 
 export class SubscriptionService {
     private database: DrizzleClient;
@@ -42,7 +43,7 @@ export class SubscriptionService {
             canceledAt: fromUnixTimeOrUndefined(stripeSubscription.canceled_at),
             priceId: price.id,
         }).onConflictDoUpdate({
-            target: subscriptionsTable.id,
+            target: subscriptionsTable.stripeSubscriptionId,
             set: {
                 status: sql.raw(`excluded.${subscriptionsTable.status.name}`),
                 currentPeriodStart: sql.raw(`excluded.${subscriptionsTable.currentPeriodStart.name}`),
@@ -63,18 +64,41 @@ export class SubscriptionService {
     }
 
     async handleSubscriptionCancelled(stripeSubscription: Stripe.Subscription) {
-        await this.updateSubscription(stripeSubscription);
+        logger.debug(`Handling subscription cancelled event for subscription '${stripeSubscription?.id}'.`);
+
+        const cancelledSubscription = await this.updateSubscription(stripeSubscription);
+        if (cancelledSubscription) {
+            const userId = cancelledSubscription.userId;
+            const userActiveSubscription = await this.getActiveUserSubscription(userId);
+
+            // The cancelled subscription was the user's active subscription
+            if (userActiveSubscription && userActiveSubscription.id == cancelledSubscription.id) {
+                logger.info(`Cancelled subscription was user's active subscription, attempting to create new 'Free' subscription.`);
+                const plans = await this.getPlans()
+                const freePlanPrice = plans.find(plan => plan.name.toLocaleLowerCase() === "free")?.prices[0];
+
+                if (freePlanPrice) {
+                    await this.createUserSubscription(userId, freePlanPrice.id, false, true)
+                } else {
+                    logger.warn(`Could not create new 'Free' subscription for user '${userId}', free plan price could not be found.`)
+                }
+            }
+        }
     }
 
-    async createUserSubscription(userId: string, priceId: string, includeTrialPeriod?: boolean) {
-        const existingSubscription = await this.getActiveUserSubscription(userId);
-        if (existingSubscription) throw new Error(`The user already has an active subscription, can't create a new one.`);
+    async createUserSubscription(userId: string, priceId: string, includeTrialPeriod?: boolean, skipActiveSubscriptionValidation?: boolean) {
+        if (!skipActiveSubscriptionValidation) {
+            const existingSubscription = await this.getActiveUserSubscription(userId);
+            if (existingSubscription) throw new Error(`The user already has an active subscription, can't create a new one.`);
+        }
 
         const customerId = await this.findOrCreateStripeCustomerId(userId);
-        const [price] = await this.database.select().from(planPricesTable).where(eq(planPricesTable.id, priceId))
+        const [price] = await this.database.select({ stripePriceId: planPricesTable.stripePriceId, trialPeriod: plansTable.trialPeriod }).from(planPricesTable)
+            .innerJoin(plansTable, eq(plansTable.id, planPricesTable.planId))
+            .where(eq(planPricesTable.id, priceId))
         if (!price) throw new Error(`Could not find plan price with id '${priceId}'.`);
 
-        const trialPeriodDays = includeTrialPeriod && price.amount > 0 ? 7 : undefined
+        const trialPeriodDays = includeTrialPeriod && price.trialPeriod || undefined
 
         await stripe.subscriptions.create({
             customer: customerId,
@@ -244,7 +268,7 @@ export class SubscriptionService {
         const stripePriceId = stripeSubscription.items.data[0]?.price.id || "";
         const price = await this.getPlanPriceByStripePriceId(stripePriceId);
 
-        await this.database.update(subscriptionsTable).set({
+        const [subscription] = await this.database.update(subscriptionsTable).set({
             status: stripeSubscription.status,
             priceId: price && price.id || undefined,
             currentPeriodStart: fromUnixTime(stripeSubscription.current_period_start),
@@ -252,7 +276,9 @@ export class SubscriptionService {
             trialStart: fromUnixTimeOrUndefined(stripeSubscription.trial_start),
             trialEnd: fromUnixTimeOrUndefined(stripeSubscription.trial_end),
             canceledAt: fromUnixTimeOrUndefined(stripeSubscription.canceled_at),
-        }).where(eq(subscriptionsTable.stripeSubscriptionId, stripeSubscription.id));
+        }).where(eq(subscriptionsTable.stripeSubscriptionId, stripeSubscription.id)).returning()
+
+        return subscription || null;
     }
 }
 
