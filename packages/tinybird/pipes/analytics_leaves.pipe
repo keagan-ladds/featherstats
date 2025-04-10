@@ -24,7 +24,7 @@ SQL >
     utm_campaign,
     utm_term,
     utm_content,
-    FLOOR(COALESCE(JSONExtractInt(payload, 'duration'), 0) / 1000) as duration
+    toInt64(FLOOR(COALESCE(JSONExtractInt(payload, 'duration'), 0) / 1000)) as duration
     FROM analytics_events_enriched
     WHERE event_type = 'page_leave'
     ORDER BY timestamp DESC
