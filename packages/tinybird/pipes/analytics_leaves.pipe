@@ -1,0 +1,38 @@
+INCLUDE "../includes/analytics_events_enriched.incl"
+
+NODE analytics_leaves_0
+SQL >
+
+    SELECT 
+    timestamp, 
+    workspace_id,
+    domain_name,
+    session_id,
+    user_id,
+    pathname,
+    referrer,
+    browser,
+    device,
+    os,
+    country,
+    city,
+    region,
+    source,
+    channel,
+    utm_source,
+    utm_medium,
+    utm_campaign,
+    utm_term,
+    utm_content,
+    FLOOR(COALESCE(JSONExtractInt(payload, 'duration'), 0) / 1000) as duration
+    FROM analytics_events_enriched
+    WHERE event_type = 'page_leave'
+    ORDER BY timestamp DESC
+
+
+NODE endpoint
+SQL >
+
+    SELECT * FROM analytics_leaves_0
+
+
