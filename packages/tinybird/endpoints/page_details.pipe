@@ -1,4 +1,5 @@
 INCLUDE "../includes/analytics_pages_filtered.incl"
+INCLUDE "../includes/analytics_durations_filtered.incl"
 
 NODE page_details_0
 SQL >
@@ -6,6 +7,20 @@ SQL >
     SELECT pathname, uniqMerge(visits) as visits, uniqMerge(unique_visits) as unique_visits, countMerge(hits) as pageviews 
     FROM analytics_pages_filtered
     GROUP BY pathname
+
+NODE page_details_1
+SQL >
+
+    SELECT pathname, sumMerge(sum_duration)/countMerge(count_duration) as avg_duration
+    FROM analytics_durations_filtered 
+    GROUP BY pathname
+
+NODE page_details_2
+SQL >
+
+    SELECT page_details_0.*, avg_duration
+    FROM page_details_0 pages
+    LEFT JOIN  page_details_1 durations ON durations.pathname = pages.pathname
     ORDER BY visits DESC
 
 
