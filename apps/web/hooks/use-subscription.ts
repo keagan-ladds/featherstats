@@ -1,5 +1,5 @@
 'use client'
-import { getSubscriptionPlans, getSubscriptionUsage, updateSubscriptionPlan as updateSubscriptionPlanApi } from "lib/client/api-client";
+import { getSubscriptionPlans, getSubscriptionUsage, updateSubscriptionBillingDetails, updateSubscriptionPlan as updateSubscriptionPlanApi } from "lib/client/api-client";
 import { useCallback, useEffect, useState } from "react";
 import { PlanWithPrices, SubscriptionPaymentIntent, UpdateSubscriptionPlanOptions, UpdateSubscriptionPlanResult } from "types/subscription";
 import { toast } from "sonner"
@@ -41,14 +41,27 @@ export function useSubscription() {
         setIsLoading(true);
         try {
             const result = await updateSubscriptionPlanApi(opts);
-            if (result.paymentIntent) {
-                setPaymentIntent(result.paymentIntent)
-            } else {
-                toast.success("Your subscription was successfully updated!")
+            if (result.redirectUrl) {
+                window.location.href = result.redirectUrl
             }
 
         } catch (err) {
             toast.error("Something went wrong while processing subscription plan update, please refresh the page and try again.")
+        } finally {
+            setIsLoading(false)
+        }
+    }, [])
+
+    const updateBillingDetails = useCallback(async () => {
+        setIsLoading(true);
+        try {
+            const result = await updateSubscriptionBillingDetails();
+            if (result.redirectUrl) {
+                window.location.href = result.redirectUrl
+            }
+
+        } catch (err) {
+            toast.error("Something went wrong while processing billing details update, please refresh the page and try again.")
         } finally {
             setIsLoading(false)
         }
@@ -62,5 +75,6 @@ export function useSubscription() {
         fetchPlans,
         fetchUsage,
         updateSubscriptionPlan,
+        updateBillingDetails
     }
 }

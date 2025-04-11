@@ -2,12 +2,12 @@ import { db } from "@featherstats/database/index";
 import { sql, eq, and, getTableColumns } from 'drizzle-orm';
 import { planPricesTable, plansTable, subscriptionsTable } from "@featherstats/database/schema/app";
 import Stripe from "stripe";
-import { DrizzleClient, PlanPrice, PlanUsageLimit, Subscription, User } from "@featherstats/database/types";
+import { DrizzleClient, PlanPrice, Subscription, User } from "@featherstats/database/types";
 import { fromUnixTime } from "date-fns";
 import { stripe } from "lib/stripe/server";
 import { usersTable } from "@featherstats/database/schema/auth";
-import { PlanWithPrices, UpdateSubscriptionPlanOptions, UpdateSubscriptionPlanResult } from "types/subscription";
-import { fromUnixTimeOrUndefined } from "lib/utils";
+import { PlanWithPrices, UpdateBillingDetailsResult, UpdateSubscriptionPlanOptions, UpdateSubscriptionPlanResult } from "types/subscription";
+import { fromUnixTimeOrUndefined, getURL } from "lib/utils";
 import logger from "lib/logger";
 
 export class SubscriptionService {
@@ -145,6 +145,30 @@ export class SubscriptionService {
         }, [])
     }
 
+    async updateBillingDetails(userId: string): Promise<UpdateBillingDetailsResult> {
+        const stripeCustomerId = await this.findOrCreateStripeCustomerId(userId);
+
+        const configuration = await stripe.billingPortal.configurations.create({
+            features: {
+                customer_update: {
+                    enabled: true,
+                    allowed_updates: ["name", "address", "tax_id"]
+                },
+                payment_method_update: {
+                    enabled: true,
+                }
+            }
+        });
+
+        const session = await stripe.billingPortal.sessions.create({
+            customer: stripeCustomerId,
+            configuration: configuration.id,
+            return_url: getURL(),
+        })
+
+        return { redirectUrl: session.url }
+    }
+
     async getActiveUserSubscription(userId: string): Promise<Subscription | null> {
         const [subscription] = await this.database.select({ ...getTableColumns(subscriptionsTable) })
             .from(usersTable)
@@ -163,86 +187,58 @@ export class SubscriptionService {
 
         const customerId = await this.findOrCreateStripeCustomerId(userId);
         const existingSubscription = await this.getActiveUserSubscription(userId);
-        let stripeSubscription: Stripe.Subscription;
 
-        if (!existingSubscription) {
-            stripeSubscription = await stripe.subscriptions.create({
-                payment_behavior: "default_incomplete",
-                customer: customerId,
-                items: [
-                    {
-                        price: price.stripePriceId,
-                    }
-                ],
-                payment_settings: {
-                    save_default_payment_method: 'on_subscription',
+        if (!existingSubscription) throw new Error("The user does not have an active subscription");
+
+        const stripeSubscriptionId = existingSubscription.stripeSubscriptionId;
+        const subscription = await stripe.subscriptions.retrieve(stripeSubscriptionId);
+
+        const configuration = await stripe.billingPortal.configurations.create({
+            features: {
+                subscription_update: {
+                    enabled: true,
+                    default_allowed_updates: ["price"],
+                    products: [{
+                        product:price.stripeProductId,
+                        prices: [price.stripePriceId]
+                    }],
+                    proration_behavior: "create_prorations",
                 },
-                expand: ['latest_invoice.payment_intent', 'pending_setup_intent']
-            })
-        } else {
-            const stripeSubscriptionId = existingSubscription.stripeSubscriptionId;
-            const subscription = await stripe.subscriptions.retrieve(stripeSubscriptionId);
-            const prorationDate = Math.floor(Date.now() / 1000)
-
-            stripeSubscription = await stripe.subscriptions.update(stripeSubscriptionId, {
-                payment_behavior: "default_incomplete",
-                proration_behavior: "always_invoice",
-                proration_date: prorationDate,
-                items: [
-                    {
-                        id: subscription.items.data[0]!.id,
-                        price: price.stripePriceId
-                    }
-                ],
-                payment_settings: {
-                    save_default_payment_method: 'on_subscription',
+                payment_method_update: {
+                    enabled: true
                 },
-                expand: ['latest_invoice.payment_intent', 'pending_setup_intent']
-            });
-        }
-
-        if ((stripeSubscription.latest_invoice as Stripe.Invoice).paid === true) {
-            return { complete: true }
-        }
-
-        if ((stripeSubscription.latest_invoice as Stripe.Invoice).payment_intent !== null) {
-            const latestInvoice = stripeSubscription.latest_invoice as Stripe.Invoice
-            let paymentIntent = latestInvoice.payment_intent as Stripe.PaymentIntent
-
-            if (stripeSubscription.default_payment_method !== null) {
-                // Attempt to collect payment using the default payment method (if possible)
-                paymentIntent = await stripe.paymentIntents.confirm(paymentIntent.id);
+                customer_update: {
+                    enabled: true
+                }
             }
+        })
 
-            if (paymentIntent.status == "succeeded" || paymentIntent.status === "processing") {
-                return { complete: true }
-            }
+        const session = await stripe.billingPortal.sessions.create({
+            customer: customerId,
+            configuration: configuration.id,
+            return_url: getURL("/manage/subscription"),
+            flow_data: {
+                type: "subscription_update_confirm",
+                subscription_update_confirm: {
+                    subscription: stripeSubscriptionId,
+                    items: [
+                        {
+                            id: subscription.items.data[0]!.id,
+                            price: price.stripePriceId
+                        }
+                    ],
+                },
+                after_completion: {
+                    type: "redirect",
+                    redirect: {
+                        return_url: getURL("/manage/subscription?update")
+                    }
+                }
+            },
+            
+        })
 
-            return { complete: false, paymentIntent: { intentType: "payment_intent", clientSecret: paymentIntent.client_secret!, amount: paymentIntent.amount, currency: paymentIntent.currency } }
-        }
-
-        if (stripeSubscription.pending_setup_intent !== null) {
-            const setupIntent = stripeSubscription.pending_setup_intent as Stripe.SetupIntent;
-            return { complete: false, paymentIntent: { intentType: "setup_intent", clientSecret: setupIntent.client_secret! } }
-        }
-
-        return { complete: true }
-
-        // // See what the next invoice would look like with a price switch
-        // // and proration set:
-        // const items = [{
-        //     id: subscription.items.data[0]!.id,
-        //     price: price.stripePriceId, // Switch to new price
-        // }];
-
-        // const invoice = await stripe.invoices.createPreview({
-        //     customer: customerId,
-        //     subscription: subscriptionId,
-        //     subscription_details: {
-        //         items: items,
-        //         proration_date: prorationDate
-        //     },
-        // });
+        return { redirectUrl: session.url }
     }
 
     private async findOrCreateStripeCustomerId(userId: string): Promise<string> {

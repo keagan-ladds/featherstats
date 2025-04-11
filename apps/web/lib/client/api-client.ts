@@ -4,7 +4,7 @@
 import { Domain } from "@featherstats/database/types";
 import { ApiErrorResponse, ApiResponse } from "types/api";
 import { OnboardingData } from "types/onboarding";
-import { PlanWithPrices, UpdateSubscriptionPlanOptions, UpdateSubscriptionPlanResult } from "types/subscription";
+import { PlanWithPrices, UpdateBillingDetailsResult, UpdateSubscriptionPlanOptions, UpdateSubscriptionPlanResult } from "types/subscription";
 import { SubscriptionUsage } from "types/usage";
 import { UpdateUserPreferencesOptions } from "types/user";
 import { DomainCreateOptions, WorkspaceWithDomains } from "types/workspace";
@@ -45,6 +45,10 @@ export async function getSubscriptionPlans(): Promise<PlanWithPrices[]> {
 
 export async function updateSubscriptionPlan(opts: UpdateSubscriptionPlanOptions): Promise<UpdateSubscriptionPlanResult> {
     return makeApiRequest("/api/v1/subscription", "PUT", opts);
+}
+
+export async function updateSubscriptionBillingDetails(): Promise<UpdateBillingDetailsResult> {
+    return makeApiRequest("/api/v1/subscription/billing", "GET");
 }
 
 export async function createDomain(workspaceId: string, opts: DomainCreateOptions): Promise<Domain> {

@@ -9,8 +9,7 @@ export type PlanWithPrices = Plan & {
 export type UpdateSubscriptionPlanOptions = z.infer<typeof UpdateUserSubscriptionSchema>
 
 export type UpdateSubscriptionPlanResult = {
-    complete: boolean;
-    paymentIntent?: SubscriptionPaymentIntent
+    redirectUrl: string;
 }
 
 export type SubscriptionPaymentIntent = {
@@ -18,4 +17,8 @@ export type SubscriptionPaymentIntent = {
     clientSecret?: string;
     amount?: number;
     currency?: string;
+}
+
+export type UpdateBillingDetailsResult = {
+    redirectUrl: string;
 }

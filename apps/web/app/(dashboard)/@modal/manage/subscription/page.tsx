@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@repo
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@repo/ui/components/ui/dialog";
 import { formatDate } from "date-fns";
 import { useModalSafeClose } from "hooks/use-modal-close";
+import { useSubscription } from "hooks/use-subscription";
 import { useUser } from "hooks/use-user";
 import { formatCurrency } from "lib/format-utils";
 import { PlusCircle, Settings } from "lucide-react";
@@ -12,6 +13,7 @@ import Link from "next/link";
 export default function UserSubscriptionDialog() {
     const close = useModalSafeClose();
     const { profile } = useUser()
+    const {updateBillingDetails} = useSubscription()
     const subscription = profile.subscription
     return <>
         <Dialog open={true} onOpenChange={close}>
@@ -44,7 +46,7 @@ export default function UserSubscriptionDialog() {
                     </CardContent>
                 </Card>
                 <DialogFooter>
-                    <Button variant="outline" className="gap-1 w-full">
+                    <Button variant="outline" className="gap-1 w-full" onClick={() => updateBillingDetails()}>
                         <Settings className="h-4 w-4" />
                         Update Billing
                     </Button>
