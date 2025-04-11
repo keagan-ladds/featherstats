@@ -16,6 +16,6 @@ export type WorkspaceWithDomains = Workspace & {
 }
 
 export type DomainWithSubscriptionDetails = Domain & {
-    subscriptionId: string;
+    subscriptionId: string | null;
     userId: string
 }

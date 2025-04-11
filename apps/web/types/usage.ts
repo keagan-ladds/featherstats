@@ -8,7 +8,8 @@ export type UsageSummaryData = {
 }[]
 
 export type UsageTrackResult = {
-    shouldRateLimit: boolean
+    shouldRateLimit: boolean;
+    shouldBlock?: boolean;
     message?: string
     error?: any
 }

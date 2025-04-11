@@ -6,6 +6,7 @@ import {
     FileText,
     MapPin,
     Microchip,
+    Plug,
     Share2,
 } from "lucide-react"
 
@@ -16,6 +17,7 @@ import {
     SidebarContent,
     SidebarFooter,
     SidebarHeader,
+    SidebarMenuButton,
     SidebarRail,
 } from "@repo/ui/components/ui/sidebar"
 import { useWorkspace } from "hooks/use-workspace"
@@ -25,6 +27,7 @@ import { useParams, usePathname } from "next/navigation"
 import { NavBrand } from "./nav-brand"
 import { useUser } from "hooks/use-user"
 import { DomainSwitcher } from "./domain-switcher"
+import Link from "next/link"
 
 
 const navDomainItems = (appBaseUrl: string, domainName: string) => [
@@ -140,7 +143,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <Sidebar collapsible="icon" {...props}>
             <SidebarHeader>
                 <NavBrand />
-                <DomainSwitcher/>
+                <DomainSwitcher />
             </SidebarHeader>
             <SidebarContent>
                 {paramsLoading ? <SidebarNavSkeleton /> : <>
@@ -149,6 +152,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 </>}
             </SidebarContent>
             <SidebarFooter>
+                {domain && (
+                    <SidebarMenuButton asChild>
+                        <Link href={`/${domain}/connect`}>
+                            <Plug />
+                            <span>Connect Your Domain</span>
+                        </Link>
+                    </SidebarMenuButton>
+                )}
                 <NavUser user={profile} />
             </SidebarFooter>
             <SidebarRail />

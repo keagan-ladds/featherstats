@@ -116,7 +116,7 @@ class UsageService {
 
             if (!subscription) {
                 logger.warn(`Could not get subscription details for subscription id '${subscriptionId}', unable to track usage.`)
-                return { shouldRateLimit: false }
+                return { shouldRateLimit: false, shouldBlock: true }
             }
 
             const { usagePeriodAnchor, usageLimits } = subscription;

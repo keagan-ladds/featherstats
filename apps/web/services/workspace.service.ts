@@ -69,7 +69,7 @@ export class WorkspaceService {
         if (domainWithUsageLimits) {
             return {
                 ...domainWithUsageLimits,
-                subscriptionId: domainWithUsageLimits.subscriptionId || domainWithUsageLimits.userId,
+                subscriptionId: domainWithUsageLimits.subscriptionId,
                 userId: domainWithUsageLimits.userId
             }
         }

@@ -12,7 +12,7 @@ export const syncSubscriptionUsage = inngest.createFunction(
 
 export const syncAllSubscriptionUsage = inngest.createFunction(
     { id: "sync-all-subscription-usage" },
-    { cron: "*/30 * * * *" },
+    { cron: "0 */2 * * *" },
     async ({ event, step }) => {
 
         const subscriptionIds = await step.run("get-active-subscriptions", async () => {

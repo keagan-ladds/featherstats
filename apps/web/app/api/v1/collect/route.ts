@@ -16,6 +16,7 @@ export async function POST(request: NextRequest) {
         if (!apiKey) return new NextResponse(null, { status: 401 });
         const domain = await workspaceService.getWorkspaceDomainByKey(apiKey);
         if (!domain) return new NextResponse(null, { status: 401 });
+        if (!domain.subscriptionId) return new NextResponse("No active subscription", { status: 400 });
 
         const { shouldRateLimit, message } = await usageService.trackUsage(domain.subscriptionId);
         if (shouldRateLimit) return new NextResponse(message, { status: 429 });
