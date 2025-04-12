@@ -197,7 +197,7 @@ export class SubscriptionService {
             features: {
                 subscription_update: {
                     enabled: true,
-                    default_allowed_updates: ["price"],
+                    default_allowed_updates: ["price", "promotion_code"],
                     products: [{
                         product:price.stripeProductId,
                         prices: [price.stripePriceId]
