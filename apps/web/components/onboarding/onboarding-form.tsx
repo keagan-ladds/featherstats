@@ -7,6 +7,7 @@ import { Button } from '@repo/ui/components/ui/button'
 import { ArrowRight, LoaderCircle } from 'lucide-react'
 import OnboardingStepDone from './onboarding-done'
 import OnboardingStepSubscription from './onboarding-subscription'
+import OnboardingStepConnect from './onboarding-connect'
 
 export default function OnboardingForm() {
     const { onboardingStep } = useOnboarding();
@@ -17,6 +18,7 @@ export default function OnboardingForm() {
             {onboardingStep == 'subscription' && <OnboardingStepSubscription/>}
             {onboardingStep == 'workspace' && <OnboardingStepWorkspace />}
             {onboardingStep == 'domain' && <OnboardingStepDomain />}
+            {onboardingStep == 'connect' && <OnboardingStepConnect />}
             {onboardingStep == 'done' && <OnboardingStepDone />}
         </div>
     )

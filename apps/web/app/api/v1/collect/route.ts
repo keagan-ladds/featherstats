@@ -60,6 +60,10 @@ export async function POST(request: NextRequest) {
 
         await tinybirdClient.publishEvents('analytics_events', eventsWithClientInfo);
 
+        if (domain.verificationStatus == 'pending') {
+            await workspaceService.setWorkspaceDomainAsVerified(workspaceId, domainName);
+        }
+
     } catch (error) {
         logger.error(error, 'Error processing telemetry');
     }

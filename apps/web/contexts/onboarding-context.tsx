@@ -3,7 +3,7 @@
 import { createContext, useState } from "react";
 import { OnboardingData } from "types/onboarding";
 
-export type OnboardingStep = 'welcome' | 'subscription' | 'workspace' | 'domain' | 'done';
+export type OnboardingStep = 'welcome' | 'subscription' | 'workspace' | 'domain' | 'connect' | 'done';
 
 
 
@@ -16,10 +16,16 @@ interface OnboardingContext {
         period?: string;
         currency?: string;
         promo?: string;
-    }
+    },
+    workspaceId?: string;
+    domainName?: string;
+    trackingId?: string;
     setOnboardingStep: (step: OnboardingStep) => void;
     setOnboardingData: (data: Partial<OnboardingData>) => void;
     setLoading: (loading: boolean) => void;
+    setWorkspaceId: (workspaceId: string) => void;
+    setDomainName: (domainName: string) => void;
+    setTrackingId: (trackingId: string) => void;
 }
 
 interface OnboardingProviderProps {
@@ -37,6 +43,9 @@ export function OnboardingProvider({ children, flowParams }: OnboardingProviderP
     const [onboardingStep, setOnboardingStep] = useState<OnboardingStep>("welcome")
     const [loading, setLoading] = useState<boolean>(false)
     const [onboardingData, setOnboardingDataState] = useState<Partial<OnboardingData>>({})
+    const [domainName, setDomainName] = useState<string>();
+    const [workspaceId, setWorkspaceId] = useState<string>();
+    const [trackingId, setTrackingId] = useState<string>();
 
     const setOnboardingData = (data: Partial<OnboardingData>) => {
         setOnboardingDataState({
@@ -50,9 +59,15 @@ export function OnboardingProvider({ children, flowParams }: OnboardingProviderP
         loading,
         onboardingData,
         flowParams,
+        workspaceId,
+        domainName,
+        trackingId,
         setOnboardingStep,
         setOnboardingData,
-        setLoading
+        setLoading,
+        setWorkspaceId,
+        setDomainName,
+        setTrackingId
     }
 
     return <OnboardingContext.Provider value={context}>{children}</OnboardingContext.Provider>;

@@ -55,6 +55,10 @@ export async function createDomain(workspaceId: string, opts: DomainCreateOption
     return makeApiRequest("/api/v1/workspace/" + workspaceId + "/domain", "POST", opts);
 }
 
+export async function getDomain(workspaceId: string, domainName: string): Promise<Domain> {
+    return makeApiRequest("/api/v1/workspace/" + workspaceId + "/domain/" + domainName, "GET");
+}
+
 export async function getSubscriptionUsage(): Promise<SubscriptionUsage> {
     return makeApiRequest("/api/v1/subscription/usage", "GET");
 }

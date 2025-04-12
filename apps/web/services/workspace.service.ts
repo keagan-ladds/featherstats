@@ -1,6 +1,6 @@
 import { db } from "@featherstats/database";
 import { domainsTable, subscriptionsTable, workspacesTable } from "@featherstats/database/schema/app";
-import { Domain, DrizzleClient, Workspace } from "@featherstats/database/types";
+import { Domain, DomainVerificationStatus, DrizzleClient, Workspace } from "@featherstats/database/types";
 import { DomainCreateOptions, DomainWithSubscriptionDetails, WorkspaceCreateOptions, WorkspaceWithDomains } from "types/workspace";
 import { eq, and, getTableColumns } from "drizzle-orm"
 import { usersTable } from "@featherstats/database/schema/auth";
@@ -75,6 +75,11 @@ export class WorkspaceService {
         }
 
         return null;
+    }
+
+    async setWorkspaceDomainAsVerified(workspaceId: string, domainName: string) {
+        await this.database.update(domainsTable).set({ verificationStatus: "verified" })
+        .where(and(eq(domainsTable.workspaceId, workspaceId), eq(domainsTable.name, this.normalizeDomainName(domainName))))
     }
 
     private normalizeDomainName(domainName: string): string {

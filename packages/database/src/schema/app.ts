@@ -5,11 +5,12 @@ import { generateUniqueString } from "../util";
 import { integer, boolean } from "drizzle-orm/pg-core";
 import { json } from "drizzle-orm/pg-core";
 import { PlanUsageLimit as PlanUsageLimits } from "../types";
+import { uniqueIndex } from "drizzle-orm/pg-core";
 
 export const workspacesTable = pgTable("workspaces", {
     id: text("id").primaryKey().$default(() => generateUniqueString()),
     name: text("name").notNull().$default(() => "Default Workspace"),
-    userId: text("user_id").notNull().references(() => usersTable.id, {onDelete: "cascade"}),
+    userId: text("user_id").notNull().references(() => usersTable.id, { onDelete: "cascade" }),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at"),
 });
@@ -19,13 +20,16 @@ export const domainVerificationStatus = pgEnum("domain_verification_status", ["p
 export const domainsTable = pgTable("domains", {
     id: text("id").primaryKey().$default(() => generateUniqueString()),
     workspaceId: text("workspace_id").notNull().references(() => workspacesTable.id, { onDelete: "cascade" }),
-    name: varchar("name").notNull().unique(),
+    name: varchar("name").notNull(),
     key: varchar("key").notNull().unique().$default(() => `pk-${generateUniqueString(16)}`),
     verificationStatus: domainVerificationStatus("verification_status").notNull().$default(() => "pending"),
     verifiedAt: timestamp("verified_at"),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at"),
-});
+},
+    (domains) => [
+        uniqueIndex().on(domains.workspaceId, domains.name)
+    ]);
 
 
 export const billingPeriod = pgEnum("billing_period", ["monthly", "yearly"]);
