@@ -11,7 +11,7 @@ import { PlusCircle, Settings } from "lucide-react";
 import Link from "next/link";
 
 export default function UserSubscriptionDialog() {
-    const close = useModalSafeClose();
+    const close = useModalSafeClose("/", true);
     const { profile } = useUser()
     const {updateBillingDetails} = useSubscription()
     const subscription = profile.subscription

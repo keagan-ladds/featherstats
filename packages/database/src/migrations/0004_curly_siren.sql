@@ -1,1 +1,0 @@
-ALTER TABLE "plans" ADD COLUMN "stripe_product_id" text NOT NULL;

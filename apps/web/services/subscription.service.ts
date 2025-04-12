@@ -206,9 +206,6 @@ export class SubscriptionService {
                 },
                 payment_method_update: {
                     enabled: true
-                },
-                customer_update: {
-                    enabled: true
                 }
             }
         })

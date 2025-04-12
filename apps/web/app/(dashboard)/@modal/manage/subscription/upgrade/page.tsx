@@ -8,7 +8,7 @@ import { useModalSafeClose } from "hooks/use-modal-close";
 import { useRouter } from "next/navigation";
 
 export default function UserPlanSelectionDialog() {
-    const close = useModalSafeClose();
+    const close = useModalSafeClose("/", true);
     const {push } = useRouter();
 
     const { plans, isLoading, updateSubscriptionPlan, fetchPlans, paymentIntent } = useSubscription();
