@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { ChevronsUpDown, Plus, Sparkles } from "lucide-react"
+import { ChevronsUpDown, Globe, Plus, Sparkles } from "lucide-react"
 
 import {
   DropdownMenu,
@@ -35,9 +35,6 @@ export function DomainSwitcher() {
   const [activeDomain, setActiveDomain] = React.useState(domains[0])
   const params = useParams()
 
-  if (!activeDomain) {
-    return null
-  }
 
   // Hide the switcher if the user can only have one domain anyway
   if (profile.subscription?.usageLimits.maxDomains == 1) {
@@ -70,11 +67,11 @@ export function DomainSwitcher() {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <div className={cn("flex aspect-square size-6 -ml-1 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground")}>
-                <SourceIcon className={cn("size-4")} source={activeDomain.name} />
+                {activeDomain ? <SourceIcon className={cn("size-4")} source={activeDomain.name} /> : <Globe className="size-4"/>}
               </div>
               <div className={cn("grid flex-1 text-left text-sm leading-tight", !open && "hidden")}>
                 <span className="truncate font-semibold">
-                  {activeDomain.name}
+                  {activeDomain ? activeDomain.name : "Switch Domain"}
                 </span>
                 {/* <span className="truncate text-xs">{activeDomain.plan}</span> */}
               </div>
