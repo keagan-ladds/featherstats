@@ -1,5 +1,7 @@
 import { nanoid } from 'nanoid'
 
+type EventType = 'page_hit' | 'page_leave' | 'custom_event'
+
 interface FeatherstatsClientConfig {
   batchSize?: number;
   flushInterval?: number;
@@ -11,7 +13,7 @@ export interface AnalyticsEvent {
   timestamp: string
   sessionId: string
   userId: string;
-  eventType: string;
+  eventType: EventType;
   payload: Object;
 }
 
@@ -23,8 +25,13 @@ interface UtmParameters {
   utm_content: string | undefined
 }
 
-interface EventOptions {
-  payload?: Object
+export interface EventOptions {
+  revenue?: {
+    amount: number,
+    currency?: string
+  },
+  properties?: Record<string, any>,
+  flush?: boolean
 }
 
 const DEFAULT_CONFIG: Required<FeatherstatsClientConfig> = {
@@ -54,11 +61,17 @@ export class FeatherstatsClient {
   }
 
   public async track(
-    eventType: string,
+    eventType: EventType,
+    eventName?: string,
     options: EventOptions = {}
   ): Promise<void> {
     if (this.isDestroyed) {
       console.warn('Attempting to track event on destroyed telemetry service');
+      return;
+    }
+
+    if (eventType === "custom_event" && !eventName) {
+      console.warn('Attempting to track custom event without event name.');
       return;
     }
 
@@ -74,13 +87,15 @@ export class FeatherstatsClient {
       timestamp: new Date().toISOString(),
       payload: {
         ...defaultPayload,
-        ...options.payload || {}
+        eventName: eventName,
+        properties: options.properties,
+        revenue: options.revenue
       }
     };
 
     this.eventQueue.push(event);
 
-    if (this.eventQueue.length >= this.config.batchSize) {
+    if (options.flush || this.eventQueue.length >= this.config.batchSize) {
       await this.flush();
     }
   }

@@ -1,4 +1,4 @@
-import { FeatherstatsClient } from '@repo/analytics-client';
+import { FeatherstatsClient, EventOptions } from '@repo/analytics-client';
 
 declare const FEATHERSTATS_BASE_URL: string;
 
@@ -8,6 +8,7 @@ declare global {
     featherstats?: {
       q?: Array<[string, ...any[]]>;
       instance?: FeatherstatsClient;
+      track?: (eventName: string, options?: EventOptions) => void
     };
   }
 }
@@ -15,8 +16,7 @@ declare global {
 function init() {
   // Get the script tag that loaded this file
   const scripts = document.getElementsByTagName('script');
-  const currentScript = scripts[scripts.length - 1];
-  const apiKey = window.FEATHERSTATS_API_KEY || currentScript.getAttribute('data-api-key');
+  const apiKey = window.FEATHERSTATS_API_KEY;
 
   if (!apiKey) {
     console.error('Featherstats: No API key provided');
@@ -35,7 +35,7 @@ function init() {
 
   // Replace the queue with actual function calls
   w.featherstats = {
-    track: (eventName: string, payload?: Object) => client.track(eventName, { payload }),
+    track: (eventName: string, options?: EventOptions) => client.track("custom_event", eventName, options),
     instance: client
   };
 
