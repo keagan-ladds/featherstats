@@ -30,7 +30,8 @@ export interface EventOptions {
     amount: number,
     currency?: string
   },
-  properties?: Record<string, any>
+  properties?: Record<string, any>,
+  flush?: boolean
 }
 
 const DEFAULT_CONFIG: Required<FeatherstatsClientConfig> = {
@@ -94,7 +95,7 @@ export class FeatherstatsClient {
 
     this.eventQueue.push(event);
 
-    if (this.eventQueue.length >= this.config.batchSize) {
+    if (options.flush || this.eventQueue.length >= this.config.batchSize) {
       await this.flush();
     }
   }
