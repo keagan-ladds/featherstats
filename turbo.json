@@ -39,7 +39,8 @@
         "KV_REST_API_TOKEN",
         "NEXT_PUBLIC_WEBAPP_URL",
         "INNGEST_SIGNING_KEY",
-        "INNGEST_EVENT_KEY"
+        "INNGEST_EVENT_KEY",
+        "NEXT_PUBLIC_FEATHERSTATS_KEY"
       ]
     },
     "lint": {
