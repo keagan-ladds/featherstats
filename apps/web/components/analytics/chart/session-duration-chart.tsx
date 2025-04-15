@@ -4,17 +4,19 @@ import LearningTooltip from "components/learning-tooltip"
 import { formatDuration, generateHighestSessionDurationInsight, getTopNWithOtherAvg } from "lib/utils"
 import { Lightbulb } from "lucide-react"
 import React from "react"
-import { Bar, BarChart, CartesianGrid, Cell, Label, LabelList, Pie, PieChart, RadialBar, RadialBarChart, XAxis } from "recharts"
-import { BrowserDetailsData, OsDetailsData } from "types/analytics"
+import { Bar, BarChart, CartesianGrid, LabelList, XAxis, YAxis } from "recharts"
 
 
 interface Props<T extends any[]> {
     data: T
     loading?: boolean
     groupKey: keyof T[number]
+    groupFormatter?: (name: any) => string;
 }
 
-export default function SessionDurationChart<T extends any[]>({ data, loading, groupKey }: Props<T>) {
+const DefaultGroupFormatter = (value: any) => value;
+
+export default function SessionDurationChart<T extends any[]>({ data, loading, groupKey, groupFormatter = DefaultGroupFormatter }: Props<T>) {
 
     const chartData = React.useMemo(() => {
         return getTopNWithOtherAvg(data, "avg_session_sec", groupKey).map((item, index) => ({
@@ -29,18 +31,21 @@ export default function SessionDurationChart<T extends any[]>({ data, loading, g
             return {
                 ...config,
                 [item[groupKey]]: {
-                    label: item[groupKey]
+                    label: groupFormatter(item[groupKey])
                 }
             }
         }, {
             bounce_rate: {
                 label: 'Bounce Rate'
+            },
+            avg_session_sec: {
+                label: 'Average Session Duration'
             }
         }) satisfies ChartConfig;
     }, [chartData])
 
     const insightText = React.useMemo(() => {
-        return generateHighestSessionDurationInsight(chartData, "avg_session_sec", groupKey)
+        return generateHighestSessionDurationInsight(chartData, "avg_session_sec", groupKey, groupFormatter)
     }, [chartData])
 
     return <>
@@ -57,10 +62,11 @@ export default function SessionDurationChart<T extends any[]>({ data, loading, g
                     config={chartConfig}
                     className="mx-auto aspect-square! max-h-[250px]"
                 >
-                    <BarChart accessibilityLayer data={chartData} dataKey={"avg_session_sec"}>
+                    <BarChart accessibilityLayer data={chartData} layout="vertical" dataKey={"avg_session_sec"}>
                         <CartesianGrid vertical={false} />
-                        <XAxis
+                        <YAxis
                             dataKey={groupKey as string}
+                            type="category"
                             tickLine={false}
                             tickMargin={10}
                             axisLine={false}
@@ -68,18 +74,28 @@ export default function SessionDurationChart<T extends any[]>({ data, loading, g
                             tickFormatter={(value) =>
                                 chartConfig[value as keyof typeof chartConfig].label
                             }
+                            hide
                         />
+                        <XAxis dataKey={"avg_session_sec"} hide type="number" />
                         <ChartTooltip
                             cursor={false}
-                            content={<ChartTooltipContent nameKey={groupKey as string} valueFormatter={(value) => formatDuration(value as number)} />}
+                            content={<ChartTooltipContent labelKey="avg_session_sec" nameKey={groupKey as string}  valueFormatter={(value) => formatDuration(value as number)} />}
                         />
                         <Bar
                             dataKey={"avg_session_sec"}
-
+                            layout="vertical"
                             strokeWidth={2}
-                            radius={8}
-                            activeIndex={2}
-                        />
+                            radius={8}>
+                            <LabelList
+                                dataKey={groupKey as string}
+                                position="insideLeft"
+                                offset={8}
+                                width={500}
+                                className="fill-foreground"
+                                fontSize={12}
+                                formatter={groupFormatter}
+                            />
+                        </Bar>
                     </BarChart>
                 </ChartContainer>
             </CardContent>

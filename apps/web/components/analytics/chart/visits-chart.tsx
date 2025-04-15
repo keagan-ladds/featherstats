@@ -1,12 +1,10 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@repo/ui/components/ui/card"
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@repo/ui/components/ui/chart"
 import LearningTooltip from "components/learning-tooltip"
-import { group } from "console"
 import { generateInsight, getTopNWithOtherSum } from "lib/utils"
-import { Lightbulb, TrendingUp } from "lucide-react"
+import { Lightbulb } from "lucide-react"
 import React from "react"
-import { Cell, Label, LabelList, Pie, PieChart, Sector } from "recharts"
-import { PieSectorDataItem } from "recharts/types/polar/Pie"
+import { Cell, Label, Pie, PieChart } from "recharts"
 
 interface Props<T extends any[]> {
     data: T
@@ -20,8 +18,8 @@ const DefaultGroupFormatter = (value: any) => value;
 export default function VisitsChart<T extends any[]>({ data, loading, groupKey, groupFormatter = DefaultGroupFormatter }: Props<T>) {
 
     const chartConfig = {
-        sessions: {
-            label: "Sessions",
+        visits: {
+            label: "Visits",
         },
     } satisfies ChartConfig
 
@@ -34,7 +32,7 @@ export default function VisitsChart<T extends any[]>({ data, loading, groupKey, 
     }, [data])
 
     const insightText = React.useMemo(() => {
-        return generateInsight(chartData, "visits", groupKey)
+        return generateInsight(chartData, "visits", groupKey, groupFormatter)
     }, [data])
 
     return <>
@@ -51,7 +49,7 @@ export default function VisitsChart<T extends any[]>({ data, loading, groupKey, 
                     <PieChart>
                         <ChartTooltip
                             cursor={false}
-                            content={<ChartTooltipContent hideLabel nameFormatter={groupFormatter} />}
+                            content={<ChartTooltipContent labelKey="visits" nameFormatter={groupFormatter} nameKey={groupKey as string} labelFormatter={groupFormatter} />}
                         />
                         <Pie
                             data={chartData}

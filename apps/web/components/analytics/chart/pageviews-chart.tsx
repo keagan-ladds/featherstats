@@ -1,19 +1,21 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@repo/ui/components/ui/card"
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@repo/ui/components/ui/chart"
 import LearningTooltip from "components/learning-tooltip"
-import { generateInsight, getTopNWithOtherAvg, getTopNWithOtherSum } from "lib/utils"
+import { generateInsight, getTopNWithOtherAvg } from "lib/utils"
 import { Lightbulb } from "lucide-react"
 import React from "react"
-import { Cell, Label, LabelList, Pie, PieChart } from "recharts"
+import { Cell, Label, Pie, PieChart } from "recharts"
 
 interface Props<T extends any[]> {
     data: T
     loading?: boolean
-    groupKey: keyof T[number]
+    groupKey: keyof T[number];
+    groupFormatter?: (name: any) => string;
 }
 
+const DefaultGroupFormatter = (value: any) => value;
 
-export default function PageViewsChart<T extends any[]>({ data, loading, groupKey }: Props<T>) {
+export default function PageViewsChart<T extends any[]>({ data, loading, groupKey, groupFormatter = DefaultGroupFormatter }: Props<T>) {
 
 
     const chartData = React.useMemo(() => {
@@ -25,7 +27,7 @@ export default function PageViewsChart<T extends any[]>({ data, loading, groupKe
     }, [data])
 
     const insightText = React.useMemo(() => {
-        return generateInsight(chartData, "pageviews", groupKey)
+        return generateInsight(chartData, "pageviews", groupKey, groupFormatter)
     }, [data])
 
     const chartConfig = React.useMemo(() => {
@@ -33,10 +35,14 @@ export default function PageViewsChart<T extends any[]>({ data, loading, groupKe
             return {
                 ...config,
                 [item[groupKey]]: {
-                    label: item[groupKey]
+                    label: groupFormatter(item[groupKey])
                 }
             }
-        }, {}) satisfies ChartConfig;
+        }, {
+            pageviews: {
+                label: "Page Views",
+            }
+        }) satisfies ChartConfig;
     }, [chartData])
 
     return <>
@@ -53,7 +59,7 @@ export default function PageViewsChart<T extends any[]>({ data, loading, groupKe
                     <PieChart>
                         <ChartTooltip
                             cursor={false}
-                            content={<ChartTooltipContent hideLabel nameKey={groupKey as string} />}
+                            content={<ChartTooltipContent nameFormatter={groupFormatter} nameKey={groupKey as string} />}
                         />
                         <Pie
                             data={chartData}

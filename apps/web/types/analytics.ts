@@ -69,6 +69,7 @@ export type PageDetailsData = {
     pathname: string;
     visits: number;
     pageviews: number;
+    avg_duration: number;
 }[]
 
 export type ChannelDetailsData = {

@@ -19,9 +19,9 @@ export default function DevicesDashboardPage() {
     return <>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <VisitsChart {...countryDetails} groupKey={"country"} groupFormatter={formatCountryCode}/>
-            <PageViewsChart {...countryDetails} groupKey={"country"}/>
-            <BounceRateChart {...countryDetails} groupKey={"country"}/>
-            <SessionDurationChart {...countryDetails} groupKey={"country"}/>
+            <PageViewsChart {...countryDetails} groupKey={"country"} groupFormatter={formatCountryCode}/>
+            <BounceRateChart {...countryDetails} groupKey={"country"} groupFormatter={formatCountryCode}/>
+            <SessionDurationChart {...countryDetails} groupKey={"country"} groupFormatter={formatCountryCode}/>
             <CountryDetailTable {...countryDetails} className="col-span-full"/>
         </div>
 

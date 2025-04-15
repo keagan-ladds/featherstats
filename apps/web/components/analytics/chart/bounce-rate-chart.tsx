@@ -4,19 +4,17 @@ import LearningTooltip from "components/learning-tooltip"
 import { generateLowestBounceRateInsight, getTopNWithOtherAvg } from "lib/utils"
 import { Lightbulb } from "lucide-react"
 import React from "react"
-import { Bar, BarChart, CartesianGrid, Cell, Label, LabelList, Pie, PieChart, PolarAngleAxis, RadialBar, RadialBarChart, XAxis } from "recharts"
+import { Bar, BarChart, CartesianGrid, LabelList, XAxis, YAxis } from "recharts"
 
 interface Props<T extends any[]> {
     data: T
     loading?: boolean
     groupKey: keyof T[number]
+    groupFormatter?: (name: any) => string;
 }
 
-
-export default function BounceRateChart<T extends any[]>({ data, loading, groupKey }: Props<T>) {
-
-
-
+const DefaultGroupFormatter = (value: any) => value;
+export default function BounceRateChart<T extends any[]>({ data, loading, groupKey, groupFormatter = DefaultGroupFormatter }: Props<T>) {
     const chartData = React.useMemo(() => {
         return getTopNWithOtherAvg(data, "bounce_rate", groupKey, 3, "asc").map((item, index) => ({
             ...item,
@@ -26,7 +24,7 @@ export default function BounceRateChart<T extends any[]>({ data, loading, groupK
     }, [data])
 
     const insightText = React.useMemo(() => {
-        return generateLowestBounceRateInsight(chartData, "bounce_rate", groupKey)
+        return generateLowestBounceRateInsight(chartData, "bounce_rate", groupKey, groupFormatter)
     }, [chartData])
 
     const chartConfig = React.useMemo(() => {
@@ -35,10 +33,14 @@ export default function BounceRateChart<T extends any[]>({ data, loading, groupK
             return {
                 ...config,
                 [item[groupKey]]: {
-                    label: item[groupKey]
+                    label: groupFormatter(item[groupKey])
                 }
             }
-        }, {}) satisfies ChartConfig;
+        }, {
+            bounce_rate: {
+                label: 'Bounce Rate'
+            },
+        }) satisfies ChartConfig;
     }, [chartData])
 
 
@@ -55,10 +57,11 @@ export default function BounceRateChart<T extends any[]>({ data, loading, groupK
                     config={chartConfig}
                     className="mx-auto aspect-square! max-h-[250px]"
                 >
-                    <BarChart accessibilityLayer data={chartData} dataKey={"bounce_rate"}>
+                    <BarChart accessibilityLayer data={chartData} layout="vertical" dataKey={"bounce_rate"}>
                         <CartesianGrid vertical={false} />
-                        <XAxis
+                        <YAxis
                             dataKey={groupKey as string}
+                            type="category"
                             tickLine={false}
                             tickMargin={10}
                             axisLine={false}
@@ -66,18 +69,31 @@ export default function BounceRateChart<T extends any[]>({ data, loading, groupK
                             tickFormatter={(value) =>
                                 chartConfig[value as keyof typeof chartConfig].label
                             }
+                            hide
+
                         />
+                        <XAxis dataKey={"bounce_rate"} hide type="number" />
                         <ChartTooltip
                             cursor={false}
-                            content={<ChartTooltipContent nameKey={groupKey as string} valueFormatter={(value) => `${(value as number * 100).toFixed(1)}%`} />}
+                            content={<ChartTooltipContent labelKey="bounce_rate" nameKey={groupKey as string} valueFormatter={(value) => `${(value as number * 100).toFixed(1)}%`} />}
                         />
                         <Bar
                             dataKey={"bounce_rate"}
-
                             strokeWidth={2}
                             radius={8}
+                            layout="vertical"
+                            minPointSize={10}
                             activeIndex={2}
-                        />
+                        >
+                            <LabelList
+                                dataKey={groupKey as string}
+                                position="insideLeft"
+                                offset={8}
+                                className="fill-foreground"
+                                fontSize={12}
+                                formatter={groupFormatter}
+                            />
+                        </Bar>
                     </BarChart>
                 </ChartContainer>
             </CardContent>
