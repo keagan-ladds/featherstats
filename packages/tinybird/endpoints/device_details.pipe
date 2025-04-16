@@ -22,7 +22,7 @@ SQL >
         device,
         uniq(session_id) as visits,
         sum(pageviews) as pageviews,
-        sum(case when latest_hit_aux = first_hit_aux then 1 end) / visits as bounce_rate,
+        sum(is_bounce) / visits as bounce_rate,
         avg(latest_hit_aux - first_hit_aux) as avg_session_sec
     FROM device_details_0
     GROUP BY device
