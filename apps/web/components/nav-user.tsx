@@ -35,6 +35,8 @@ import { signOut } from "next-auth/react"
 import { useCallback } from "react"
 import { UserProfile } from "types/user"
 import Link from "next/link"
+import { cn } from "lib/utils"
+
 
 interface Props {
   user: UserProfile
@@ -43,7 +45,7 @@ interface Props {
 export function NavUser({
   user,
 }: Props) {
-  const { isMobile } = useSidebar()
+  const { isMobile, open } = useSidebar()
   const onSignOut = useCallback(() => {
     signOut({ redirectTo: '/login' })
   }, [])
@@ -57,7 +59,7 @@ export function NavUser({
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <Avatar className="h-8 w-8 rounded-lg">
+              <Avatar className={cn("h-8 w-8 rounded-lg", !open && "size-6 -ml-1")}>
                 {user.image && <AvatarImage src={user.image} alt={user.name || 'User Name'} />}
                 <AvatarFallback className="rounded-lg">CN</AvatarFallback>
               </Avatar>

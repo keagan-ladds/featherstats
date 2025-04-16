@@ -67,7 +67,7 @@ export function generateInsight<T extends Record<string, any>>(
   const total = data.reduce((acc, item) => acc + item[valueKey], 0);
   const topItem = data[0];
   const topValue = topItem![valueKey];
-  const percentage = ((topValue / total) * 100).toFixed(1); // Rounded to 1 decimal place
+  const percentage = ((topValue / total) * 100).toFixed(0); 
 
   return `${percentage}% of ${valueKey.toString()} come from ${groupFormatter(topItem![groupKey])}.`;
 }
@@ -83,7 +83,7 @@ export function generateLowestBounceRateInsight<T extends Record<string, any>>(
   // Find the category with the lowest bounce rate
   const sortedData = [...data].sort((a, b) => a[valueKey] - b[valueKey]);
   const lowestItem = sortedData[0];
-  return `${groupFormatter(lowestItem![groupKey])} has the lowest bounce rate at ${(lowestItem![valueKey] * 100).toFixed(1)}%.`
+  return `${groupFormatter(lowestItem![groupKey])} has the lowest bounce rate at ${(lowestItem![valueKey] * 100).toFixed(0)}%.`
 }
 
 export function generateHighestSessionDurationInsight<T extends Record<string, any>>(
