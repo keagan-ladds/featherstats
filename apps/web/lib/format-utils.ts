@@ -1,7 +1,7 @@
 import countryList from "./country-list";
 
 export function formatCountryCode(countryCode: string): string {
-    return countryList[countryCode as keyof typeof countryList];
+    return countryList[countryCode as keyof typeof countryList] || countryCode;
 }
 
 export const formatCurrency = (amount: number, currency: string) => {
