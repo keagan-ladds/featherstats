@@ -25,6 +25,17 @@ interface UtmParameters {
   utm_content: string | undefined
 }
 
+interface AdAttributionParameters {
+  gclid: string | undefined;
+  gclsrc: string | undefined;
+  fbclid: string | undefined;
+  msclkid: string | undefined;
+  ttclid: string | undefined;
+  li_fat_id: string | undefined;
+  wbraid: string | undefined;
+  gbraid: string | undefined;
+}
+
 export interface EventOptions {
   revenue?: {
     amount: number,
@@ -37,7 +48,7 @@ export interface EventOptions {
 const DEFAULT_CONFIG: Required<FeatherstatsClientConfig> = {
   batchSize: 10,
   flushInterval: 5000,
-  baseUrl: 'http://localhost:3000',
+  baseUrl: 'https://app.featherstats.com',
   requeueOnFailure: false
 };
 
@@ -47,6 +58,7 @@ export class FeatherstatsClient {
   private readonly apiKey: string;
   private readonly userId: string;
   private readonly utmParameters: UtmParameters;
+  private readonly adParameters: AdAttributionParameters;
   private flushTimeout?: NodeJS.Timeout;
   private isDestroyed: boolean = false;
   private lastPageHit: number = Date.now();
@@ -56,6 +68,7 @@ export class FeatherstatsClient {
     this.userId = this.getUserId();
     this.config = { ...DEFAULT_CONFIG, ...config };
     this.utmParameters = this.getUtmParameters();
+    this.adParameters = this.getAdAttributionParameters();
     this.startFlushInterval();
     this.registerEventHandlers();
   }
@@ -184,6 +197,20 @@ export class FeatherstatsClient {
     };
   }
 
+  private getAdAttributionParameters(): AdAttributionParameters {
+    const params = new URLSearchParams(window.location.search);
+    return {
+      gclid: params.get('gclid') || undefined,
+      wbraid: params.get('wbraid') || undefined,
+      gbraid: params.get('gbraid') || undefined,
+      gclsrc: params.get('gclsrc') || undefined,
+      fbclid: params.get('fbclid') || undefined,
+      msclkid: params.get('msclkid') || undefined,
+      ttclid: params.get('ttclid') || undefined,
+      li_fat_id: params.get('li_fat_id') || undefined
+    };
+  }
+
   private async sendEvents(events: AnalyticsEvent[]): Promise<void> {
     await fetch(`${this.config.baseUrl}/api/v1/collect`, {
       method: 'POST',
@@ -210,6 +237,7 @@ export class FeatherstatsClient {
       utm_campaign: this.utmParameters.utm_campaign,
       utm_term: this.utmParameters.utm_term,
       utm_content: this.utmParameters.utm_content,
+      ad_params: this.adParameters,
       ...(eventType === "page_leave" && pageLeavePayload || {})
     }
   }
