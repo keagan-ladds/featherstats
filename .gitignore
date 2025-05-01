@@ -40,3 +40,6 @@ dist/
 
 # tinybird
 .tinyb
+
+# Exclude locally built featherstats tracking script
+featherstats.min.js
