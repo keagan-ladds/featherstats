@@ -2,6 +2,8 @@ export type CountrySummaryData = {
     country: string;
     visits: number;
     pageviews: number;
+    conversions: number;
+    conversion_revenue: number;
 }[]
 
 export type CitySummaryData = {
@@ -9,12 +11,16 @@ export type CitySummaryData = {
     country: string;
     visits: number;
     pageviews: number;
+    conversions: number;
+    conversion_revenue: number;
 }[]
 
 export type PageSummaryData = {
     pathname: string;
     visits: number;
     pageviews: number;
+    conversions: number;
+    conversion_revenue: number;
 }[]
 
 export type SourceSummaryData = {
@@ -22,12 +28,16 @@ export type SourceSummaryData = {
     referrer: string;
     visits: number;
     pageviews: number;
+    conversions: number;
+    conversion_revenue: number;
 }[]
 
 export type ChannelSummaryData = {
     channel: string;
     visits: number;
     pageviews: number;
+    conversions: number;
+    conversion_revenue: number;
 }[]
 
 export type KeyMetricsData = {
@@ -35,25 +45,33 @@ export type KeyMetricsData = {
     visits: number;
     pageviews: number;
     bounce_rate: number;
-    avg_session_sec: number
+    avg_session_sec: number;
+    conversions: number;
+    total_revenue: number;
 }[]
 
 export type DeviceSummaryData = {
     device: string;
     visits: number;
     pageviews: number;
+    conversions: number;
+    conversion_revenue: number;
 }[]
 
 export type BrowserSummaryData = {
     browser: string;
     visits: number;
     pageviews: number;
+    conversions: number;
+    conversion_revenue: number;
 }[]
 
 export type OperatingSystemSummaryData = {
     os: string;
     visits: number;
     pageviews: number
+    conversions: number;
+    conversion_revenue: number;
 }[]
 
 export type SourceDetailsData = {

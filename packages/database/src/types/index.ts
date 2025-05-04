@@ -18,6 +18,20 @@ export type UserPreferences = {
     clarifyModeEnabled?: boolean
 }
 
+export type DomainConversionConfiguration = {
+    name: string;
+    enabled: boolean
+}
+
+export type DomainConfiguration = {
+    currency?: string;
+    conversions?: Record<string, DomainConversionConfiguration>;
+}
+
+export type WorkspaceConfiguration = {
+
+}
+
 export type PlanUsageLimit = {
     maxMonthlyPageviews: number,
     maxDomains: number,

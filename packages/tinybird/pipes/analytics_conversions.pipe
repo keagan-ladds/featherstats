@@ -1,0 +1,53 @@
+NODE analytics_conversions_0
+SQL >
+
+    SELECT
+        toStartOfFifteenMinutes(timestamp) AS period,
+        workspace_id,
+        domain_name,
+        event_name,
+        pathname,
+        device,
+        browser,
+        os,
+        referrer,
+        source,
+        channel,
+        country,
+        city,
+        region,
+        utm_source,
+        utm_medium,
+        utm_campaign,
+        utm_term,
+        utm_content,
+        revenue_currency,
+        countState() AS event_count,
+        sumState(revenue_amount) AS revenue_amount_sum
+    FROM analytics_custom_events
+    GROUP BY
+        workspace_id,
+        domain_name,
+        period,
+        event_name,
+        pathname,
+        revenue_currency,
+        referrer,
+        source,
+        channel,
+        device,
+        browser,
+        os,
+        country,
+        city,
+        region,
+        utm_source,
+        utm_medium,
+        utm_campaign,
+        utm_term,
+        utm_content
+
+TYPE materialized
+DATASOURCE analytics_conversions_mv
+
+

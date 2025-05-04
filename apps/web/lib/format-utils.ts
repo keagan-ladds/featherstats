@@ -5,7 +5,8 @@ export function formatCountryCode(countryCode: string): string {
 }
 
 export const formatCurrency = (amount: number, currency: string) => {
-    return new Intl.NumberFormat("en-US", {
+    const locale = Intl.NumberFormat().resolvedOptions().locale
+    return new Intl.NumberFormat(locale, {
         style: "currency",
         currency: currency,
         minimumFractionDigits: 0,

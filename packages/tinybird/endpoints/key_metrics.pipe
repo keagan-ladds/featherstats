@@ -1,4 +1,5 @@
 INCLUDE "../includes/analytics_sessions_filtered.incl"
+INCLUDE "../includes/analytics_conversions_filtered.incl"
 
 NODE timeseries
 SQL >
@@ -92,6 +93,17 @@ SQL >
     
         order by date desc
 
+NODE conversions
+SQL >
+
+    %
+            select
+                date,
+                countMerge(event_count) as conversions,
+                sumMerge(revenue_amount_sum) as revenue
+            from analytics_conversions_filtered
+            group by date
+            order by date desc
 
 
 NODE aggregate
@@ -111,9 +123,10 @@ SQL >
 NODE endpoint
 SQL >
 
-    select a.date, b.visits, b.pageviews, b.bounce_rate, b.avg_session_sec
+    select a.date as date, b.visits as visits, b.pageviews as pageviews, b.bounce_rate as bounce_rate, b.avg_session_sec as avg_session_sec, c.conversions as conversions, c.revenue/100.0 as total_revenue
     from timeseries a
     left join aggregate b using date
+    left join conversions c ON a.date = c.date
 
 
 

@@ -1,0 +1,38 @@
+TAGS "Internal"
+
+NODE analytics_conversions_filtered
+SQL >
+
+    %
+    select
+        toDate(period, {{ String(timezone, 'Europe/London') }}) as date,
+        event_name,
+        pathname,
+        device,
+        browser,
+        os,
+        source,
+        channel,
+        country,
+        city,
+        event_count,
+        revenue_amount_sum,
+        revenue_currency
+    from analytics_conversions_mv
+    where
+        date
+        >= {{ Date(date_from, description="Starting day for filtering a date range", required=True) }}
+        and date
+        <= {{ Date(date_to, description="Finishing day for filtering a date range", required=True) }}
+        and workspace_id = {{ String(workspace_id, required=True) }}
+        and domain_name = {{ String(domain_name, required=True) }}
+        
+        {% if defined(currency)  %}
+         and revenue_currency IN  {{Array(currency, 'String')}}
+        {% end %}
+
+        {% if defined(conversion_events) %}
+            and event_name IN  {{Array(conversion_events, 'String')}}
+        {% end %}
+
+

@@ -1,0 +1,40 @@
+INCLUDE "../includes/analytics_events_enriched.incl"
+
+NODE analytics_custom_events_0
+SQL >
+
+    SELECT 
+    timestamp, 
+    workspace_id,
+    domain_name,
+    JSONExtractString(payload, 'eventName') as event_name,
+    session_id,
+    user_id,
+    pathname,
+    referrer,
+    browser,
+    device,
+    os,
+    country,
+    city,
+    region,
+    source,
+    channel,
+    utm_source,
+    utm_medium,
+    utm_campaign,
+    utm_term,
+    utm_content,
+    CAST(truncate(JSONExtractFloat(payload, 'revenue', 'amount') * 100), 'Int64') as revenue_amount,
+    UPPER(JSONExtractString(payload, 'revenue', 'currency')) as revenue_currency
+    FROM analytics_events_enriched
+    WHERE event_type = 'custom_event'
+    ORDER BY timestamp DESC
+
+
+NODE endpoint
+SQL >
+
+    SELECT * FROM analytics_custom_events_0
+
+

@@ -7,7 +7,8 @@ import { Skeleton } from "@repo/ui/components/ui/skeleton";
 import { useAnalytics } from "hooks/use-analytics";
 import { isSameDay } from "date-fns"
 import { formatDuration } from "lib/utils";
-import ClarityModeTooltip from "components/clarity-mode/clarity-tooltip";
+import { formatCurrency } from "lib/format-utils";
+import useDomain from "hooks/use-domain";
 
 interface DashboardMetricsCardProps {
   className?: string | undefined
@@ -18,30 +19,34 @@ const chartConfig = {
     label: "Page Views",
   },
   visits: {
-    //label: <div className="flex items-center gap-2">Visits <ClarityModeTooltip className="size-3" content="A visit (or session) is when a user comes to your site and interacts with it." /></div>,
-    
     label: "Visits",
     color: "hsl(var(--chart-1))"
   },
   pageviews: {
-    //label: <div className="flex items-center gap-2">Pageviews <ClarityModeTooltip className="size-3" content="A pageview is recorded each time a page on your website is loaded or reloaded. One visit can include multiple pageviews if the user navigates through different pages." /></div>,
     label: "Pageviews",
     color: "hsl(var(--chart-2))",
   },
   bounce_rate: {
-    //label: <div className="flex items-center gap-2">Bounce Rate <ClarityModeTooltip className="size-3" content="Bounce rate is the percentage of visitors who leave after viewing only one page without interacting. A high bounce rate may indicate that users didn't find what they were looking for." /></div>,
     label: "Bounce Rate",
     color: "hsl(var(--chart-3))",
   },
   avg_session_sec: {
-    //label: <div className="flex items-center gap-2">Avg. Session Duration <ClarityModeTooltip className="size-3" content="This is the average time visitors spend on your site during a session. A higher session duration usually means users are engaged with your content." /></div>,
     label: "Avg. Session Duration",
+    color: "hsl(var(--chart-4))",
+  },
+  conversions: {
+    label: "Conversions",
+    color: "hsl(var(--chart-4))",
+  },
+  total_revenue: {
+    label: "Revenue",
     color: "hsl(var(--chart-4))",
   }
 } satisfies ChartConfig
 
 export default function DashboardMetricsCard({ className }: DashboardMetricsCardProps) {
   const { keyMetrics, dateRange } = useAnalytics();
+  const { currency, conversionConfiguration } = useDomain();
 
   const formatAxisLabel = useCallback((date: Date) => {
     if (isSameDay(dateRange.start, dateRange.end)) {
@@ -76,6 +81,14 @@ export default function DashboardMetricsCard({ className }: DashboardMetricsCard
     })
   }, [dateRange])
 
+  const availableCharts = useMemo(() => {
+    if (!conversionConfiguration || Object.keys(conversionConfiguration).length === 0) {
+      return ["visits", "pageviews", "bounce_rate", "avg_session_sec"]
+    }
+
+    return ["visits", "pageviews", "bounce_rate", "avg_session_sec", "conversions", "total_revenue"]
+  }, [conversionConfiguration])
+
   const [activeChart, setActiveChart] = useState<keyof typeof chartConfig>("visits")
 
   const aggregate = useMemo(
@@ -87,14 +100,18 @@ export default function DashboardMetricsCard({ className }: DashboardMetricsCard
       const pageviews = keyMetrics.data && keyMetrics.data.reduce((acc, curr) => acc + curr.pageviews, 0) || 0
       const bounce_rate = keyMetrics.data && keyMetrics.data.reduce((acc, curr) => acc + curr.bounce_rate / avg_denom, 0) * 100.0 || 0
       const avg_session_sec = keyMetrics.data && keyMetrics.data.reduce((acc, curr) => acc + curr.avg_session_sec, 0) / avg_denom || 0
+      const conversions = keyMetrics.data && keyMetrics.data.reduce((acc, curr) => acc + curr.conversions, 0) || 0
+      const total_revenue = keyMetrics.data && keyMetrics.data.reduce((acc, curr) => acc + curr.total_revenue, 0) || 0
 
       return {
         visits: visits.toLocaleString(),
         pageviews: pageviews.toLocaleString(),
         bounce_rate: bounce_rate.toLocaleString(undefined, { maximumFractionDigits: 0 }) + " %",
-        avg_session_sec: formatDuration(avg_session_sec as number)
+        avg_session_sec: formatDuration(avg_session_sec as number),
+        conversions: conversions.toLocaleString(),
+        total_revenue: formatCurrency(total_revenue * 100, currency)
       }
-    }, [keyMetrics.data]
+    }, [keyMetrics.data, currency]
   )
 
   const tooltipValueFormatters = {
@@ -106,7 +123,7 @@ export default function DashboardMetricsCard({ className }: DashboardMetricsCard
     <Card className={cn(className)}>
       <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
         <div className="grid grid-cols-2 sm:flex">
-          {["visits", "pageviews", "bounce_rate", "avg_session_sec"].map((key) => {
+          {availableCharts.map((key) => {
             const chart = key as keyof typeof chartConfig
             return (
               <button

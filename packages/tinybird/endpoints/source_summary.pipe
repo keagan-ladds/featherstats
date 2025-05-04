@@ -1,4 +1,5 @@
 INCLUDE "../includes/analytics_sources_filtered.incl"
+INCLUDE "../includes/analytics_conversions_filtered.incl"
 
 NODE top_sources_0
 SQL >
@@ -9,5 +10,20 @@ SQL >
         group by source
         order by visits desc
         limit {{ Int32(skip, 0) }},{{ Int32(limit, 10) }}
+
+NODE conversions_by_source
+SQL >
+
+    %
+        select source, countMerge(event_count) as conversions, sumMerge(revenue_amount_sum)/100.0 as conversion_revenue
+        from analytics_conversions_filtered
+        group by source
+
+NODE top_sources_1
+SQL >
+
+    %
+        select * from top_sources_0
+        left join conversions_by_source using source
 
 

@@ -4,6 +4,7 @@ import { AnalyticsContext, AnalyticsData } from "providers/analytics-provider"
 import { useCallback, useContext } from "react"
 import { formatISO } from 'date-fns'
 import { BrowserDetailsData, CountryDetailsData, DeviceDetailsData, OsDetailsData, SourceDetailsData, BrowserSummaryData, DeviceSummaryData, PageSummaryData, CountrySummaryData, KeyMetricsData, SourceSummaryData, OperatingSystemSummaryData, CitySummaryData, ChannelSummaryData, ChannelDetailsData, CityDetailsData, PageDetailsData } from "types/analytics"
+import useDomain from "./use-domain"
 
 
 export interface AnalyticsDataState<T> {
@@ -23,8 +24,8 @@ export function useAnalytics() {
 
     const dateRangeQuery = `date_from=${formatISO(dateRange.start, { representation: "date" })}&date_to=${formatISO(dateRange.end, { representation: "date" })}`;
 
+    const { domain } = useDomain();
 
-    
 
     function fetchAnalyticsData<T>(data: AnalyticsData<T>, pipe: string) {
         return useCallback(async () => {
@@ -95,6 +96,8 @@ export function useAnalytics() {
     const refreshCountryDetails = useCallback(() => {
         fetchCountryDetails();
     }, [dateRange, fetchCountryDetails])
+
+
 
     return {
         setDateRange,
