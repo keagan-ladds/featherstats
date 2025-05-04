@@ -8,6 +8,10 @@ interface DomainProviderProps {
     domain: Domain
 }
 
-export default function DomainProvider({ children }: DomainProviderProps) {
-    return (<DomainContext.Provider value={null}>{children}</DomainContext.Provider>)
+export default function DomainProvider({ children, domain }: DomainProviderProps) {
+    const context = {
+        domain
+    }
+
+    return (<DomainContext.Provider value={context}>{children}</DomainContext.Provider>)
 }

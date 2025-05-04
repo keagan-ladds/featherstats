@@ -27,5 +27,5 @@ export const columns: ColumnDef<PageSummaryData[number]>[] = [
         cell: ({ row }) => {
             return <div className="text-right">{row.getValue("visits")}</div>
         },
-    }
+    },
 ]

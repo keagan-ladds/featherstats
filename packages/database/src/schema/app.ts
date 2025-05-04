@@ -1,16 +1,17 @@
-import { pgTable, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, varchar } from "drizzle-orm/pg-core";
 import { usersTable } from "./auth"
 import { pgEnum } from "drizzle-orm/pg-core";
 import { generateUniqueString } from "../util";
 import { integer, boolean } from "drizzle-orm/pg-core";
 import { json } from "drizzle-orm/pg-core";
-import { PlanUsageLimit as PlanUsageLimits } from "../types";
+import { DomainConfiguration, PlanUsageLimit as PlanUsageLimits, WorkspaceConfiguration } from "../types";
 import { uniqueIndex } from "drizzle-orm/pg-core";
 
 export const workspacesTable = pgTable("workspaces", {
     id: text("id").primaryKey().$default(() => generateUniqueString()),
     name: text("name").notNull().$default(() => "Default Workspace"),
     userId: text("user_id").notNull().references(() => usersTable.id, { onDelete: "cascade" }),
+    configuration: json("configuration").$type<WorkspaceConfiguration>().default({}).notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at"),
 });
@@ -24,6 +25,7 @@ export const domainsTable = pgTable("domains", {
     key: varchar("key").notNull().unique().$default(() => `pk-${generateUniqueString(16)}`),
     verificationStatus: domainVerificationStatus("verification_status").notNull().$default(() => "pending"),
     verifiedAt: timestamp("verified_at"),
+    configuration: json("configuration").$type<DomainConfiguration>().default({}).notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at"),
 },

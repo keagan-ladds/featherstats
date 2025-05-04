@@ -1,0 +1,29 @@
+# Data Source created from Pipe 'analytics_conversions'
+
+SCHEMA >
+    `period` DateTime,
+    `workspace_id` LowCardinality(String),
+    `domain_name` LowCardinality(String),
+    `event_name` String,
+    `pathname` String,
+    `device` String,
+    `browser` String,
+    `os` String,
+    `referrer` String,
+    `source` String,
+    `channel` String,
+    `country` String,
+    `city` String,
+    `region` String,
+    `utm_source` String,
+    `utm_medium` String,
+    `utm_campaign` String,
+    `utm_term` String,
+    `utm_content` String,
+    `revenue_currency` String,
+    `event_count` AggregateFunction(count),
+    `revenue_amount_sum` AggregateFunction(sum, Int64)
+
+ENGINE "AggregatingMergeTree"
+ENGINE_PARTITION_KEY "toYYYYMM(period)"
+ENGINE_SORTING_KEY "workspace_id, domain_name, period, event_name, pathname, revenue_currency, referrer, source, channel, device, browser, os, country, city, region, utm_source, utm_medium, utm_campaign, utm_term, utm_content"

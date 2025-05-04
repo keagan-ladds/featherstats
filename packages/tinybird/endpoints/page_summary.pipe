@@ -1,6 +1,7 @@
 INCLUDE "../includes/analytics_pages_filtered.incl"
+INCLUDE "../includes/analytics_conversions_filtered.incl"
 
-NODE untitled_pipe_5044_0
+NODE page_summary_0
 SQL >
 
     %
@@ -9,5 +10,20 @@ SQL >
         group by pathname
         order by visits desc
         limit {{ Int32(skip, 0) }},{{ Int32(limit, 10) }}
+
+NODE conversions_by_pathname
+SQL >
+
+    %
+        select pathname, countMerge(event_count) as conversions, sumMerge(revenue_amount_sum)/100.0 as conversion
+        from analytics_conversions_filtered
+        group by pathname
+
+NODE page_summary_1
+SQL >
+
+    %
+        select * from page_summary_0
+        left join conversions_by_pathname using pathname
 
 
