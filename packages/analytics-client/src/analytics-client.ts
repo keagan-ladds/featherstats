@@ -198,8 +198,14 @@ export class FeatherstatsClient {
   }
 
   private getAdAttributionParameters(): AdAttributionParameters {
+    const sessionParams = sessionStorage.getItem('_adp');
+    if (sessionParams) {
+      return JSON.parse(sessionParams)
+    }
+
+
     const params = new URLSearchParams(window.location.search);
-    return {
+    const adParams = {
       gclid: params.get('gclid') || undefined,
       wbraid: params.get('wbraid') || undefined,
       gbraid: params.get('gbraid') || undefined,
@@ -209,6 +215,10 @@ export class FeatherstatsClient {
       ttclid: params.get('ttclid') || undefined,
       li_fat_id: params.get('li_fat_id') || undefined
     };
+
+    sessionStorage.setItem('_adp', JSON.stringify(adParams));
+
+    return adParams;
   }
 
   private async sendEvents(events: AnalyticsEvent[]): Promise<void> {
@@ -230,7 +240,7 @@ export class FeatherstatsClient {
     }
 
     return {
-      referrer: document.referrer,
+      referrer: this.getReferrer(),
       pathname: window.location.pathname,
       utm_source: this.utmParameters.utm_source,
       utm_medium: this.utmParameters.utm_medium,
@@ -265,8 +275,8 @@ export class FeatherstatsClient {
 
   private getSessionId(sessionDurationMinutes: number = 30): string {
     const now = Date.now();
-    let sessionId = sessionStorage.getItem('sessionId');
-    let expiryTime = sessionStorage.getItem('sessionIdExpiry');
+    let sessionId = sessionStorage.getItem('_sid');
+    let expiryTime = sessionStorage.getItem('_sxp');
 
     if (sessionId && expiryTime) {
       if (now < parseInt(expiryTime)) {
@@ -276,9 +286,21 @@ export class FeatherstatsClient {
 
     sessionId = nanoid();
     expiryTime = (now + sessionDurationMinutes * 60 * 1000).toString();
-    sessionStorage.setItem('sessionId', sessionId);
-    sessionStorage.setItem('sessionIdExpiry', expiryTime);
+    sessionStorage.setItem('_sid', sessionId);
+    sessionStorage.setItem('_sxp', expiryTime);
     return sessionId;
+  }
+
+  private getReferrer() {
+    let sessionReferrer = sessionStorage.getItem('_rfk');
+    if (sessionReferrer) {
+      return sessionReferrer;
+    }
+
+    sessionReferrer = document.referrer;
+
+    sessionStorage.setItem('_rfk', sessionReferrer);
+    return sessionReferrer;
   }
 
   private getUserId(): string {
