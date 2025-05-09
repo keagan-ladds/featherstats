@@ -22,6 +22,13 @@ export const columns: ColumnDef<ChannelSummaryData[number]>[] = [
         },
     },
     {
+        accessorKey: "visits",
+        header: () => <div className="text-right">Visits</div>,
+        cell: ({ row }) => {
+            return <div className="text-right">{row.getValue("visits")}</div>
+        },
+    },
+    {
         accessorKey: "conversions",
         header: () => <div className="text-right">Conversions</div>,
         cell: ({ row }) => {
