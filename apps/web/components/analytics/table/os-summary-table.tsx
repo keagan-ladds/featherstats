@@ -29,5 +29,12 @@ export const columns: ColumnDef<OperatingSystemSummaryData[number]>[] = [
         cell: ({ row }) => {
             return <div className="text-right">{row.getValue("visits")}</div>
         },
+    },
+    {
+        accessorKey: "conversions",
+        header: () => <div className="text-right">Conversions</div>,
+        cell: ({ row }) => {
+            return <div className="text-right">{row.getValue("conversions")}</div>
+        },
     }
 ]

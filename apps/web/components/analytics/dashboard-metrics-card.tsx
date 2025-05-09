@@ -75,6 +75,7 @@ export default function DashboardMetricsCard({ className }: DashboardMetricsCard
     }
 
     return date.toLocaleDateString("en-US", {
+      weekday: "short", 
       month: "short",
       day: "numeric",
       year: "numeric",
@@ -109,7 +110,7 @@ export default function DashboardMetricsCard({ className }: DashboardMetricsCard
         bounce_rate: bounce_rate.toLocaleString(undefined, { maximumFractionDigits: 0 }) + " %",
         avg_session_sec: formatDuration(avg_session_sec as number),
         conversions: conversions.toLocaleString(),
-        total_revenue: formatCurrency(total_revenue * 100, currency)
+        total_revenue: formatCurrency(total_revenue * 100, currency, {notation: 'compact', maximumFractionDigits: 1, currencyDisplay: 'symbol'})
       }
     }, [keyMetrics.data, currency]
   )

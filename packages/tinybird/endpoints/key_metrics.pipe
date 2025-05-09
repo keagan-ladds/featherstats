@@ -96,14 +96,35 @@ SQL >
 NODE conversions
 SQL >
 
-    %
+     %
+        {% if defined(date_from) and day_diff(date_from, date_to) == 0 %}
+             select
+                toStartOfHour(period, {{String(timezone, 'Europe/Amsterdam')}}) as date,
+                countMerge(event_count) as conversions,
+                sumMerge(revenue_amount_sum) as revenue
+            from analytics_conversions_mv
+            where toDate(date) = {{ Date(date_from) }} 
+            and workspace_id = {{String(workspace_id, required=True)}} 
+            and domain_name = {{String(domain_name, required=True)}}
+
+            {% if defined(currency)  %}
+            and revenue_currency IN  {{Array(currency, 'String')}}
+            {% end %}
+
+            {% if defined(conversion_events) %}
+                and event_name IN  {{Array(conversion_events, 'String')}}
+            {% end %}
+
+            group by date
+        {% else %}
             select
                 date,
                 countMerge(event_count) as conversions,
                 sumMerge(revenue_amount_sum) as revenue
             from analytics_conversions_filtered
             group by date
-            order by date desc
+        {% end %}
+        order by date desc
 
 
 NODE aggregate

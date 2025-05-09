@@ -23,6 +23,7 @@ SQL >
     JSONExtractString(payload, 'utm_campaign') as utm_campaign,
     JSONExtractString(payload, 'utm_term') as utm_term,
     JSONExtractString(payload, 'utm_content') as utm_content,
+    JSONExtractString(payload, 'ad_params', 'gclid') as gclid,
     payload
     FROM analytics_events
     ORDER BY timestamp DESC
@@ -55,6 +56,7 @@ SQL >
     utm_campaign,
     utm_term,
     utm_content,
+    gclid,
     payload
     FROM analytics_events_enriched_0
 
@@ -82,6 +84,7 @@ SQL >
     utm_campaign,
     utm_term,
     utm_content,
+    gclid,
     payload,
     CASE
     when match(browser, 'Chrome')
@@ -146,6 +149,7 @@ SQL >
     case 
     when match(utm_medium, 'cpc') then 'Paid Search'
     when match(utm_medium, 'display') then 'Paid Ads'
+    when notEmpty(gclid) then 'Paid Ads'
     when match(utm_medium, 'email') then 'Email'
     when match(referrer, 'google.|bing.|yahoo.|duckduckgo.|baidu.|yandex.|ask.|ecosia.') then 'Organic Search'
     when match(referrer, 'facebook.|twitter.|x.com|linkedin.|instagram.|tiktok.|pinterest.|reddit.|snapchat.|threads.net|mastodon.') then 'Organic Social'
