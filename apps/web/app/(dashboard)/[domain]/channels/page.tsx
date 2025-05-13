@@ -5,10 +5,12 @@ import SessionDurationChart from "components/analytics/chart/session-duration-ch
 import VisitsChart from "components/analytics/chart/visits-chart";
 import ChannelDetailTable from "components/analytics/table/channel-detail-table";
 import { useAnalytics } from "hooks/use-analytics";
+import useDomain from "hooks/use-domain";
 import { useEffect } from "react";
 
 export default function ChannelDetailsPage() {
     const { fetchChannelDetails, channelDetails, dateRange} = useAnalytics()
+    const { showConversions, currency} = useDomain()
 
     useEffect(() => {
         fetchChannelDetails();
@@ -20,7 +22,7 @@ export default function ChannelDetailsPage() {
             <PageViewsChart {...channelDetails} groupKey={"channel"}/>
             <BounceRateChart {...channelDetails} groupKey={"channel"}/>
             <SessionDurationChart {...channelDetails} groupKey={"channel"}/>
-            <ChannelDetailTable {...channelDetails} className="col-span-full" />
+            <ChannelDetailTable {...channelDetails} className="col-span-full" showConversions={showConversions} currency={currency} />
         </div>
     </>
 }

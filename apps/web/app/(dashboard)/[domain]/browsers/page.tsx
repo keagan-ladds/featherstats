@@ -7,10 +7,12 @@ import SessionDurationChart from "components/analytics/chart/session-duration-ch
 import VisitsChart from "components/analytics/chart/visits-chart"
 import { useAnalytics } from "hooks/use-analytics"
 import { useEffect } from "react"
+import useDomain from "hooks/use-domain"
 
 export default function BrowsersDashboardPage() {
 
     const { dateRange, browserDetails, refreshBrowserDetails } = useAnalytics()
+    const { showConversions, currency} = useDomain()
 
     useEffect(() => {
         refreshBrowserDetails()
@@ -22,7 +24,7 @@ export default function BrowsersDashboardPage() {
             <PageViewsChart {...browserDetails} groupKey={"browser"}/>
             <BounceRateChart {...browserDetails} groupKey={"browser"}/>
             <SessionDurationChart {...browserDetails} groupKey={"browser"}/>
-            <BrowserDetailsTable {...browserDetails} className="col-span-full" />
+            <BrowserDetailsTable {...browserDetails} className="col-span-full" showConversions={showConversions} currency={currency} />
         </div>
 
     </>

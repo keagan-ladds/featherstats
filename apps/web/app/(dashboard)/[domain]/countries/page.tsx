@@ -8,10 +8,13 @@ import { useEffect } from "react"
 import BounceRateChart from "components/analytics/chart/bounce-rate-chart"
 import CountryDetailTable from "components/analytics/table/country-detail-table"
 import { formatCountryCode } from "lib/format-utils"
+import useDomain from "hooks/use-domain"
 
 export default function DevicesDashboardPage() {
 
     const { dateRange, countryDetails, refreshCountryDetails } = useAnalytics()
+    const { showConversions, currency} = useDomain()
+    
     useEffect(() => {
         refreshCountryDetails();
     }, [dateRange])
@@ -22,7 +25,7 @@ export default function DevicesDashboardPage() {
             <PageViewsChart {...countryDetails} groupKey={"country"} groupFormatter={formatCountryCode}/>
             <BounceRateChart {...countryDetails} groupKey={"country"} groupFormatter={formatCountryCode}/>
             <SessionDurationChart {...countryDetails} groupKey={"country"} groupFormatter={formatCountryCode}/>
-            <CountryDetailTable {...countryDetails} className="col-span-full"/>
+            <CountryDetailTable {...countryDetails} className="col-span-full" showConversions={showConversions} currency={currency}/>
         </div>
 
     </>

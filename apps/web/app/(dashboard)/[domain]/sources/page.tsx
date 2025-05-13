@@ -5,10 +5,12 @@ import SessionDurationChart from "components/analytics/chart/session-duration-ch
 import VisitsChart from "components/analytics/chart/visits-chart";
 import SourceDetailTable from "components/analytics/table/source-detail-table";
 import { useAnalytics } from "hooks/use-analytics";
+import useDomain from "hooks/use-domain";
 import { useEffect } from "react";
 
 export default function SourcesDashboardPage() {
     const { setDateRange, refreshSourceDetailsData, sourceDetails, dateRange } = useAnalytics()
+    const { showConversions, currency} = useDomain()
 
     useEffect(() => {
         refreshSourceDetailsData();
@@ -20,7 +22,7 @@ export default function SourcesDashboardPage() {
             <PageViewsChart {...sourceDetails} groupKey={"source"} />
             <BounceRateChart {...sourceDetails} groupKey={"source"} />
             <SessionDurationChart {...sourceDetails} groupKey={"source"} />
-            <SourceDetailTable {...sourceDetails} className="col-span-full" />
+            <SourceDetailTable {...sourceDetails} className="col-span-full" showConversions={showConversions} currency={currency} />
         </div>
     </>
 }
