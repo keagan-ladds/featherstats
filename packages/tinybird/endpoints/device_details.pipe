@@ -1,4 +1,5 @@
 INCLUDE "../includes/analytics_sessions_filtered.incl"
+INCLUDE "../includes/analytics_conversions_filtered.incl"
 
 NODE device_details_0
 SQL >
@@ -27,4 +28,16 @@ SQL >
     FROM device_details_0
     GROUP BY device
 
+NODE conversion_details_by_device
+SQL >
+
+    select device, countMerge(event_count) as conversions, sumMerge(revenue_amount_sum)/100.0 as conversion_revenue
+    from analytics_conversions_filtered
+    group by device
+
+NODE device_details_2
+SQL >
+    SELECT *, conversion_revenue/conversions as avg_conversion_revenue, conversions/visits as conversion_rate
+    FROM device_details_1
+    LEFT JOIN conversion_details_by_device USING device
 

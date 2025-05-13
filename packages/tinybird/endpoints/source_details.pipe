@@ -1,4 +1,5 @@
 INCLUDE "../includes/analytics_sessions_filtered.incl"
+INCLUDE "../includes/analytics_conversions_filtered.incl"
 
 NODE source_details_0
 SQL >
@@ -14,8 +15,7 @@ SQL >
         max(latest_hit) as latest_hit_aux,
         min(first_hit) as first_hit_aux
     FROM analytics_sessions_filtered
-    WHERE notEmpty(referrer)
-    and domainWithoutWWW(referrer) != domainWithoutWWW({{ String(domain_name, required=True) }})
+    WHERE domainWithoutWWW(referrer) != domainWithoutWWW({{ String(domain_name, required=True) }})
     GROUP BY source, referrer, session_id
 
 
@@ -32,5 +32,18 @@ SQL >
     FROM source_details_0
     GROUP BY source
     ORDER BY visits DESC
+
+NODE conversion_details_by_source
+SQL >
+
+    select source, countMerge(event_count) as conversions, sumMerge(revenue_amount_sum)/100.0 as conversion_revenue
+    from analytics_conversions_filtered
+    group by source
+
+NODE source_details_2
+SQL >
+    SELECT *, conversion_revenue/conversions as avg_conversion_revenue, conversions/visits as conversion_rate
+    FROM source_details_1
+    LEFT JOIN conversion_details_by_source USING source
 
 

@@ -1,5 +1,6 @@
 
 INCLUDE "../includes/analytics_sessions_filtered.incl"
+INCLUDE "../includes/analytics_conversions_filtered.incl"
 
 NODE country_details_0
 SQL >
@@ -30,5 +31,18 @@ SQL >
     FROM country_details_0
     GROUP BY country
     ORDER BY visits DESC
+
+NODE conversion_details_by_country
+SQL >
+
+    select country, countMerge(event_count) as conversions, sumMerge(revenue_amount_sum)/100.0 as conversion_revenue
+    from analytics_conversions_filtered
+    group by country
+
+NODE country_details_2
+SQL >
+    SELECT *, conversion_revenue/conversions as avg_conversion_revenue, conversions/visits as conversion_rate
+    FROM country_details_1
+    LEFT JOIN conversion_details_by_country USING country
 
 

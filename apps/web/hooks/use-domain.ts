@@ -13,6 +13,7 @@ export default function useDomain() {
     return {
         domain,
         currency: domain.configuration.currency || "USD",
-        conversionConfiguration: domain.configuration.conversions
+        conversionConfiguration: domain.configuration.conversions,
+        showConversions: domain.configuration.conversions && Object.keys(domain.configuration.conversions).length > 0
     }
 }

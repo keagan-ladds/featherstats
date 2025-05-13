@@ -1,4 +1,5 @@
 INCLUDE "../includes/analytics_sessions_filtered.incl"
+INCLUDE "../includes/analytics_conversions_filtered.incl"
 
 NODE browser_details_0
 SQL >
@@ -29,5 +30,18 @@ SQL >
     FROM browser_details_0
     GROUP BY browser
     ORDER BY visits DESC
+
+NODE conversion_details_by_browser
+SQL >
+
+    select browser, countMerge(event_count) as conversions, sumMerge(revenue_amount_sum)/100.0 as conversion_revenue
+    from analytics_conversions_filtered
+    group by browser
+
+NODE browser_details_2
+SQL >
+    SELECT *, conversion_revenue/conversions as avg_conversion_revenue, conversions/visits as conversion_rate
+    FROM browser_details_1
+    LEFT JOIN conversion_details_by_browser USING browser
 
 

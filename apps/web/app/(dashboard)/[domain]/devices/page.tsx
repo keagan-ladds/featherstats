@@ -6,11 +6,14 @@ import SessionDurationChart from "components/analytics/chart/session-duration-ch
 import VisitsChart from "components/analytics/chart/visits-chart"
 import DeviceDetailsTable from "components/analytics/table/device-details-table"
 import { useAnalytics } from "hooks/use-analytics"
+import useDomain from "hooks/use-domain"
 import { useEffect } from "react"
 
 export default function DevicesDashboardPage() {
 
     const { dateRange, deviceDetails, refreshDeviceDetails } = useAnalytics()
+    const { showConversions, currency} = useDomain()
+
     useEffect(() => {
         refreshDeviceDetails();
     }, [dateRange])
@@ -21,7 +24,7 @@ export default function DevicesDashboardPage() {
             <PageViewsChart {...deviceDetails} groupKey={"device"}/>
             <BounceRateChart {...deviceDetails} groupKey={"device"}/>
             <SessionDurationChart {...deviceDetails} groupKey={"device"}/>
-            <DeviceDetailsTable {...deviceDetails} className="col-span-full"/>
+            <DeviceDetailsTable {...deviceDetails} className="col-span-full" showConversions={showConversions} currency={currency}/>
         </div>
 
     </>
