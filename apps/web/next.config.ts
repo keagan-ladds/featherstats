@@ -24,6 +24,10 @@ const nextConfig: NextConfig = {
             key: "Access-Control-Allow-Headers",
             value: "Content-Type, Authorization, x-api-key",
           },
+          {
+            key: "Access-Control-Max-Age",
+            value: "86400"
+          }
         ],
       },
       {
@@ -41,6 +45,10 @@ const nextConfig: NextConfig = {
             key: "Access-Control-Allow-Headers",
             value: "Content-Type, Authorization, x-api-key",
           },
+          {
+            key: "Access-Control-Max-Age",
+            value: "86400"
+          }
         ],
       },
     ];
