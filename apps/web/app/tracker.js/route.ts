@@ -32,7 +32,7 @@ export async function GET(request: Request) {
         return new NextResponse(trackerSpecificJs, {
             headers: {
                 'Content-Type': 'application/javascript; charset=utf-8',
-                'Cache-Control': 'public, max-age=31536000, s-maxage=31536000', // 1 year
+                'Cache-Control': 'public, max-age=7200, s-maxage=7200', // 2 hours
                 'ETag': requestSpecificETag,
                 'X-Content-Type-Options': 'nosniff'
             }

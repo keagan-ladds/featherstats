@@ -187,14 +187,23 @@ export class FeatherstatsClient {
   }
 
   private getUtmParameters() {
+    const sessionParams = sessionStorage.getItem('_utm');
+    if (sessionParams) {
+      return JSON.parse(sessionParams);
+    }
+
     const params = new URLSearchParams(window.location.search);
-    return {
+    const utmParams = {
       utm_source: params.get('utm_source') || undefined,
       utm_medium: params.get('utm_medium') || undefined,
       utm_campaign: params.get('utm_campaign') || undefined,
       utm_term: params.get('utm_term') || undefined,
       utm_content: params.get('utm_content') || undefined
     };
+
+    sessionStorage.setItem('_utm', JSON.stringify(utmParams));
+
+    return utmParams;
   }
 
   private getAdAttributionParameters(): AdAttributionParameters {
@@ -293,7 +302,7 @@ export class FeatherstatsClient {
 
   private getReferrer() {
     let sessionReferrer = sessionStorage.getItem('_rfk');
-    if (sessionReferrer) {
+    if (sessionReferrer != null) {
       return sessionReferrer;
     }
 
